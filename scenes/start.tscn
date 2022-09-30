@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://byydfmsgnysqc"]
+
+[node name="Node2d" type="Node2D"]
+
+[node name="Label" type="Label" parent="."]
+offset_left = 231.0
+offset_top = 90.0
+offset_right = 583.0
+offset_bottom = 277.0
+text = "LD51"
