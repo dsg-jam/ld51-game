@@ -1,0 +1,25 @@
+@font-face {
+    font-family: "merry-christmas-color-regular";
+    src: url("font.ttf") format("truetype");
+}
+
+html,
+body {
+    background-color: #172A20;
+}
+
+img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h1,
+h2,
+p,
+li,
+a {
+    font-family: 'merry-christmas-color-regular', sans-serif;
+    text-align: center;
+    color: wheat;
+}
