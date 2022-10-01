@@ -1,5 +1,5 @@
 (async () => {
-    const response = await fetch('https://api.github.com/repos/mineiwik/LD51/contents/?ref=github-pages');
+    const response = await fetch('https://api.github.com/repos/dsg-jam/LD51/contents/?ref=github-pages');
     const data = await response.json();
 
     let htmlString = '';
