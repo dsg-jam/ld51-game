@@ -1,5 +1,5 @@
 @font-face {
-    font-family: "merry-christmas-color-regular";
+    font-family: "FredokaOne-Regular";
     src: url("font.ttf") format("truetype");
 }
 
@@ -17,9 +17,12 @@ img {
 h1,
 h2,
 p,
-li,
 a {
-    font-family: 'merry-christmas-color-regular', sans-serif;
+    font-family: 'FredokaOne-Regular', sans-serif;
     text-align: center;
     color: wheat;
+}
+
+.dsg-links {
+    text-align: center;
 }
