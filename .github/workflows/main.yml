@@ -1,52 +1,52 @@
-# Whenever a tag push matching pattern "v*" then run the job
-on: 
+on:
   push:
     tags:
       - "v*"
 
 jobs:
-  export_game:
+  create_release:
     runs-on: ubuntu-latest
-    name: Export Game
+    name: create & deploy new release
     steps:
-    - name: checkout
-      uses: actions/checkout@v3.0.2
-      with:
-        fetch-depth: 0
-  
-    - name: get tag from version
-      id: tag_version
-      run: |
+      - name: checkout
+        uses: actions/checkout@v3.0.2
+        with:
+          fetch-depth: 0
+
+      - name: get tag
+        id: tag_version
+        run: |
           echo ::set-output name=TAG_VERSION::${GITHUB_REF#refs/tags/v}
-  
-    - name: export game
-      id: export
-      uses: firebelley/godot-export@v4.2.0
-      with:
-        godot_executable_download_url: https://downloads.tuxfamily.org/godotengine/4.0/beta2/Godot_v4.0-beta2_linux.x86_64.zip
-        godot_export_templates_download_url: https://downloads.tuxfamily.org/godotengine/4.0/beta2/Godot_v4.0-beta2_export_templates.tpz
-        relative_project_path: ./
-        archive_output: true
-        use_godot_4: true
 
-    - name: replicate directory structure
-      run: |
-        mkdir -p remote/${{ steps.tag_version.outputs.TAG_VERSION }}
-        cp -rT ${{ steps.export.outputs.build_directory }}/web remote/${{ steps.tag_version.outputs.TAG_VERSION }}/
+      - name: export game
+        id: export
+        uses: firebelley/godot-export@v4.2.0
+        with:
+          godot_executable_download_url: https://downloads.tuxfamily.org/godotengine/4.0/beta2/Godot_v4.0-beta2_linux.x86_64.zip
+          godot_export_templates_download_url: https://downloads.tuxfamily.org/godotengine/4.0/beta2/Godot_v4.0-beta2_export_templates.tpz
+          relative_project_path: ./
+          archive_output: true
+          use_godot_4: true
 
-    - name: Deploy
-      uses: s0/git-publish-subdir-action@develop
-      env:
-        REPO: self
-        BRANCH: github-pages
-        FOLDER: remote
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        CLEAR_GLOBS_FILE: ".clear-target-files"
+      - name: prepare release & deployment
+        run: |
+          mkdir -p remote/${{ steps.tag_version.outputs.TAG_VERSION }}
+          cp -rT ${{ steps.export.outputs.build_directory }}/web remote/${{ steps.tag_version.outputs.TAG_VERSION }}/
+          rm -rf ${{ steps.export.outputs.archive_directory }}/web.zip
 
-    - name: create release
-      uses: softprops/action-gh-release@v0.1.14
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        generate_release_notes: true
-        tag_name: ${{ steps.tag_version.outputs.TAG_VERSION }}
-        files: ${{ steps.export.outputs.archive_directory }}/*
+      - name: deploy
+        uses: s0/git-publish-subdir-action@develop
+        env:
+          REPO: self
+          BRANCH: github-pages
+          FOLDER: remote
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLEAR_GLOBS_FILE: ".clear-target-files"
+
+      - name: create release
+        uses: softprops/action-gh-release@v0.1.14
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          generate_release_notes: true
+          tag_name: ${{ steps.tag_version.outputs.TAG_VERSION }}
+          files: ${{ steps.export.outputs.archive_directory }}/*
