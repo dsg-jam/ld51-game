@@ -5,6 +5,8 @@
     let htmlString = '';
     let paths = [];
 
+    data.sort((a, b) => b.name.localeCompare(a.name))
+
     for (let file of data) {
         if (file.type === "dir" && /^\d/.test(file.name)) {
             paths.push(file.path)
