@@ -7,4 +7,40 @@
 script = ExtResource("1_q3buc")
 
 [node name="Board" parent="." instance=ExtResource("2_aieau")]
-position = Vector2(320, 64)
+position = Vector2(272, 56)
+
+[node name="MessageLabel" type="Label" parent="."]
+offset_left = 408.0
+offset_top = 8.0
+offset_right = 616.0
+offset_bottom = 34.0
+text = "SELECTED PIECE: [PIECE_ID]"
+
+[node name="TimerLabel" type="Label" parent="."]
+anchors_preset = -1
+anchor_left = -0.538
+anchor_top = 0.5
+anchor_right = -0.538
+anchor_bottom = 0.5
+offset_left = 120.0
+offset_top = 8.0
+offset_right = 328.0
+offset_bottom = 34.0
+text = "[TIMER]"
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+
+[node name="MovesLabel" type="Label" parent="."]
+anchors_preset = -1
+anchor_left = -0.538
+anchor_top = 0.5
+anchor_right = -0.538
+anchor_bottom = 0.5
+offset_left = 864.0
+offset_top = 8.0
+offset_right = 1072.0
+offset_bottom = 34.0
+text = "[REMAINING_MOVES]"
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
