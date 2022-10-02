@@ -11,11 +11,10 @@ signal update_selected_piece
 func _ready():
 	render_board("oo;;o;xxxxxx;xxxoxx;ooooo;;oooxxxx;xx;ooox;xxo;oxxxxx;;;o;o")
 	var tile_size = _get_tile_size(board_grid)
-	place_piece("550e8400-e29b-11d4-a716-446655440000", Vector2(0,0))
-	place_piece("550e8400-e29b-11d4-a716-446655440001", Vector2(6,4))
-	
+	place_piece("550e8400-e29b-11d4-a716-446655440000", "550e8400-e29b-0000-a716-446655440003", Vector2(0,0))
+	place_piece("550e8400-e29b-11d4-a716-446655440001", "550e8400-e29b-0000-a716-446655440004", Vector2(6,4))
 
-func place_piece(piece_id: String, piece_position: Vector2):
+func place_piece(piece_id: String, player_id: String, piece_position: Vector2):
 	var tile_size = _get_tile_size(board_grid)
 	var new_piece = piece_prefab.instantiate()
 	var piece_scale = min(
@@ -24,10 +23,8 @@ func place_piece(piece_id: String, piece_position: Vector2):
 	)
 	new_piece.scale.x = piece_scale
 	new_piece.scale.y = piece_scale
-	new_piece.set_piece_id(piece_id)
+	new_piece.setup(piece_id, player_id)
 	new_piece.position = Vector2(tile_size/2, tile_size/2) + tile_size * piece_position
-	
-	print(new_piece.get_node("Texture").get_rect())
 	new_piece.piece_selected.connect(_on_click)
 	add_child(new_piece)
 	
@@ -43,8 +40,8 @@ func render_board(input: String):
 	var tile_size = _get_tile_size(board_grid)
 	_draw_board(board_grid, tile_size)
 
-func _on_click(piece_id):
-	emit_signal("update_selected_piece", piece_id)
+func _on_click(piece_id, piece_player_id):
+	emit_signal("update_selected_piece", piece_id, piece_player_id)
 
 func _process(delta):
 	pass

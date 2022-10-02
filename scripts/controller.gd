@@ -3,6 +3,7 @@ extends Node2D
 var selected_piece_id: String = ""
 var moves_left: int
 var next_moves: Array
+var player_id: String
 
 enum ACTIONS {NO_ACTION, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT, MOVE_UP}
 
@@ -18,11 +19,13 @@ func _ready():
 	board.update_selected_piece.connect(_on_update_selected_piece)
 	moves_left = 10
 	timer.start(100)
+	player_id = "550e8400-e29b-0000-a716-446655440003"
 	moves_message.text = "Moves left: " + str(moves_left)
 
-func _on_update_selected_piece(piece_id):
-	selected_piece_id = piece_id
-	message.text = piece_id
+func _on_update_selected_piece(piece_id, piece_player_id):
+	if player_id == piece_player_id:
+		selected_piece_id = piece_id
+		message.text = piece_id
 
 func _process(_delta):
 	timer_message.text = "Time left: %.1f" % timer.time_left
