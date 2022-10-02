@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://byydfmsgnysqc"]
+[gd_scene load_steps=4 format=3 uid="uid://byydfmsgnysqc"]
 
 [ext_resource type="Script" path="res://scripts/controller.gd" id="1_q3buc"]
 [ext_resource type="PackedScene" uid="uid://dpw0yy580qqil" path="res://prefabs/board.tscn" id="2_aieau"]
+[ext_resource type="AudioStream" uid="uid://bnoxq8cy6egds" path="res://sounds/Gong-hit.wav" id="3_oei84"]
 
 [node name="DSGController" type="Node2D"]
 script = ExtResource("1_q3buc")
@@ -42,5 +43,9 @@ offset_top = 8.0
 offset_right = 1072.0
 offset_bottom = 34.0
 text = "[REMAINING_MOVES]"
+
+[node name="GongAudio" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_oei84")
+attenuation = 3.605
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
