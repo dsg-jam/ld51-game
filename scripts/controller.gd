@@ -17,8 +17,8 @@ enum ACTIONS {NO_ACTION, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT, MOVE_UP}
 func _ready():
 	assert(network.connect_websocket())
 	board.update_selected_piece.connect(_on_update_selected_piece)
-	moves_left = 10
-	timer.start(100)
+	moves_left = 5
+	timer.start(10)
 	player_id = "550e8400-e29b-0000-a716-446655440003"
 	moves_message.text = "Moves left: " + str(moves_left)
 
