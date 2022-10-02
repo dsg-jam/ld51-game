@@ -1,8 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://byydfmsgnysqc"]
+[gd_scene load_steps=3 format=3 uid="uid://byydfmsgnysqc"]
 
 [ext_resource type="Script" path="res://scripts/controller.gd" id="1_q3buc"]
+[ext_resource type="PackedScene" uid="uid://dpw0yy580qqil" path="res://prefabs/board.tscn" id="2_aieau"]
 
-[node name="Node2D" type="Node2D"]
-
-[node name="DSGController" type="Node2D" parent="."]
+[node name="DSGController" type="Node2D"]
 script = ExtResource("1_q3buc")
+
+[node name="Board" parent="." instance=ExtResource("2_aieau")]
+position = Vector2(320, 64)
