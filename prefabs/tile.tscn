@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://g7x2pl77ta40"]
+
+[node name="Tile" type="Node2D"]
+
+[node name="Texture" type="Polygon2D" parent="."]
+scale = Vector2(0.125, 0.125)
+color = Color(1, 0.196078, 1, 1)
+polygon = PackedVector2Array(0, 0, 64, 0, 64, 64, 0, 64)
