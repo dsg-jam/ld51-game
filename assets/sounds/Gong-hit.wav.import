@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://bnoxq8cy6egds"
-path="res://.godot/imported/Gong-hit.wav-fc49ecdbda9c156f42b1ea9ba00530f0.sample"
+path="res://.godot/imported/Gong-hit.wav-437dff7aded352a6169ab06226a2b7f7.sample"
 
 [deps]
 
-source_file="res://sounds/Gong-hit.wav"
-dest_files=["res://.godot/imported/Gong-hit.wav-fc49ecdbda9c156f42b1ea9ba00530f0.sample"]
+source_file="res://assets/sounds/Gong-hit.wav"
+dest_files=["res://.godot/imported/Gong-hit.wav-437dff7aded352a6169ab06226a2b7f7.sample"]
 
 [params]
 

@@ -68,6 +68,7 @@ class Move:
 
 func _on_timer_timeout():
 	complete_next_moves()
+	$GongAudio.play()
 	if network.is_online():
 		network.send(JSON.stringify(
 			{
