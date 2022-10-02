@@ -9,10 +9,10 @@ var board_grid: Array
 signal update_selected_piece
 
 func _ready():
-	render_board("oo;;o;xxxxxx;xxxoxx;ooooo;;oooxxxx;xx;ooox;xxo;oxxxxx;;;o;o")
+	render_board(";oooxxooo;ooxxxxoo;oxxxxxxo;oxxxxxxo;ooxxxxoo;oooxxooo;")
 	var tile_size = _get_tile_size(board_grid)
-	place_piece("550e8400-e29b-11d4-a716-446655440000", "550e8400-e29b-0000-a716-446655440003", Vector2(0,0))
-	place_piece("550e8400-e29b-11d4-a716-446655440001", "550e8400-e29b-0000-a716-446655440004", Vector2(6,4))
+	place_piece("550e8400-e29b-11d4-a716-446655440000", "550e8400-e29b-0000-a716-446655440003", Vector2(3,1))
+	place_piece("550e8400-e29b-11d4-a716-446655440001", "550e8400-e29b-0000-a716-446655440004", Vector2(4,6))
 
 func place_piece(piece_id: String, player_id: String, piece_position: Vector2):
 	var tile_size = _get_tile_size(board_grid)
@@ -66,7 +66,6 @@ func _draw_board(board_grid: Array, tile_size: int):
 					pass
 
 func _get_board_grid(input: String) -> Array:
-	input = _clean_up_input(input)
 	var board_grid = []
 	for line in input.split(";"):
 		var grid_line = []
@@ -74,19 +73,6 @@ func _get_board_grid(input: String) -> Array:
 			grid_line.append(character)
 		board_grid.append(grid_line)
 	return board_grid
-	
-
-func _clean_up_input(input: String) -> String:
-	var regex_line_end = RegEx.new()
-	regex_line_end.compile("(o*(;|$))")
-	
-	var regex_top_down = RegEx.new()
-	regex_top_down.compile("(^;*)|(;*$)")
-	
-	input = regex_line_end.sub(input, ";", true)
-	input = regex_top_down.sub(input, "", true)
-	
-	return input
 
 func _get_tile_size(board_grid: Array) -> int:
 	var max_width = 0
