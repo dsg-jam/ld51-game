@@ -4,7 +4,7 @@ extends Node2D
 @onready var tile_prefab = preload("res://prefabs/tile.tscn")
 
 func _ready():
-	render_board("oo;;o;xxxxxx;xxxoxx;ooooo;;oooxxxx;xx;ooox;xxo;oxxxxx;;;o;")
+	render_board("oo;;o;xxxxxx;xxxoxx;ooooo;;oooxxxx;xx;ooox;xxo;oxxxxx;;;o;o")
 
 func render_board(input: String):
 	"""
@@ -52,7 +52,7 @@ func get_board_grid(input: String) -> Array:
 
 func clean_up_input(input: String) -> String:
 	var regex_line_end = RegEx.new()
-	regex_line_end.compile("(o*;)")
+	regex_line_end.compile("(o*(;|$))")
 	
 	var regex_top_down = RegEx.new()
 	regex_top_down.compile("(^;*)|(;*$)")
