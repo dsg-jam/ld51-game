@@ -3,6 +3,7 @@ extends Area2D
 var _piece_id: String
 var _player_id: String
 var is_selected = false
+var facing_direction = Vector2.DOWN
 
 signal piece_selected
 
