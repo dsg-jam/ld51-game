@@ -1,51 +1,77 @@
-[gd_scene load_steps=4 format=3 uid="uid://dcb2fcgn5t31k"]
+[gd_scene load_steps=2 format=3 uid="uid://di62qmkfe3ucw"]
 
-[ext_resource type="Script" path="res://scripts/controller.gd" id="1_q3buc"]
-[ext_resource type="PackedScene" uid="uid://dpw0yy580qqil" path="res://prefabs/board.tscn" id="2_aieau"]
-[ext_resource type="AudioStream" uid="uid://bnoxq8cy6egds" path="res://assets/sounds/Gong-hit.wav" id="3_oei84"]
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_xko28"]
+color = Color(0.458824, 0.384314, 0.305882, 1)
+thickness = 4
 
-[node name="DSGController" type="Node2D"]
-script = ExtResource("1_q3buc")
+[node name="start" type="Node2D"]
 
-[node name="Board" parent="." instance=ExtResource("2_aieau")]
-position = Vector2(272, 56)
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_right = 1152.0
+offset_bottom = 648.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.996078, 0.815686, 0.619608, 1)
 
-[node name="MessageLabel" type="Label" parent="."]
-offset_left = 408.0
-offset_top = 8.0
-offset_right = 616.0
-offset_bottom = 34.0
-text = "SELECTED PIECE: [PIECE_ID]"
+[node name="HSeparatorLine" type="HSeparator" parent="ColorRect"]
+layout_mode = 2
+offset_top = 321.0
+offset_right = 1152.0
+offset_bottom = 325.0
+size_flags_vertical = 6
+theme_override_styles/separator = SubResource("StyleBoxLine_xko28")
 
-[node name="TimerLabel" type="Label" parent="."]
-anchors_preset = -1
-anchor_left = -0.538
-anchor_top = 0.5
-anchor_right = -0.538
-anchor_bottom = 0.5
-offset_left = 120.0
-offset_top = 8.0
-offset_right = 328.0
-offset_bottom = 34.0
-text = "[TIMER]"
+[node name="VBoxContainer" type="VBoxContainer" parent="ColorRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
 
-[node name="Timer" type="Timer" parent="."]
-one_shot = true
+[node name="VBoxContainerTop" type="VBoxContainer" parent="ColorRect/VBoxContainer"]
+layout_mode = 2
+offset_top = 145.0
+offset_right = 1152.0
+offset_bottom = 176.0
+size_flags_vertical = 6
 
-[node name="MovesLabel" type="Label" parent="."]
-anchors_preset = -1
-anchor_left = -0.538
-anchor_top = 0.5
-anchor_right = -0.538
-anchor_bottom = 0.5
-offset_left = 864.0
-offset_top = 8.0
-offset_right = 1072.0
-offset_bottom = 34.0
-text = "[REMAINING_MOVES]"
+[node name="Button" type="Button" parent="ColorRect/VBoxContainer/VBoxContainerTop"]
+layout_mode = 2
+offset_left = 506.0
+offset_right = 645.0
+offset_bottom = 31.0
+size_flags_horizontal = 4
+text = "Creat New Game"
 
-[node name="GongAudio" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("3_oei84")
-attenuation = 3.605
+[node name="HBoxContainer" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
+layout_mode = 2
+offset_left = 416.0
+offset_top = 471.0
+offset_right = 736.0
+offset_bottom = 502.0
+size_flags_horizontal = 4
+size_flags_vertical = 6
 
-[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[node name="Label" type="Label" parent="ColorRect/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+offset_top = 2.0
+offset_right = 75.0
+offset_bottom = 28.0
+theme_override_colors/font_color = Color(0.458824, 0.384314, 0.305882, 1)
+text = "Game ID: "
+
+[node name="LineEdit" type="LineEdit" parent="ColorRect/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2i(200, 0)
+layout_mode = 2
+offset_left = 79.0
+offset_right = 279.0
+offset_bottom = 31.0
+
+[node name="Button" type="Button" parent="ColorRect/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+offset_left = 283.0
+offset_right = 320.0
+offset_bottom = 31.0
+text = "join"
