@@ -1,4 +1,8 @@
-[gd_scene format=3 uid="uid://di62qmkfe3ucw"]
+[gd_scene load_steps=2 format=3 uid="uid://di62qmkfe3ucw"]
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_xko28"]
+color = Color(0.458824, 0.384314, 0.305882, 1)
+thickness = 4
 
 [node name="start" type="Node2D"]
 
@@ -15,6 +19,7 @@ offset_top = 321.0
 offset_right = 1152.0
 offset_bottom = 325.0
 size_flags_vertical = 6
+theme_override_styles/separator = SubResource("StyleBoxLine_xko28")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ColorRect"]
 layout_mode = 1
