@@ -3,6 +3,7 @@ extends Area2D
 var _piece_id: String
 var _player_id: String
 var is_selected = false
+var facing_direction = Vector2.DOWN
 
 signal piece_selected
 
@@ -16,7 +17,7 @@ func _input_event(viewport, event, shape_idx):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	pass
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
