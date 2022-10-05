@@ -2,7 +2,7 @@ extends HTTPRequest
 
 @export var creat_lobby_url = "http://localhost:8000/lobby"
 var lobby_scene = preload("res://scenes/lobby.tscn")
-var global_vars = get_node("/root/GlobalVariables")
+@onready var global_vars = get_node("/root/GlobalVariables")
 
 func _ready():
 	self.connect("request_completed", Callable(self, "_on_request_completed"))
