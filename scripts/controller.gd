@@ -15,7 +15,6 @@ enum ACTIONS {NO_ACTION, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT, MOVE_UP}
 @onready var timer = $Timer
 
 func _ready():
-	assert(network.connect_websocket())
 	board.update_selected_piece.connect(_on_update_selected_piece)
 	moves_left = 5
 	timer.start(10)

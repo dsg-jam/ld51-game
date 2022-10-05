@@ -90,7 +90,7 @@ size_flags_vertical = 6
 theme_override_colors/font_color = Color(0.458824, 0.384314, 0.305882, 1)
 text = "1"
 
-[node name="Button" type="Button" parent="ColorRect/VBoxContainer"]
+[node name="StartGameButton" type="Button" parent="ColorRect/VBoxContainer"]
 layout_mode = 2
 offset_left = 530.0
 offset_top = 479.0
@@ -99,3 +99,5 @@ offset_bottom = 510.0
 size_flags_horizontal = 4
 size_flags_vertical = 6
 text = "start game"
+
+[connection signal="pressed" from="ColorRect/VBoxContainer/StartGameButton" to="." method="_on_start_game_button_pressed"]
