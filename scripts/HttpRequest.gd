@@ -15,7 +15,6 @@ func _on_creat_new_game_button_pressed():
 
 func _on_request_completed(_result, _response_code, _headers, body):
 	var response = JSON.parse_string(body.get_string_from_utf8())
-	print(response)
 	if "lobby_id" in response:
 		GlobalVariables.id = response["lobby_id"]
 		get_tree().change_scene_to_packed(lobby_scene)
