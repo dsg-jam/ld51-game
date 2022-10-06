@@ -2,8 +2,9 @@
 
 [ext_resource type="Script" path="res://scripts/lobby.gd" id="1_ykju5"]
 
-[node name="lobby" type="Node2D"]
+[node name="lobby" type="Node2D" node_paths=PackedStringArray("start_button")]
 script = ExtResource("1_ykju5")
+start_button = NodePath("ColorRect/VBoxContainer/StartGameButton")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 offset_right = 1152.0
