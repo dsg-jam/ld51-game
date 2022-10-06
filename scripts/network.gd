@@ -2,7 +2,6 @@ extends Node
 
 signal ws_received_message
 
-var _url: String = "ws://127.0.0.1:8000/lobby/550e8400-e29b-11d4-a716-446655440000/join"
 var _client = WebSocketClient.new()
 
 func _ready():
@@ -17,17 +16,14 @@ func _process(_delta):
 func is_online() -> bool:
 	return _client.get_peer(1).is_connected_to_host()
 
-func connect_websocket() -> bool:
-	if _client.connect_to_url(_url, []) != OK:
+func connect_websocket(url: String) -> bool:
+	if _client.connect_to_url(url, []) != OK:
 		return false
 	_client.get_peer(1).set_write_mode(WebSocketPeer.WRITE_MODE_TEXT)
 	return true
 
 func disconnect_websocket():
 	_client.disconnect_from_host()
-	
-func set_url(new_url: String):
-	_url = new_url
 
 func send(payload: PackedByteArray):
 	_client.get_peer(1).put_packet(payload)

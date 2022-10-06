@@ -1,19 +1,22 @@
 extends Node2D
 
+@export var start_button: Button
+
 @onready var board_scene = preload("res://scenes/board_game.tscn")
-@onready var network = get_node("/root/DSGNetwork")
 
 func _ready():
 	$ColorRect/VBoxContainer/HBoxContainer/IDValue.text = GlobalVariables.id
-	DSGNetwork.set_url(GlobalVariables.id)
-	assert(DSGNetwork.connect_websocket())
-	network.ws_received_message.connect(_on_ws_received_message)
+	assert(DSGNetwork.connect_websocket("ws://127.0.0.1:8000/lobby/%s/join" % GlobalVariables.id))
+	DSGNetwork.ws_received_message.connect(_on_ws_received_message)
 
 
 func _on_start_game_button_pressed():
 	get_tree().change_scene_to_packed(board_scene)
 
 
-func _on_ws_received_message(message: String):
-	# TODO: Receive server's hello message
-	print(message)
+func _on_ws_received_message(stream: String):
+	var message = JSON.parse_string(stream)
+	if message["type"] == "server_hello":
+		if not message["payload"]["is_host"]:
+			start_button.queue_free()
+		GlobalVariables.player_id = message["payload"]["player_id"]
