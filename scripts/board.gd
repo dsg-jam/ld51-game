@@ -42,6 +42,10 @@ func _ready():
 	place_piece("550e8400-e29b-11d4-a716-446655440003", "550e8400-e29b-0000-a716-446655440004", Vector2(6,2))
 	place_piece("550e8400-e29b-11d4-a716-446655440004", "550e8400-e29b-0000-a716-446655440004", Vector2(6,3))
 	place_piece("550e8400-e29b-11d4-a716-446655440005", "550e8400-e29b-0000-a716-446655440004", Vector2(4,4))
+	place_piece("550e8400-e29b-11d4-a716-446655440006", "550e8400-e29b-0000-a716-446655440004", Vector2(3,4))
+	place_piece("550e8400-e29b-11d4-a716-446655440007", "550e8400-e29b-0000-a716-446655440004", Vector2(2,5))
+	place_piece("550e8400-e29b-11d4-a716-446655440008", "550e8400-e29b-0000-a716-446655440004", Vector2(3,6))
+	place_piece("550e8400-e29b-11d4-a716-446655440009", "550e8400-e29b-0000-a716-446655440004", Vector2(4,5))
 	
 	var events = [
 		{
@@ -52,7 +56,8 @@ func _ready():
 						"pusher_piece_id": "550e8400-e29b-11d4-a716-446655440000",
 						"victim_piece_ids": [
 							"550e8400-e29b-11d4-a716-446655440001",
-							"550e8400-e29b-11d4-a716-446655440002"
+							"550e8400-e29b-11d4-a716-446655440002",
+							"550e8400-e29b-11d4-a716-446655440006"
 						],
 						"direction": "down"
 					}
@@ -103,6 +108,74 @@ func _ready():
 						"piece_a": "550e8400-e29b-11d4-a716-446655440002",
 						"piece_b": "550e8400-e29b-11d4-a716-446655440005"
 					}
+				},
+				{
+					"type": "push_conflict",
+					"payload": {
+						"piece_a": "550e8400-e29b-11d4-a716-446655440006",
+						"piece_b": "550e8400-e29b-11d4-a716-446655440007"
+					}
+				}
+			]
+		},
+		{
+			"outcomes": [
+				{
+					"type": "push_conflict",
+					"payload": {
+						"piece_a": "550e8400-e29b-11d4-a716-446655440006",
+						"piece_b": "550e8400-e29b-11d4-a716-446655440008"
+					}
+				}
+			]
+		},
+		{
+			"outcomes": [
+				{
+					"type": "push_conflict",
+					"payload": {
+						"piece_a": "550e8400-e29b-11d4-a716-446655440006",
+						"piece_b": "550e8400-e29b-11d4-a716-446655440009"
+					}
+				}
+			]
+		},
+		{
+			"outcomes": [
+				{
+					"type": "push",
+					"payload": {
+						"pusher_piece_id": "550e8400-e29b-11d4-a716-446655440009",
+						"victim_piece_ids": [],
+						"direction": "right"
+					}
+				}
+			]
+		},
+		{
+			"outcomes": [
+				{
+					"type": "push",
+					"payload": {
+						"pusher_piece_id": "550e8400-e29b-11d4-a716-446655440009",
+						"victim_piece_ids": [],
+						"direction": "up"
+					}
+				}
+			]
+		},
+		{
+			"outcomes": [
+				{
+					"type": "push",
+					"payload": {
+						"pusher_piece_id": "550e8400-e29b-11d4-a716-446655440009",
+						"victim_piece_ids": [
+							"550e8400-e29b-11d4-a716-446655440005",
+							"550e8400-e29b-11d4-a716-446655440002"
+						],
+						"direction": "left"
+					}
 				}
 			]
 		}
@@ -123,8 +196,7 @@ func animate_events(events: Array):
 		tween_move.play()
 		await tween_move.finished
 		tween_move_back.play()
-		# TODO: tween_interval(0.0) might result in an unexpected behavior!
-		await tween_move_back.tween_interval(0.0).finished
+		await tween_move_back.tween_interval(0.2).finished
 
 func animate_event(outcomes: Array):
 	for outcome in outcomes:
