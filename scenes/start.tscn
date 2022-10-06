@@ -11,6 +11,7 @@ thickness = 4
 [node name="CreatLobbyHttpRequest" type="HTTPRequest" parent="."]
 use_threads = true
 script = ExtResource("1_ua71p")
+game_id_path = NodePath("../ColorRect/VBoxContainer/HBoxContainer/GameID")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 offset_right = 1152.0
@@ -20,6 +21,7 @@ grow_vertical = 2
 color = Color(0.996078, 0.815686, 0.619608, 1)
 
 [node name="HSeparatorLine" type="HSeparator" parent="ColorRect"]
+layout_mode = 0
 offset_top = 321.0
 offset_right = 1152.0
 offset_bottom = 325.0
@@ -27,6 +29,7 @@ size_flags_vertical = 6
 theme_override_styles/separator = SubResource("StyleBoxLine_xko28")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ColorRect"]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -35,12 +38,14 @@ grow_vertical = 2
 alignment = 1
 
 [node name="VBoxContainerTop" type="VBoxContainer" parent="ColorRect/VBoxContainer"]
+layout_mode = 2
 offset_top = 145.0
 offset_right = 1152.0
 offset_bottom = 176.0
 size_flags_vertical = 6
 
 [node name="creatNewGameButton" type="Button" parent="ColorRect/VBoxContainer/VBoxContainerTop"]
+layout_mode = 2
 offset_left = 506.0
 offset_right = 645.0
 offset_bottom = 31.0
@@ -48,6 +53,7 @@ size_flags_horizontal = 4
 text = "Creat New Game"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
+layout_mode = 2
 offset_left = 416.0
 offset_top = 471.0
 offset_right = 736.0
@@ -56,22 +62,26 @@ size_flags_horizontal = 4
 size_flags_vertical = 6
 
 [node name="Label" type="Label" parent="ColorRect/VBoxContainer/HBoxContainer"]
+layout_mode = 2
 offset_top = 2.0
 offset_right = 75.0
 offset_bottom = 28.0
 theme_override_colors/font_color = Color(0.458824, 0.384314, 0.305882, 1)
 text = "Game ID: "
 
-[node name="LineEdit" type="LineEdit" parent="ColorRect/VBoxContainer/HBoxContainer"]
+[node name="GameID" type="LineEdit" parent="ColorRect/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2i(200, 0)
+layout_mode = 2
 offset_left = 79.0
 offset_right = 279.0
 offset_bottom = 31.0
 
 [node name="Button" type="Button" parent="ColorRect/VBoxContainer/HBoxContainer"]
+layout_mode = 2
 offset_left = 283.0
 offset_right = 320.0
 offset_bottom = 31.0
 text = "join"
 
 [connection signal="pressed" from="ColorRect/VBoxContainer/VBoxContainerTop/creatNewGameButton" to="CreatLobbyHttpRequest" method="_on_creat_new_game_button_pressed"]
+[connection signal="pressed" from="ColorRect/VBoxContainer/HBoxContainer/Button" to="CreatLobbyHttpRequest" method="_on_join_button_pressed"]
