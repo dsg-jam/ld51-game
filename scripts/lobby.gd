@@ -16,16 +16,29 @@ func _ready():
 	assert(DSGNetwork.connect_websocket("ws://%s/lobby/%s/join" % [ws_address, GlobalVariables.id]))
 
 func _on_start_game_button_pressed():
-	var _start_message = {
-		"type": "start_game",
-		"payload": {}
+	var start_message = {
+		"type": "host_start_game",
+		"payload": {
+			"platform": {
+				"tiles": [
+					{
+						"position": {
+							"x": 0,
+							"y": 0
+						},
+						"texture_id": "grass",
+						"tile_type": "void"	
+					}
+				]
+			}
+		}
 	}
-	# TODO: type `start_game` is not implemented yet on the server side
-	# DSGNetwork.send(JSON.stringify(start_message).to_utf8_buffer())
+	DSGNetwork.send(JSON.stringify(start_message).to_utf8_buffer())
 	get_tree().change_scene_to_packed(board_scene)
 
 func _on_ws_received_message(stream: String):
 	var message = JSON.parse_string(stream)
+	print(message)
 	if message["type"] == "server_hello":
 		_server_hello(message["payload"])
 	elif message["type"] == "player_joined":
