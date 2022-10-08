@@ -118,27 +118,27 @@ func _draw_board():
 	for tile in GlobalVariables.map.get_tiles():
 		# TODO: Set tile texture
 		var tile_type = tile.get_tile_type()
-		var position = Vector2(tile.get_position().get_x(), tile.get_position().get_y())
+		var tile_position = Vector2(tile.get_position().get_x(), tile.get_position().get_y())
 		if tile_type == "floor":
 			var new_tile = tile_prefab.instantiate()
 			new_tile.get_node("Texture").set_polygon(
 				[
-					Vector2(0, 0),
-					Vector2(tile_size, 0),
-					Vector2(tile_size, tile_size),
-					Vector2(0, tile_size)
+					Vector2.ZERO,
+					Vector2.RIGHT * tile_size,
+					Vector2.ONE * tile_size,
+					Vector2.DOWN * tile_size
 				]
 			)
 			add_child(new_tile)
-			new_tile.position = position * tile_size
+			new_tile.position = tile_position * tile_size
 
 func _get_tile_size() -> float:
 	var max_width = 0
 	for tile in GlobalVariables.map.get_tiles():
-		var position = tile.get_position()
-		if position.get_x() > max_width:
-			max_width = position.get_x()
-		if position.get_y() > max_width:
-			max_width = position.get_y()
+		var tile_position = tile.get_position()
+		if tile_position.get_x() > max_width:
+			max_width = tile_position.get_x()
+		if tile_position.get_y() > max_width:
+			max_width = tile_position.get_y()
 	max_width += 1
 	return min(floor(texture.polygon[2].x/max_width), floor(texture.polygon[2].y)/max_width)

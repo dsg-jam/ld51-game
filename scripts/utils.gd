@@ -2,7 +2,7 @@ class_name Utils
 
 static func parse_map_to_dict(map: String) -> Dictionary:
 	var grid = map.split(";")
-	var tiles: Array[BoardPlatformTile]
+	var tiles: Array[BoardPlatformTile] = []
 	for row in grid.size():
 		for col in grid[row].length():
 			var tile_char = grid[row][col]
