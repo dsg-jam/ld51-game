@@ -25,16 +25,18 @@ func _on_start_game_button_pressed():
 			"platform": Utils.parse_map_to_dict("oooooooo;oooxxooo;ooxxxxoo;oxxxxxxo;oxxxxxxo;ooxxxxoo;oooxxooo;oooooooo")
 		}
 	}
-
 	DSGNetwork.send(start_message)
-	get_tree().change_scene_to_packed(self.board_scene)
 
 func _on_ws_received_message(stream: String):
 	var message = JSON.parse_string(stream)
+
 	if message["type"] == "server_hello":
 		self._server_hello(message["payload"])
 	elif message["type"] == "player_joined":
 		self._player_joined(message["payload"])
+	elif message["type"] == "server_start_game":
+		GlobalVariables.map = Utils.parse_dict_to_map(message["payload"])
+		get_tree().change_scene_to_packed(self.board_scene)
 
 func _server_hello(payload: Variant):
 	if not payload["is_host"]:

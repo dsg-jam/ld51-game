@@ -10,7 +10,6 @@ const directions = {
 }
 const Piece = preload("res://scripts/piece.gd")
 
-var board_grid: Array
 var pieces: Dictionary
 var tile_size: float
 var tween_move: Tween
@@ -21,165 +20,9 @@ var tween_rotate: Tween
 @onready var tile_prefab = preload("res://prefabs/tile.tscn")
 @onready var piece_prefab = preload("res://prefabs/piece.tscn")
 
-func _ready():
-	#	input:
-	#		'x': normal tile (habitable)
-	#		'o': empty tile (void - player can fall down) - all board surrounding tiles are implicitly empty tiles
-	#		';': line break
-	
-	var input = ";oooxxooo;ooxxxxoo;oxxxxxxo;oxxxxxxo;ooxxxxoo;oooxxooo;"
-	board_grid = _get_board_grid(input)
+func _ready():	
 	tile_size = _get_tile_size()
 	_draw_board()
-	
-	############## SAMPLE - BEGIN
-	place_piece("550e8400-e29b-11d4-a716-446655440000", "550e8400-e29b-0000-a716-446655440003", Vector2(3,1))
-	place_piece("550e8400-e29b-11d4-a716-446655440001", "550e8400-e29b-0000-a716-446655440004", Vector2(3,2))
-	place_piece("550e8400-e29b-11d4-a716-446655440002", "550e8400-e29b-0000-a716-446655440004", Vector2(3,3))
-	place_piece("550e8400-e29b-11d4-a716-446655440003", "550e8400-e29b-0000-a716-446655440004", Vector2(6,2))
-	place_piece("550e8400-e29b-11d4-a716-446655440004", "550e8400-e29b-0000-a716-446655440004", Vector2(6,3))
-	place_piece("550e8400-e29b-11d4-a716-446655440005", "550e8400-e29b-0000-a716-446655440004", Vector2(4,4))
-	place_piece("550e8400-e29b-11d4-a716-446655440006", "550e8400-e29b-0000-a716-446655440004", Vector2(3,4))
-	place_piece("550e8400-e29b-11d4-a716-446655440007", "550e8400-e29b-0000-a716-446655440004", Vector2(2,5))
-	place_piece("550e8400-e29b-11d4-a716-446655440008", "550e8400-e29b-0000-a716-446655440004", Vector2(3,6))
-	place_piece("550e8400-e29b-11d4-a716-446655440009", "550e8400-e29b-0000-a716-446655440004", Vector2(4,5))
-	
-	var events = [
-		{
-			"outcomes": [
-				{
-					"type": "push",
-					"payload": {
-						"pusher_piece_id": "550e8400-e29b-11d4-a716-446655440000",
-						"victim_piece_ids": [
-							"550e8400-e29b-11d4-a716-446655440001",
-							"550e8400-e29b-11d4-a716-446655440002",
-							"550e8400-e29b-11d4-a716-446655440006"
-						],
-						"direction": "down"
-					}
-				},
-				{
-					"type": "push",
-					"payload": {
-						"pusher_piece_id": "550e8400-e29b-11d4-a716-446655440003",
-						"victim_piece_ids": [],
-						"direction": "left"
-					}
-				},
-				{
-					"type": "push",
-					"payload": {
-						"pusher_piece_id": "550e8400-e29b-11d4-a716-446655440004",
-						"victim_piece_ids": [],
-						"direction": "left"
-					}
-				}
-			]
-		},
-		{
-			"outcomes": [
-				{
-					"type": "move_conflict",
-					"payload": {
-						"piece_ids": ["550e8400-e29b-11d4-a716-446655440000", "550e8400-e29b-11d4-a716-446655440003"],
-						"collision_point": {
-							"x": 4,
-							"y": 2
-						}
-					}
-				},
-				{
-					"type": "move_conflict",
-					"payload": {
-						"piece_ids": ["550e8400-e29b-11d4-a716-446655440001", "550e8400-e29b-11d4-a716-446655440004"],
-						"collision_point": {
-							"x": 4,
-							"y": 3
-						}
-					}
-				},
-				{
-					"type": "push_conflict",
-					"payload": {
-						"piece_a": "550e8400-e29b-11d4-a716-446655440002",
-						"piece_b": "550e8400-e29b-11d4-a716-446655440005"
-					}
-				},
-				{
-					"type": "push_conflict",
-					"payload": {
-						"piece_a": "550e8400-e29b-11d4-a716-446655440006",
-						"piece_b": "550e8400-e29b-11d4-a716-446655440007"
-					}
-				}
-			]
-		},
-		{
-			"outcomes": [
-				{
-					"type": "push_conflict",
-					"payload": {
-						"piece_a": "550e8400-e29b-11d4-a716-446655440006",
-						"piece_b": "550e8400-e29b-11d4-a716-446655440008"
-					}
-				}
-			]
-		},
-		{
-			"outcomes": [
-				{
-					"type": "push_conflict",
-					"payload": {
-						"piece_a": "550e8400-e29b-11d4-a716-446655440006",
-						"piece_b": "550e8400-e29b-11d4-a716-446655440009"
-					}
-				}
-			]
-		},
-		{
-			"outcomes": [
-				{
-					"type": "push",
-					"payload": {
-						"pusher_piece_id": "550e8400-e29b-11d4-a716-446655440009",
-						"victim_piece_ids": [],
-						"direction": "right"
-					}
-				}
-			]
-		},
-		{
-			"outcomes": [
-				{
-					"type": "push",
-					"payload": {
-						"pusher_piece_id": "550e8400-e29b-11d4-a716-446655440009",
-						"victim_piece_ids": [],
-						"direction": "up"
-					}
-				}
-			]
-		},
-		{
-			"outcomes": [
-				{
-					"type": "push",
-					"payload": {
-						"pusher_piece_id": "550e8400-e29b-11d4-a716-446655440009",
-						"victim_piece_ids": [
-							"550e8400-e29b-11d4-a716-446655440005",
-							"550e8400-e29b-11d4-a716-446655440002"
-						],
-						"direction": "left"
-					}
-				}
-			]
-		}
-	]
-	
-	animate_events(events)
-	############## SAMPLE - END
 
 func place_piece(piece_id: String, player_id: String, piece_position: Vector2):
 	var new_piece = piece_prefab.instantiate()
@@ -272,36 +115,30 @@ func _on_click(piece_id, piece_player_id):
 	emit_signal("update_selected_piece", piece_id, piece_player_id)
 
 func _draw_board():
-	for row in board_grid.size():
-		for col in board_grid[row].size():
-			match board_grid[row][col]:
-				"x":
-					var new_tile = tile_prefab.instantiate()
-					new_tile.get_node("Texture").set_polygon(
-						[
-							Vector2(0, 0),
-							Vector2(tile_size, 0),
-							Vector2(tile_size, tile_size),
-							Vector2(0, tile_size)
-						]
-					)
-					add_child(new_tile)
-					new_tile.position = Vector2(col, row) * tile_size
-				"o":
-					pass
-
-func _get_board_grid(input: String) -> Array:
-	board_grid = []
-	for line in input.split(";"):
-		var grid_line = []
-		for character in line:
-			grid_line.append(character)
-		board_grid.append(grid_line)
-	return board_grid
+	for tile in GlobalVariables.map.get_tiles():
+		# TODO: Set tile texture
+		var tile_type = tile.get_tile_type()
+		var position = Vector2(tile.get_position().get_x(), tile.get_position().get_y())
+		if tile_type == "floor":
+			var new_tile = tile_prefab.instantiate()
+			new_tile.get_node("Texture").set_polygon(
+				[
+					Vector2(0, 0),
+					Vector2(tile_size, 0),
+					Vector2(tile_size, tile_size),
+					Vector2(0, tile_size)
+				]
+			)
+			add_child(new_tile)
+			new_tile.position = position * tile_size
 
 func _get_tile_size() -> float:
 	var max_width = 0
-	for line in board_grid:
-		if line.size() > max_width:
-			max_width = line.size()
-	return min(floor(texture.polygon[2].x/max_width), floor(texture.polygon[2].y)/board_grid.size())
+	for tile in GlobalVariables.map.get_tiles():
+		var position = tile.get_position()
+		if position.get_x() > max_width:
+			max_width = position.get_x()
+		if position.get_y() > max_width:
+			max_width = position.get_y()
+	max_width += 1
+	return min(floor(texture.polygon[2].x/max_width), floor(texture.polygon[2].y)/max_width)

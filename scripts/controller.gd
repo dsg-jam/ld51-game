@@ -5,7 +5,6 @@ enum ACTIONS {NO_ACTION, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT, MOVE_UP}
 var selected_piece_id: String = ""
 var moves_left: int
 var next_moves: Array
-var player_id: String
 
 @onready var network = get_node("/root/DSGNetwork")
 @onready var board = $Board
@@ -18,7 +17,6 @@ func _ready():
 	board.update_selected_piece.connect(_on_update_selected_piece)
 	moves_left = 5
 	timer.start(10)
-	player_id = "550e8400-e29b-0000-a716-446655440003"
 	moves_message.text = "Moves left: " + str(moves_left)
 
 func _process(_delta):
@@ -40,7 +38,7 @@ func _input(_event):
 	moves_message.text = "Moves left: " + str(moves_left)
 
 func _on_update_selected_piece(piece_id, piece_player_id):
-	if player_id == piece_player_id:
+	if GlobalVariables.player_id == piece_player_id:
 		selected_piece_id = piece_id
 		message.text = piece_id
 
@@ -63,14 +61,12 @@ func _on_timer_timeout():
 	_complete_next_moves()
 	$GongAudio.play()
 	if network.is_online():
-		network.send(JSON.stringify(
-			{
-				"type": "player_moves",
-				"payload": {
-					"moves": next_moves
-				}
+		network.send({
+			"type": "player_moves",
+			"payload": {
+				"moves": next_moves
 			}
-		).to_utf8_buffer())
+		})
 
 func _complete_next_moves():
 	if (next_moves.size() >= 10):

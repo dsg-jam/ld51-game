@@ -13,6 +13,6 @@ static func parse_map_to_dict(map: String) -> Dictionary:
 	var platform = BoardPlatform.new(tiles)
 	return platform.get_dict()
 
-func parse_dict_to_map():
-	# TODO
-	pass
+static func parse_dict_to_map(data: Dictionary) -> BoardPlatform:
+	assert("platform" in data, "Platform is missing in server_start_game message")
+	return BoardPlatform.get_obj_from_dict(data["platform"])
