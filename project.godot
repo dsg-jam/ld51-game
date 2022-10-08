@@ -8,6 +8,34 @@
 
 config_version=5
 
+_global_script_classes=[{
+"base": "RefCounted",
+"class": &"BoardPlatform",
+"language": &"GDScript",
+"path": "res://scripts/protocol/BoardPlatform.gd"
+}, {
+"base": "RefCounted",
+"class": &"BoardPlatformTile",
+"language": &"GDScript",
+"path": "res://scripts/protocol/BoardPlatformTile.gd"
+}, {
+"base": "RefCounted",
+"class": &"Position",
+"language": &"GDScript",
+"path": "res://scripts/protocol/Position.gd"
+}, {
+"base": "RefCounted",
+"class": &"Utils",
+"language": &"GDScript",
+"path": "res://scripts/utils.gd"
+}]
+_global_script_class_icons={
+"BoardPlatform": "",
+"BoardPlatformTile": "",
+"Position": "",
+"Utils": ""
+}
+
 [application]
 
 config/name="LD51"
