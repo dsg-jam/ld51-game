@@ -25,8 +25,8 @@ func connect_websocket(url: String) -> bool:
 func disconnect_websocket():
 	_client.disconnect_from_host()
 
-func send(payload: PackedByteArray):
-	_client.get_peer(1).put_packet(payload)
+func send(payload: Dictionary):
+	_client.get_peer(1).put_packet(JSON.stringify(payload).to_utf8_buffer())
 
 func _receive():
 	emit_signal("ws_received_message", _client.get_peer(1).get_packet().get_string_from_utf8())
