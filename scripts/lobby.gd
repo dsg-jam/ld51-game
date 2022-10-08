@@ -25,8 +25,8 @@ func _on_start_game_button_pressed():
 			"platform": Utils.parse_map_to_dict("oooooooo;oooxxooo;ooxxxxoo;oxxxxxxo;oxxxxxxo;ooxxxxoo;oooxxooo;oooooooo")
 		}
 	}
-	print(JSON.stringify(start_message))
-	DSGNetwork.send(JSON.stringify(start_message).to_utf8_buffer())
+
+	DSGNetwork.send(start_message)
 	get_tree().change_scene_to_packed(self.board_scene)
 
 func _on_ws_received_message(stream: String):
