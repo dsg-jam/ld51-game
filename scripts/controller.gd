@@ -1,27 +1,37 @@
 extends Node2D
 
 enum ACTIONS {NO_ACTION, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT, MOVE_UP}
+enum STATES {AWAITING_ROUND, ROUND_UNDERGOING, AWAITING_RESULT, ANIMATING_MOVES}
 
-var selected_piece_id: String = ""
-var moves_left: int
-var next_moves: Array
+var _selected_piece_id: String = ""
+var _moves_left: int
+var _next_moves: Array
+var _current_state: STATES
 
 @export var message: Label
 @export var moves_message: Label
 @export var timer_message: Label
 
-@onready var network = get_node("/root/DSGNetwork")
 @onready var board = $Board
 @onready var timer = $Timer
 
 func _ready():
 	board.update_selected_piece.connect(_on_update_selected_piece)
-	moves_left = 5
+	self._current_state = STATES.AWAITING_ROUND
+	self._moves_left = 5
 	timer.start(10)
-	moves_message.text = "Moves left: " + str(moves_left)
 
 func _process(_delta):
-	timer_message.text = "Time left: %.1f" % timer.time_left
+	self._update_labels()
+	match self._current_state:
+		STATES.AWAITING_ROUND:
+			pass
+		STATES.ROUND_UNDERGOING:
+			pass
+		STATES.AWAITING_RESULT:
+			pass
+		STATES.ANIMATING_MOVES:
+			pass
 
 func _input(_event):
 	if Input.is_action_just_pressed("MOVE_DOWN"):
@@ -36,44 +46,48 @@ func _input(_event):
 		_append_move(ACTIONS.NO_ACTION)
 	elif Input.is_action_just_pressed("REMOVE_MOVE"):
 		_remove_latest_move()
-	moves_message.text = "Moves left: " + str(moves_left)
+	self._update_labels()
 
 func _on_update_selected_piece(piece_id, piece_player_id):
 	if GlobalVariables.player_id == piece_player_id:
-		selected_piece_id = piece_id
+		self._selected_piece_id = piece_id
 		message.text = piece_id
 
 func _remove_latest_move():
-	if next_moves.size() <= 0:
+	if self._next_moves.size() <= 0:
 		return
-	next_moves.pop_back()
-	moves_left += 1
+	self._next_moves.pop_back()
+	self._moves_left += 1
 
 func _append_move(action: ACTIONS):
-	if selected_piece_id == "" or moves_left <= 0:
+	if self._selected_piece_id == "" or self._moves_left <= 0:
 		return
-	next_moves.append({
-		"piece_id": selected_piece_id,
+	self._next_moves.append({
+		"piece_id": self._selected_piece_id,
 		"action": ACTIONS.keys()[action].to_lower()
 	})
-	moves_left -= 1
+	self._moves_left -= 1
 
 func _on_timer_timeout():
 	_complete_next_moves()
 	$GongAudio.play()
-	if network.is_online():
-		network.send({
+	if DSGNetwork.is_online():
+		DSGNetwork.send({
 			"type": "player_moves",
 			"payload": {
-				"moves": next_moves
+				"moves": self._next_moves
 			}
 		})
 
 func _complete_next_moves():
-	if (next_moves.size() >= 10):
+	if (self._next_moves.size() >= 10):
 		return
-	while next_moves.size() < 10:
-		next_moves.append({
+	while self._next_moves.size() < 10:
+		self._next_moves.append({
 			"piece_id": "00000000-0000-0000-0000-000000000000",
 			"action": ACTIONS.keys()[ACTIONS.NO_ACTION].to_lower()
 		})
+
+func _update_labels():
+	self.moves_message.text = "Moves left: " + str(self._moves_left)
+	self.timer_message.text = "Time left: %.1f" % self.timer.time_left
