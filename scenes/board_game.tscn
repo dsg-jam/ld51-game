@@ -5,21 +5,14 @@
 [ext_resource type="FontFile" uid="uid://ddtswll5v6p3s" path="res://assets/font/Stick-Regular.ttf" id="2_n1wtn"]
 [ext_resource type="AudioStream" uid="uid://bnoxq8cy6egds" path="res://assets/sounds/Gong-hit.wav" id="3_oei84"]
 
-[node name="Control" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Node2d" type="Node2D"]
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
+anchors_preset = 10
 anchor_right = 1.0
-anchor_bottom = 1.0
+offset_right = 1152.0
+offset_bottom = 51.0
 grow_horizontal = 2
-grow_vertical = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -57,20 +50,20 @@ theme_override_fonts/font = ExtResource("2_n1wtn")
 theme_override_font_sizes/font_size = 32
 text = "[REMAINING_MOVES]"
 
-[node name="DSGController" type="Node2D" parent="VBoxContainer" node_paths=PackedStringArray("message", "moves_message", "timer_message")]
+[node name="DSGController" type="Node2D" parent="." node_paths=PackedStringArray("message", "moves_message", "timer_message")]
 script = ExtResource("1_q3buc")
-message = NodePath("../HBoxContainer/MessageLabel")
-moves_message = NodePath("../HBoxContainer/MovesLabel")
-timer_message = NodePath("../HBoxContainer/TimerLabel")
+message = NodePath("../VBoxContainer/HBoxContainer/MessageLabel")
+moves_message = NodePath("../VBoxContainer/HBoxContainer/MovesLabel")
+timer_message = NodePath("../VBoxContainer/HBoxContainer/TimerLabel")
 
-[node name="Board" parent="VBoxContainer/DSGController" instance=ExtResource("2_aieau")]
+[node name="Board" parent="DSGController" instance=ExtResource("2_aieau")]
 position = Vector2(320, 85)
 
-[node name="Timer" type="Timer" parent="VBoxContainer/DSGController"]
+[node name="Timer" type="Timer" parent="DSGController"]
 one_shot = true
 
-[node name="GongAudio" type="AudioStreamPlayer2D" parent="VBoxContainer/DSGController"]
+[node name="GongAudio" type="AudioStreamPlayer2D" parent="DSGController"]
 stream = ExtResource("3_oei84")
 attenuation = 3.605
 
-[connection signal="timeout" from="VBoxContainer/DSGController/Timer" to="VBoxContainer/DSGController" method="_on_timer_timeout"]
+[connection signal="timeout" from="DSGController/Timer" to="DSGController" method="_on_timer_timeout"]

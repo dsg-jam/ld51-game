@@ -25,6 +25,9 @@ func _ready():
 	_draw_board()
 
 func place_piece(piece_id: String, player_id: String, piece_position: Vector2):
+	if piece_id in self.pieces:
+		self.pieces[piece_id].position = self._get_position_on_grid(piece_position)
+		return
 	var new_piece = piece_prefab.instantiate()
 	var piece_scale = min(
 		tile_size / new_piece.get_node("Texture").get_rect().size.x,
@@ -33,7 +36,7 @@ func place_piece(piece_id: String, player_id: String, piece_position: Vector2):
 	new_piece.scale.x = piece_scale
 	new_piece.scale.y = piece_scale
 	new_piece.setup(piece_id, player_id)
-	new_piece.position = Vector2(tile_size/2, tile_size/2) + tile_size * piece_position
+	new_piece.position = self._get_position_on_grid(piece_position)
 	new_piece.piece_selected.connect(_on_click)
 	add_child(new_piece)
 	pieces[piece_id] = new_piece

@@ -1,10 +1,12 @@
 extends Node2D
 
 enum ACTIONS {NO_ACTION, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT, MOVE_UP}
-enum STATES {AWAITING_ROUND, ROUND_UNDERGOING, AWAITING_RESULT, ANIMATING_MOVES}
+enum STATES {AWAITING_ROUND, AWAITING_RESULT}
+
+const MAX_MOVES = 5
 
 var _selected_piece_id: String = ""
-var _moves_left: int
+var _moves_left: int = 0
 var _next_moves: Array
 var _current_state: STATES
 
@@ -16,22 +18,12 @@ var _current_state: STATES
 @onready var timer = $Timer
 
 func _ready():
+	DSGNetwork.ws_received_message.connect(_on_ws_received_message)
 	board.update_selected_piece.connect(_on_update_selected_piece)
 	self._current_state = STATES.AWAITING_ROUND
-	self._moves_left = 5
-	timer.start(10)
 
 func _process(_delta):
 	self._update_labels()
-	match self._current_state:
-		STATES.AWAITING_ROUND:
-			pass
-		STATES.ROUND_UNDERGOING:
-			pass
-		STATES.AWAITING_RESULT:
-			pass
-		STATES.ANIMATING_MOVES:
-			pass
 
 func _input(_event):
 	if Input.is_action_just_pressed("MOVE_DOWN"):
@@ -47,6 +39,27 @@ func _input(_event):
 	elif Input.is_action_just_pressed("REMOVE_MOVE"):
 		_remove_latest_move()
 	self._update_labels()
+
+func _on_ws_received_message(stream: String):
+	var message = JSON.parse_string(stream)
+	print(message)
+	match self._current_state:
+		STATES.AWAITING_ROUND:
+			if message["type"] == "round_start":
+				self._next_moves = []
+				self._moves_left = 5
+				timer.start(message["payload"]["round_duration"])
+				var pieces = message["payload"]["board_state"]
+				for piece in pieces:
+					board.place_piece(piece["piece_id"], piece["player_id"], Vector2(piece["position"]["x"], piece["position"]["y"]))
+		STATES.AWAITING_RESULT:
+			if message["type"] == "round_result":
+				await board.animate_events(message["payload"]["timeline"])
+				DSGNetwork.send({
+					"type": "ready_for_next_round",
+					"payload": {}
+				})
+				self._current_state = STATES.AWAITING_ROUND
 
 func _on_update_selected_piece(piece_id, piece_player_id):
 	if GlobalVariables.player_id == piece_player_id:
@@ -78,13 +91,14 @@ func _on_timer_timeout():
 				"moves": self._next_moves
 			}
 		})
+	self._current_state = STATES.AWAITING_RESULT
 
 func _complete_next_moves():
-	if (self._next_moves.size() >= 10):
+	if (self._next_moves.size() >= MAX_MOVES):
 		return
-	while self._next_moves.size() < 10:
+	while self._next_moves.size() < MAX_MOVES:
 		self._next_moves.append({
-			"piece_id": "00000000-0000-0000-0000-000000000000",
+			"piece_id": board.pieces.keys()[0],
 			"action": ACTIONS.keys()[ACTIONS.NO_ACTION].to_lower()
 		})
 
