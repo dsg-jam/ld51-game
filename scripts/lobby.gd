@@ -67,9 +67,7 @@ func _update_labels():
 func _display_maps():
 	for map in MapsDb.MAPS:
 		map_list.add_item(map["name"])
-		print(map)
 
 
-func _on_maps_list_item_clicked(index, at_position, mouse_button_index):
-	print(index)
+func _on_maps_list_item_clicked(index, _at_position, _mouse_button_index):
 	self._selected_map_idx = index

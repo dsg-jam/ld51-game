@@ -6,11 +6,12 @@ var selected_piece_id: String = ""
 var moves_left: int
 var next_moves: Array
 
+@export var message: Label
+@export var moves_message: Label
+@export var timer_message: Label
+
 @onready var network = get_node("/root/DSGNetwork")
 @onready var board = $Board
-@onready var message = $MessageLabel
-@onready var moves_message = $MovesLabel
-@onready var timer_message = $TimerLabel
 @onready var timer = $Timer
 
 func _ready():

@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://4rmus8xw4nio"]
+[gd_scene load_steps=3 format=3 uid="uid://4rmus8xw4nio"]
 
 [ext_resource type="Script" path="res://scripts/lobby.gd" id="1_ykju5"]
+[ext_resource type="FontFile" uid="uid://ddtswll5v6p3s" path="res://assets/font/Stick-Regular.ttf" id="2_ery7r"]
 
 [node name="lobby" type="Node2D" node_paths=PackedStringArray("start_button", "label_id_value", "label_amount_of_players", "label_players", "map_list")]
 script = ExtResource("1_ykju5")
@@ -20,7 +21,6 @@ size_flags_vertical = 3
 color = Color(0.996078, 0.815686, 0.619608, 1)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ColorRect"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -29,73 +29,74 @@ grow_vertical = 2
 alignment = 1
 
 [node name="GameInfo" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
-layout_mode = 2
-offset_left = 499.0
-offset_top = 66.0
-offset_right = 652.0
-offset_bottom = 92.0
+offset_left = 414.0
+offset_top = 54.0
+offset_right = 737.0
+offset_bottom = 105.0
 size_flags_horizontal = 4
 size_flags_vertical = 6
 
 [node name="IDLabel" type="Label" parent="ColorRect/VBoxContainer/GameInfo"]
-layout_mode = 2
-offset_right = 75.0
-offset_bottom = 26.0
+offset_right = 143.0
+offset_bottom = 51.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 6
 theme_override_colors/font_color = Color(0.458824, 0.384314, 0.305882, 1)
+theme_override_fonts/font = ExtResource("2_ery7r")
+theme_override_font_sizes/font_size = 32
 text = "Game ID: "
 
 [node name="IDValue" type="Label" parent="ColorRect/VBoxContainer/GameInfo"]
-layout_mode = 2
-offset_left = 79.0
-offset_right = 153.0
-offset_bottom = 26.0
+offset_left = 147.0
+offset_right = 323.0
+offset_bottom = 51.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 6
 theme_override_colors/font_color = Color(0.458824, 0.384314, 0.305882, 1)
+theme_override_fonts/font = ExtResource("2_ery7r")
+theme_override_font_sizes/font_size = 32
 text = "00000001"
 
 [node name="PlayerInfo" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
-layout_mode = 2
-offset_left = 503.0
+offset_left = 435.0
 offset_top = 163.0
-offset_right = 648.0
+offset_right = 716.0
 offset_bottom = 322.0
 size_flags_horizontal = 4
 size_flags_vertical = 3
 
 [node name="LablePlayers" type="Label" parent="ColorRect/VBoxContainer/PlayerInfo"]
-layout_mode = 2
-offset_top = 66.0
-offset_right = 131.0
-offset_bottom = 92.0
+offset_top = 54.0
+offset_right = 255.0
+offset_bottom = 105.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 6
 theme_override_colors/font_color = Color(0.458824, 0.384314, 0.305882, 1)
+theme_override_fonts/font = ExtResource("2_ery7r")
+theme_override_font_sizes/font_size = 32
 text = "Players in lobby: "
 
 [node name="LableAmountOfPlyers" type="Label" parent="ColorRect/VBoxContainer/PlayerInfo"]
-layout_mode = 2
-offset_left = 135.0
-offset_top = 66.0
-offset_right = 145.0
-offset_bottom = 92.0
+offset_left = 259.0
+offset_top = 54.0
+offset_right = 281.0
+offset_bottom = 105.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 6
 theme_override_colors/font_color = Color(0.458824, 0.384314, 0.305882, 1)
+theme_override_fonts/font = ExtResource("2_ery7r")
+theme_override_font_sizes/font_size = 32
 text = "1"
 
 [node name="MapSelection" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
-layout_mode = 2
 offset_top = 326.0
 offset_right = 1152.0
 offset_bottom = 485.0
@@ -103,36 +104,37 @@ size_flags_vertical = 3
 alignment = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="ColorRect/VBoxContainer/MapSelection"]
-custom_minimum_size = Vector2i(200, 0)
-layout_mode = 2
-offset_left = 476.0
-offset_right = 676.0
+custom_minimum_size = Vector2i(512, 0)
+offset_left = 320.0
+offset_right = 832.0
 offset_bottom = 159.0
 horizontal_scroll_mode = 3
 
 [node name="MapsList" type="ItemList" parent="ColorRect/VBoxContainer/MapSelection/ScrollContainer"]
-layout_mode = 2
-offset_right = 200.0
+offset_right = 512.0
 offset_bottom = 159.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("2_ery7r")
+theme_override_font_sizes/font_size = 32
 
 [node name="StartGame" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
-layout_mode = 2
-offset_left = 530.0
+offset_left = 320.0
 offset_top = 489.0
-offset_right = 622.0
+offset_right = 832.0
 offset_bottom = 648.0
 size_flags_horizontal = 4
 size_flags_vertical = 3
 
 [node name="StartGameButton" type="Button" parent="ColorRect/VBoxContainer/StartGame"]
-layout_mode = 2
-offset_top = 64.0
-offset_right = 92.0
-offset_bottom = 95.0
+custom_minimum_size = Vector2i(512, 0)
+offset_top = 51.0
+offset_right = 512.0
+offset_bottom = 107.0
 size_flags_horizontal = 4
 size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("2_ery7r")
+theme_override_font_sizes/font_size = 32
 text = "start game"
 
 [connection signal="item_clicked" from="ColorRect/VBoxContainer/MapSelection/ScrollContainer/MapsList" to="." method="_on_maps_list_item_clicked"]

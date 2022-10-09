@@ -1,7 +1,9 @@
-[gd_scene format=3 uid="uid://g7x2pl77ta40"]
+[gd_scene load_steps=2 format=3 uid="uid://g7x2pl77ta40"]
+
+[ext_resource type="Texture2D" uid="uid://q6c7fhctplst" path="res://assets/background/Grass_Centre_Tile.png" id="1_u8k7t"]
 
 [node name="Tile" type="Node2D"]
 
-[node name="Texture" type="Polygon2D" parent="."]
-color = Color(1, 0.196078, 1, 1)
-polygon = PackedVector2Array(0, 0, 16, 0, 16, 16, 0, 16)
+[node name="Texture" type="Sprite2D" parent="."]
+texture = ExtResource("1_u8k7t")
+centered = false

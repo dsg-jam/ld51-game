@@ -121,14 +121,7 @@ func _draw_board():
 		var tile_position = Vector2(tile.get_position().get_x(), tile.get_position().get_y())
 		if tile_type == "floor":
 			var new_tile = tile_prefab.instantiate()
-			new_tile.get_node("Texture").set_polygon(
-				[
-					Vector2.ZERO,
-					Vector2.RIGHT * tile_size,
-					Vector2.ONE * tile_size,
-					Vector2.DOWN * tile_size
-				]
-			)
+			new_tile.get_node("Texture").apply_scale(Vector2(tile_size / new_tile.get_node("Texture").texture.get_width(), tile_size / new_tile.get_node("Texture").texture.get_height()))
 			add_child(new_tile)
 			new_tile.position = tile_position * tile_size
 

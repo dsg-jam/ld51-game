@@ -1,48 +1,63 @@
-[gd_scene load_steps=4 format=3 uid="uid://dcb2fcgn5t31k"]
+[gd_scene load_steps=5 format=3 uid="uid://dcb2fcgn5t31k"]
 
 [ext_resource type="Script" path="res://scripts/controller.gd" id="1_q3buc"]
 [ext_resource type="PackedScene" uid="uid://dpw0yy580qqil" path="res://prefabs/board.tscn" id="2_aieau"]
+[ext_resource type="FontFile" uid="uid://ddtswll5v6p3s" path="res://assets/font/Stick-Regular.ttf" id="2_n1wtn"]
 [ext_resource type="AudioStream" uid="uid://bnoxq8cy6egds" path="res://assets/sounds/Gong-hit.wav" id="3_oei84"]
 
-[node name="DSGController" type="Node2D"]
+[node name="DSGController" type="Node2D" node_paths=PackedStringArray("message", "moves_message", "timer_message")]
 script = ExtResource("1_q3buc")
+message = NodePath("VBoxContainer/HBoxContainer/MessageLabel")
+moves_message = NodePath("VBoxContainer/HBoxContainer/MovesLabel")
+timer_message = NodePath("VBoxContainer/HBoxContainer/TimerLabel")
 
-[node name="Board" parent="." instance=ExtResource("2_aieau")]
-position = Vector2(272, 56)
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+offset_right = 1152.0
+offset_bottom = 648.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="MessageLabel" type="Label" parent="."]
-offset_left = 408.0
-offset_top = 8.0
-offset_right = 616.0
-offset_bottom = 34.0
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+offset_right = 1152.0
+offset_bottom = 51.0
+theme_override_constants/separation = 100
+alignment = 1
+
+[node name="TimerLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+anchors_preset = -1
+offset_left = 11.0
+offset_right = 138.0
+offset_bottom = 51.0
+theme_override_fonts/font = ExtResource("2_n1wtn")
+theme_override_font_sizes/font_size = 32
+text = "[TIMER]"
+
+[node name="MessageLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+offset_left = 238.0
+offset_right = 699.0
+offset_bottom = 51.0
+theme_override_fonts/font = ExtResource("2_n1wtn")
+theme_override_font_sizes/font_size = 32
 text = "SELECTED PIECE: [PIECE_ID]"
 
-[node name="TimerLabel" type="Label" parent="."]
+[node name="MovesLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
 anchors_preset = -1
-anchor_left = -0.538
-anchor_top = 0.5
-anchor_right = -0.538
-anchor_bottom = 0.5
-offset_left = 120.0
-offset_top = 8.0
-offset_right = 328.0
-offset_bottom = 34.0
-text = "[TIMER]"
+offset_left = 799.0
+offset_right = 1140.0
+offset_bottom = 51.0
+theme_override_fonts/font = ExtResource("2_n1wtn")
+theme_override_font_sizes/font_size = 32
+text = "[REMAINING_MOVES]"
+
+[node name="Board" parent="." instance=ExtResource("2_aieau")]
+position = Vector2(320, 85)
 
 [node name="Timer" type="Timer" parent="."]
 one_shot = true
-
-[node name="MovesLabel" type="Label" parent="."]
-anchors_preset = -1
-anchor_left = -0.538
-anchor_top = 0.5
-anchor_right = -0.538
-anchor_bottom = 0.5
-offset_left = 864.0
-offset_top = 8.0
-offset_right = 1072.0
-offset_bottom = 34.0
-text = "[REMAINING_MOVES]"
 
 [node name="GongAudio" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("3_oei84")

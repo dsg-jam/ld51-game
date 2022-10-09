@@ -8,7 +8,7 @@ const MAPS := [
 		"map_string": "oooooooo;oooxxooo;ooxxxxoo;oxxxxxxo;oxxxxxxo;ooxxxxoo;oooxxooo;oooooooo"
 	},
 	{
-		"name": "Bermuda Triangle",
-		"map_string": "ooooooooo;ooooxoooo;oooxxxooo;ooxxxxxoo;oxxxxxxxoo;ooooooooo"
+		"name": "Triangle Island",
+		"map_string": "ooooooooo;ooooxoooo;oooxxxooo;ooxxxxxoo;oxxxxxxxo;ooooooooo"
 	}
 ]
