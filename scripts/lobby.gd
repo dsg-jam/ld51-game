@@ -2,6 +2,13 @@ extends Control
 
 const MapsDb := preload("res://scripts/db/maps.gd")
 
+# you just gotta love how PackedStringArray isn't const
+var MSG_FILTER := PackedStringArray([
+	DSGMessageType.PLAYER_JOINED,
+	DSGMessageType.SERVER_HELLO,
+	DSGMessageType.SERVER_START_GAME,
+])
+
 var _amount_of_players = 1
 var _selected_map_idx = -1
 
@@ -17,14 +24,15 @@ var _selected_map_idx = -1
 func _ready():
 	self._display_maps()
 	self._update_labels()
-	DSGNetwork.ws_received_message.connect(_on_ws_received_message)
-	assert(DSGNetwork.connect_websocket("ws://%s/lobby/%s/join" % [ws_address, GlobalVariables.id]))
+	DSGNetwork.message_received.connect(_on_ws_received_message)
+	var ok := DSGNetwork.connect_websocket("ws://%s/lobby/%s/join" % [ws_address, GlobalVariables.id])
+	assert(ok)
 
 func _on_start_game_button_pressed():
 	if self._selected_map_idx < 0:
 		return
 	var start_message = {
-		"type": "host_start_game",
+		"type": DSGMessageType.HOST_START_GAME,
 		"payload": {
 			"platform": Utils.parse_map_to_dict(
 				MapsDb.MAPS[self._selected_map_idx]["map_string"]
@@ -33,16 +41,19 @@ func _on_start_game_button_pressed():
 	}
 	DSGNetwork.send(start_message)
 
-func _on_ws_received_message(stream: String):
-	var message = JSON.parse_string(stream)
-
-	if message["type"] == "server_hello":
-		self._server_hello(message["payload"])
-	elif message["type"] == "player_joined":
-		self._player_joined(message["payload"])
-	elif message["type"] == "server_start_game":
-		GlobalVariables.map = Utils.parse_dict_to_map(message["payload"])
-		get_tree().change_scene_to_packed(self.board_scene)
+func _on_ws_received_message(_msg_type: String) -> void:
+	while true:
+		var msg: Variant = DSGNetwork.pop_pending_message(MSG_FILTER)
+		if msg == null:
+			break
+		match msg["type"]:
+			DSGMessageType.SERVER_HELLO:
+				self._server_hello(msg["payload"])
+			DSGMessageType.PLAYER_JOINED:
+				self._player_joined(msg["payload"])
+			DSGMessageType.SERVER_START_GAME:
+				GlobalVariables.map = Utils.parse_dict_to_map(msg["payload"])
+				get_tree().change_scene_to_packed(self.board_scene)
 
 func _server_hello(payload: Variant):
 	if not payload["is_host"]:
@@ -67,7 +78,6 @@ func _update_labels():
 func _display_maps():
 	for map in MapsDb.MAPS:
 		map_list.add_item(map["name"])
-
 
 func _on_maps_list_item_clicked(index, _at_position, _mouse_button_index):
 	self._selected_map_idx = index

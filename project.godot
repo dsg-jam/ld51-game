@@ -20,6 +20,11 @@ _global_script_classes=[{
 "path": "res://scripts/protocol/BoardPlatformTile.gd"
 }, {
 "base": "RefCounted",
+"class": &"DSGMessageType",
+"language": &"GDScript",
+"path": "res://scripts/protocol/MessageType.gd"
+}, {
+"base": "RefCounted",
 "class": &"Position",
 "language": &"GDScript",
 "path": "res://scripts/protocol/Position.gd"
@@ -32,6 +37,7 @@ _global_script_classes=[{
 _global_script_class_icons={
 "BoardPlatform": "",
 "BoardPlatformTile": "",
+"DSGMessageType": "",
 "Position": "",
 "Utils": ""
 }

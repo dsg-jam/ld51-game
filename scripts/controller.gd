@@ -5,6 +5,11 @@ enum STATES {AWAITING_ROUND, AWAITING_RESULT}
 
 const MAX_MOVES = 5
 
+var MSG_FILTER := PackedStringArray([
+	DSGMessageType.ROUND_RESULT,
+	DSGMessageType.ROUND_START,
+])
+
 var _selected_piece_id: String = ""
 var _moves_left: int = 0
 var _next_moves: Array
@@ -19,9 +24,12 @@ var _round_number: int = 0
 @onready var timer = $Timer
 
 func _ready():
-	DSGNetwork.ws_received_message.connect(_on_ws_received_message)
+	DSGNetwork.message_received.connect(_on_ws_received_message)
 	board.update_selected_piece.connect(_on_update_selected_piece)
 	self._current_state = STATES.AWAITING_ROUND
+
+	# catch up on all the messages we missed while loading
+	self._on_ws_received_message("")
 
 func _process(_delta):
 	self._update_labels()
@@ -40,15 +48,19 @@ func _input(_event):
 	elif Input.is_action_just_pressed("REMOVE_MOVE"):
 		_remove_latest_move()
 
-func _on_ws_received_message(stream: String):
-	var message = JSON.parse_string(stream)
-	match self._current_state:
-		STATES.AWAITING_ROUND:
-			if message["type"] == "round_start":
-				self._start_round(message["payload"])
-		STATES.AWAITING_RESULT:
-			if message["type"] == "round_result":
-				self._animate_round(message["payload"])
+func _on_ws_received_message(_msg_type: String) -> void:
+	while true:
+		var msg: Variant = DSGNetwork.pop_pending_message(MSG_FILTER)
+		if msg == null:
+			break
+
+		match msg["type"]:
+			DSGMessageType.ROUND_START:
+				if self._current_state == STATES.AWAITING_ROUND:
+					self._start_round(msg["payload"])
+			DSGMessageType.ROUND_RESULT:
+				if self._current_state == STATES.AWAITING_RESULT:
+					self._animate_round(msg["payload"])
 
 func _start_round(payload: Dictionary):
 	self._next_moves = []
@@ -62,7 +74,7 @@ func _start_round(payload: Dictionary):
 func _animate_round(payload: Dictionary):
 	await board.animate_events(payload["timeline"])
 	DSGNetwork.send({
-		"type": "ready_for_next_round",
+		"type": DSGMessageType.READY_FOR_NEXT_ROUND,
 		"payload": {}
 	})
 	self._current_state = STATES.AWAITING_ROUND
@@ -91,7 +103,7 @@ func _on_timer_timeout():
 	$GongAudio.play()
 	if DSGNetwork.is_online():
 		DSGNetwork.send({
-			"type": "player_moves",
+			"type": DSGMessageType.PLAYER_MOVES,
 			"payload": {
 				"moves": self._next_moves
 			}
