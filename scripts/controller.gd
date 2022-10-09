@@ -9,6 +9,7 @@ var _selected_piece_id: String = ""
 var _moves_left: int = 0
 var _next_moves: Array
 var _current_state: STATES
+var _round_number: int = 0
 
 @export var message: Label
 @export var moves_message: Label
@@ -38,33 +39,37 @@ func _input(_event):
 		_append_move(ACTIONS.NO_ACTION)
 	elif Input.is_action_just_pressed("REMOVE_MOVE"):
 		_remove_latest_move()
-	self._update_labels()
 
 func _on_ws_received_message(stream: String):
 	var message = JSON.parse_string(stream)
-	print(message)
 	match self._current_state:
 		STATES.AWAITING_ROUND:
 			if message["type"] == "round_start":
-				self._next_moves = []
-				self._moves_left = 5
-				timer.start(message["payload"]["round_duration"])
-				var pieces = message["payload"]["board_state"]
-				for piece in pieces:
-					board.place_piece(piece["piece_id"], piece["player_id"], Vector2(piece["position"]["x"], piece["position"]["y"]))
+				self._start_round(message["payload"])
 		STATES.AWAITING_RESULT:
 			if message["type"] == "round_result":
-				await board.animate_events(message["payload"]["timeline"])
-				DSGNetwork.send({
-					"type": "ready_for_next_round",
-					"payload": {}
-				})
-				self._current_state = STATES.AWAITING_ROUND
+				self._animate_round(message["payload"])
+
+func _start_round(payload: Dictionary):
+	self._next_moves = []
+	self._moves_left = 5
+	self._round_number = payload["round_number"]
+	timer.start(payload["round_duration"])
+	var pieces = payload["board_state"]
+	for piece in pieces:
+		board.place_piece(piece["piece_id"], piece["player_id"], Vector2(piece["position"]["x"], piece["position"]["y"]))
+
+func _animate_round(payload: Dictionary):
+	await board.animate_events(payload["timeline"])
+	DSGNetwork.send({
+		"type": "ready_for_next_round",
+		"payload": {}
+	})
+	self._current_state = STATES.AWAITING_ROUND
 
 func _on_update_selected_piece(piece_id, piece_player_id):
 	if GlobalVariables.player_id == piece_player_id:
 		self._selected_piece_id = piece_id
-		message.text = piece_id
 
 func _remove_latest_move():
 	if self._next_moves.size() <= 0:
@@ -105,3 +110,4 @@ func _complete_next_moves():
 func _update_labels():
 	self.moves_message.text = "Moves left: " + str(self._moves_left)
 	self.timer_message.text = "Time left: %.1f" % self.timer.time_left
+	self.message.text = "Round " + str(self._round_number)
