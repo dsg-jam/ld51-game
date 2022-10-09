@@ -1,27 +1,30 @@
 extends Node2D
 
 enum ACTIONS {NO_ACTION, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT, MOVE_UP}
+enum STATES {AWAITING_ROUND, AWAITING_RESULT}
 
-var selected_piece_id: String = ""
-var moves_left: int
-var next_moves: Array
+const MAX_MOVES = 5
+
+var _selected_piece_id: String = ""
+var _moves_left: int = 0
+var _next_moves: Array
+var _current_state: STATES
+var _round_number: int = 0
 
 @export var message: Label
 @export var moves_message: Label
 @export var timer_message: Label
 
-@onready var network = get_node("/root/DSGNetwork")
 @onready var board = $Board
 @onready var timer = $Timer
 
 func _ready():
+	DSGNetwork.ws_received_message.connect(_on_ws_received_message)
 	board.update_selected_piece.connect(_on_update_selected_piece)
-	moves_left = 5
-	timer.start(10)
-	moves_message.text = "Moves left: " + str(moves_left)
+	self._current_state = STATES.AWAITING_ROUND
 
 func _process(_delta):
-	timer_message.text = "Time left: %.1f" % timer.time_left
+	self._update_labels()
 
 func _input(_event):
 	if Input.is_action_just_pressed("MOVE_DOWN"):
@@ -36,44 +39,75 @@ func _input(_event):
 		_append_move(ACTIONS.NO_ACTION)
 	elif Input.is_action_just_pressed("REMOVE_MOVE"):
 		_remove_latest_move()
-	moves_message.text = "Moves left: " + str(moves_left)
+
+func _on_ws_received_message(stream: String):
+	var message = JSON.parse_string(stream)
+	match self._current_state:
+		STATES.AWAITING_ROUND:
+			if message["type"] == "round_start":
+				self._start_round(message["payload"])
+		STATES.AWAITING_RESULT:
+			if message["type"] == "round_result":
+				self._animate_round(message["payload"])
+
+func _start_round(payload: Dictionary):
+	self._next_moves = []
+	self._moves_left = 5
+	self._round_number = payload["round_number"]
+	timer.start(payload["round_duration"])
+	var pieces = payload["board_state"]
+	for piece in pieces:
+		board.place_piece(piece["piece_id"], piece["player_id"], Vector2(piece["position"]["x"], piece["position"]["y"]))
+
+func _animate_round(payload: Dictionary):
+	await board.animate_events(payload["timeline"])
+	DSGNetwork.send({
+		"type": "ready_for_next_round",
+		"payload": {}
+	})
+	self._current_state = STATES.AWAITING_ROUND
 
 func _on_update_selected_piece(piece_id, piece_player_id):
 	if GlobalVariables.player_id == piece_player_id:
-		selected_piece_id = piece_id
-		message.text = piece_id
+		self._selected_piece_id = piece_id
 
 func _remove_latest_move():
-	if next_moves.size() <= 0:
+	if self._next_moves.size() <= 0:
 		return
-	next_moves.pop_back()
-	moves_left += 1
+	self._next_moves.pop_back()
+	self._moves_left += 1
 
 func _append_move(action: ACTIONS):
-	if selected_piece_id == "" or moves_left <= 0:
+	if self._selected_piece_id == "" or self._moves_left <= 0:
 		return
-	next_moves.append({
-		"piece_id": selected_piece_id,
+	self._next_moves.append({
+		"piece_id": self._selected_piece_id,
 		"action": ACTIONS.keys()[action].to_lower()
 	})
-	moves_left -= 1
+	self._moves_left -= 1
 
 func _on_timer_timeout():
 	_complete_next_moves()
 	$GongAudio.play()
-	if network.is_online():
-		network.send({
+	if DSGNetwork.is_online():
+		DSGNetwork.send({
 			"type": "player_moves",
 			"payload": {
-				"moves": next_moves
+				"moves": self._next_moves
 			}
 		})
+	self._current_state = STATES.AWAITING_RESULT
 
 func _complete_next_moves():
-	if (next_moves.size() >= 10):
+	if (self._next_moves.size() >= MAX_MOVES):
 		return
-	while next_moves.size() < 10:
-		next_moves.append({
-			"piece_id": "00000000-0000-0000-0000-000000000000",
+	while self._next_moves.size() < MAX_MOVES:
+		self._next_moves.append({
+			"piece_id": board.pieces.keys()[0],
 			"action": ACTIONS.keys()[ACTIONS.NO_ACTION].to_lower()
 		})
+
+func _update_labels():
+	self.moves_message.text = "Moves left: " + str(self._moves_left)
+	self.timer_message.text = "Time left: %.1f" % self.timer.time_left
+	self.message.text = "Round " + str(self._round_number)
