@@ -3,7 +3,15 @@
 [ext_resource type="Script" path="res://scripts/lobby.gd" id="1_ykju5"]
 [ext_resource type="FontFile" uid="uid://ddtswll5v6p3s" path="res://assets/font/Stick-Regular.ttf" id="2_ery7r"]
 
-[node name="lobby" type="Node2D" node_paths=PackedStringArray("start_button", "label_id_value", "label_amount_of_players", "label_players", "map_list")]
+[node name="Control" type="Control" node_paths=PackedStringArray("start_button", "label_id_value", "label_amount_of_players", "label_players", "map_list")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 script = ExtResource("1_ykju5")
 start_button = NodePath("ColorRect/VBoxContainer/StartGame/StartGameButton")
 label_id_value = NodePath("ColorRect/VBoxContainer/GameInfo/IDValue")
@@ -12,8 +20,9 @@ label_players = NodePath("ColorRect/VBoxContainer/PlayerInfo/LablePlayers")
 map_list = NodePath("ColorRect/VBoxContainer/MapSelection/ScrollContainer/MapsList")
 
 [node name="ColorRect" type="ColorRect" parent="."]
-offset_right = 1152.0
-offset_bottom = 648.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3

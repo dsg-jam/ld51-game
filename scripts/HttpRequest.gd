@@ -24,3 +24,4 @@ func _on_join_button_pressed():
 	var game_id = game_id_input.text
 	if len(game_id) == 36:
 		self.request(lobby_url + "/" + game_id_input.text)
+		

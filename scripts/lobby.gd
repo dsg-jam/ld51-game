@@ -1,4 +1,4 @@
-extends Node2D
+extends Control
 
 const MapsDb := preload("res://scripts/db/maps.gd")
 

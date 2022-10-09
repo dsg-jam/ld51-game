@@ -7,7 +7,13 @@
 color = Color(0.458824, 0.384314, 0.305882, 1)
 thickness = 4
 
-[node name="start" type="Node2D"]
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="CreatLobbyHttpRequest" type="HTTPRequest" parent="."]
 use_threads = true
@@ -15,17 +21,21 @@ script = ExtResource("1_ua71p")
 game_id_path = NodePath("../ColorRect/VBoxContainer/HBoxContainer/GameID")
 
 [node name="ColorRect" type="ColorRect" parent="."]
-offset_right = 1152.0
-offset_bottom = 648.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.996078, 0.815686, 0.619608, 1)
 
 [node name="HSeparatorLine" type="HSeparator" parent="ColorRect"]
-layout_mode = 0
-offset_top = 321.0
-offset_right = 1152.0
-offset_bottom = 325.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_vertical = 6
 theme_override_styles/separator = SubResource("StyleBoxLine_xko28")
 
