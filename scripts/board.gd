@@ -94,19 +94,10 @@ func _animate(outcome: Dictionary):
 		for moving_piece in moving_pieces:
 			tween_move_back.tween_property(moving_piece, "position", moving_pieces[moving_piece], 0.2).set_trans(Tween.TRANS_BOUNCE)
 	elif outcome["type"] == "push_conflict":
-		var piece_a = _get_piece_by_id(outcome["payload"]["piece_a"])
-		var piece_b = _get_piece_by_id(outcome["payload"]["piece_b"])
-		var initial_position_a = piece_a.position
-		var initial_position_b = piece_b.position
-		var direction_a = (piece_b.position - piece_a.position).normalized()
-		var direction_b = (piece_a.position - piece_b.position).normalized()
-		_animate_piece_rotation(piece_a, direction_a / 4)
-		_animate_piece_rotation(piece_b, direction_b / 4)
-		_animate_piece_move(piece_a, direction_a / 4, 0.0, Tween.TRANS_BACK)
-		_animate_piece_move(piece_b, direction_b / 4, 0.0, Tween.TRANS_BACK)
-		
-		tween_move_back.tween_property(piece_a, "position", initial_position_a, 0.2).set_trans(Tween.TRANS_BOUNCE)
-		tween_move_back.tween_property(piece_b, "position", initial_position_b, 0.2).set_trans(Tween.TRANS_BOUNCE)
+		var piece_ids = outcome["payload"]["piece_ids"]
+		for piece_id in piece_ids:
+			var piece = self._get_piece_by_id(piece_id)
+			tween_rotate.tween_property(piece, "rotation", 2*PI, 1).set_trans(Tween.TRANS_BACK)
 
 func _get_position_on_grid(coordinates: Vector2):
 	return Vector2(tile_size/2, tile_size/2) + coordinates * tile_size	

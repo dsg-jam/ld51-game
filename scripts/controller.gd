@@ -66,6 +66,7 @@ func _on_ws_received_message(_msg_type: String) -> void:
 func _start_round(payload: Dictionary):
 	self._next_moves = []
 	self._moves_left = 5
+	self._selected_piece_id = ""
 	self._round_number = payload["round_number"]
 	timer.start(payload["round_duration"])
 	var pieces = payload["board_state"]
