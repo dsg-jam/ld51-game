@@ -3,8 +3,7 @@ extends Node
 signal message_received(String)
 
 var _client := WebSocketClient.new()
-# Array<Dictionary>
-var _pending_messages: Array = []
+var _pending_messages: Array[Dictionary] = []
 
 func _ready():
 	_client.connection_closed.connect(_closed)
