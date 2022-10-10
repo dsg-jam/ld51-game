@@ -60,6 +60,7 @@ func _on_ws_received_message(_msg_type: String) -> void:
 					self._start_round(msg["payload"])
 			DSGMessageType.ROUND_RESULT:
 				if self._current_state == STATES.AWAITING_RESULT:
+					print(msg["payload"])
 					self._animate_round(msg["payload"])
 
 func _start_round(payload: Dictionary):
@@ -99,7 +100,6 @@ func _append_move(action: ACTIONS):
 	self._moves_left -= 1
 
 func _on_timer_timeout():
-	_complete_next_moves()
 	$GongAudio.play()
 	if DSGNetwork.is_online():
 		DSGNetwork.send({
@@ -109,15 +109,6 @@ func _on_timer_timeout():
 			}
 		})
 	self._current_state = STATES.AWAITING_RESULT
-
-func _complete_next_moves():
-	if (self._next_moves.size() >= MAX_MOVES):
-		return
-	while self._next_moves.size() < MAX_MOVES:
-		self._next_moves.append({
-			"piece_id": board.pieces.keys()[0],
-			"action": ACTIONS.keys()[ACTIONS.NO_ACTION].to_lower()
-		})
 
 func _update_labels():
 	self.moves_message.text = "Moves left: " + str(self._moves_left)
