@@ -81,3 +81,6 @@ func _display_maps():
 
 func _on_maps_list_item_clicked(index, _at_position, _mouse_button_index):
 	self._selected_map_idx = index
+
+func _on_copy_button_pressed():
+	DisplayServer.clipboard_set(GlobalVariables.id)
