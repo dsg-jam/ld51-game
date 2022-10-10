@@ -16,6 +16,10 @@ var tween_move: Tween
 var tween_move_back: Tween
 var tween_rotate: Tween
 
+@export var ROTATION_ANIMATION_DURATION: float = 1.0
+@export var MOVE_ANIMATION_DURATION: float = 1.0
+@export var MOVE_BACK_ANIMATION_DURATION: float = 0.2
+
 @onready var texture = $Texture
 @onready var tile_prefab = preload("res://prefabs/tile.tscn")
 @onready var piece_prefab = preload("res://prefabs/piece.tscn")
@@ -49,11 +53,13 @@ func animate_events(events: Array):
 		tween_move_back.stop()
 		tween_rotate = get_tree().create_tween().set_parallel()
 		_animate_event(event["outcomes"])
-		await tween_rotate.finished
-		tween_move.play()
-		await tween_move.finished
-		tween_move_back.play()
-		await tween_move_back.tween_interval(0.2).finished
+		await tween_rotate.tween_interval(ROTATION_ANIMATION_DURATION).finished
+		if tween_move.is_valid():
+			tween_move.play()
+			await tween_move.tween_interval(MOVE_ANIMATION_DURATION).finished
+		if tween_move_back.is_valid():
+			tween_move_back.play()
+			await tween_move_back.tween_interval(MOVE_BACK_ANIMATION_DURATION).finished
 
 func _animate_event(outcomes: Array):
 	for outcome in outcomes:
@@ -61,11 +67,11 @@ func _animate_event(outcomes: Array):
 
 func _animate_piece_rotation(piece: Piece, direction: Vector2, delay: float = 0.0, transition: int = Tween.TRANS_BACK):
 	var angle = piece.facing_direction.angle_to(direction)
-	tween_rotate.tween_property(piece, "rotation", angle, 1).set_trans(transition).set_delay(delay)
+	tween_rotate.tween_property(piece, "rotation", angle, ROTATION_ANIMATION_DURATION).set_trans(transition).set_delay(delay)
 
 func _animate_piece_move(piece: Piece, direction: Vector2, delay: float = 0.0, transition: int = Tween.TRANS_CUBIC):
 	var new_position = piece.position + direction * tile_size
-	tween_move.tween_property(piece, "position", new_position, 1).set_trans(transition).set_delay(delay)
+	tween_move.tween_property(piece, "position", new_position, MOVE_ANIMATION_DURATION).set_trans(transition).set_delay(delay)
 
 
 func _animate(outcome: Dictionary):
@@ -92,7 +98,7 @@ func _animate(outcome: Dictionary):
 			_animate_piece_rotation(current_piece, direction)
 			_animate_piece_move(current_piece, direction/2)
 		for moving_piece in moving_pieces:
-			tween_move_back.tween_property(moving_piece, "position", moving_pieces[moving_piece], 0.2).set_trans(Tween.TRANS_BOUNCE)
+			tween_move_back.tween_property(moving_piece, "position", moving_pieces[moving_piece], MOVE_BACK_ANIMATION_DURATION).set_trans(Tween.TRANS_BOUNCE)
 	elif outcome["type"] == "push_conflict":
 		var piece_ids = outcome["payload"]["piece_ids"]
 		for piece_id in piece_ids:
