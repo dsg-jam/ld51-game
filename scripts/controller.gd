@@ -60,7 +60,6 @@ func _on_ws_received_message(_msg_type: String) -> void:
 					self._start_round(msg["payload"])
 			DSGMessageType.ROUND_RESULT:
 				if self._current_state == STATES.AWAITING_RESULT:
-					print(msg["payload"])
 					self._animate_round(msg["payload"])
 
 func _start_round(payload: Dictionary):
@@ -72,6 +71,7 @@ func _start_round(payload: Dictionary):
 	var pieces = payload["board_state"]
 	for piece in pieces:
 		board.place_piece(piece["piece_id"], piece["player_id"], Vector2(piece["position"]["x"], piece["position"]["y"]))
+	board.turn_all_player_piece_lights_on(0.4)
 
 func _animate_round(payload: Dictionary):
 	await board.animate_events(payload["timeline"])
@@ -83,6 +83,8 @@ func _animate_round(payload: Dictionary):
 
 func _on_update_selected_piece(piece_id, piece_player_id):
 	if GlobalVariables.player_id == piece_player_id:
+		board.turn_all_player_piece_lights_on(0.4)
+		board.get_piece_by_id(piece_id).turn_light_on(0.6)
 		self._selected_piece_id = piece_id
 
 func _remove_latest_move():
@@ -110,6 +112,7 @@ func _on_timer_timeout():
 			}
 		})
 	self._current_state = STATES.AWAITING_RESULT
+	board.turn_all_piece_lights_off()
 
 func _update_labels():
 	self.moves_message.text = "Moves left: " + str(self._moves_left)

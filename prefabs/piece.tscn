@@ -1,16 +1,27 @@
-[gd_scene load_steps=4 format=3 uid="uid://deekub7q5864t"]
+[gd_scene load_steps=5 format=3 uid="uid://deekub7q5864t"]
 
 [ext_resource type="Texture2D" uid="uid://ddj4i2o10l4fy" path="res://assets/player/Player_Blue.png" id="1_iuh12"]
 [ext_resource type="Script" path="res://scripts/piece.gd" id="1_jfprr"]
+[ext_resource type="Texture2D" uid="uid://luw6nhn53pku" path="res://assets/light.png" id="3_v80cm"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8f7yi"]
 size = Vector2(816, 912)
 
-[node name="Area2d" type="Area2D"]
+[node name="Area2d" type="Area2D" node_paths=PackedStringArray("_light_source")]
 script = ExtResource("1_jfprr")
+_light_source = NodePath("Light")
 
 [node name="Texture" type="Sprite2D" parent="."]
+light_mask = 2
 texture = ExtResource("1_iuh12")
 
 [node name="CollisionShape2d" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_8f7yi")
+
+[node name="Light" type="PointLight2D" parent="."]
+enabled = false
+color = Color(1, 0.878431, 0.686275, 1)
+energy = 0.5
+range_item_cull_mask = 2
+texture = ExtResource("3_v80cm")
+height = 100.0

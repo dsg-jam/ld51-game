@@ -28,6 +28,17 @@ func _ready():
 	tile_size = _get_tile_size()
 	_draw_board()
 
+func get_piece_by_id(piece_id: String) -> Piece:
+	return pieces[piece_id]
+
+func turn_all_player_piece_lights_on(intensity: float):
+	for piece in pieces.values():
+		piece.turn_light_on(intensity)
+
+func turn_all_piece_lights_off():
+	for piece in pieces.values():
+		piece.turn_light_off()
+
 func place_piece(piece_id: String, player_id: String, piece_position: Vector2):
 	if piece_id in self.pieces:
 		self.pieces[piece_id].position = self._get_position_on_grid(piece_position)
@@ -76,14 +87,14 @@ func _animate_piece_move(piece: Piece, direction: Vector2, delay: float = 0.0, t
 
 func _animate(outcome: Dictionary):
 	if outcome["type"] == "push":
-		var pusher_piece = _get_piece_by_id(outcome["payload"]["pusher_piece_id"])
+		var pusher_piece = get_piece_by_id(outcome["payload"]["pusher_piece_id"])
 		var victim_piece_ids = outcome["payload"]["victim_piece_ids"]
 		var direction = directions[outcome["payload"]["direction"]]
 		_animate_piece_rotation(pusher_piece, direction)
 		_animate_piece_move(pusher_piece, direction)
 		var i = 1
 		for victim_piece_id in victim_piece_ids:
-			var victim_piece = _get_piece_by_id(victim_piece_id)
+			var victim_piece = get_piece_by_id(victim_piece_id)
 			_animate_piece_rotation(victim_piece, direction)
 			_animate_piece_move(victim_piece, direction, 0.125 * i)
 			i += 1
@@ -91,7 +102,7 @@ func _animate(outcome: Dictionary):
 		var new_coordinates = Vector2(outcome["payload"]["collision_point"]["x"], outcome["payload"]["collision_point"]["y"])
 		var moving_pieces = {}
 		for moving_piece_id in outcome["payload"]["piece_ids"]:
-			var current_piece = _get_piece_by_id(moving_piece_id)
+			var current_piece = get_piece_by_id(moving_piece_id)
 			moving_pieces[current_piece] = current_piece.position
 			var new_position = _get_position_on_grid(new_coordinates)
 			var direction = (new_position-current_piece.position).normalized()
@@ -107,9 +118,6 @@ func _animate(outcome: Dictionary):
 
 func _get_position_on_grid(coordinates: Vector2):
 	return Vector2(tile_size/2, tile_size/2) + coordinates * tile_size	
-
-func _get_piece_by_id(piece_id: String):
-	return pieces[piece_id]
 
 func _on_click(piece_id, piece_player_id):
 	emit_signal("update_selected_piece", piece_id, piece_player_id)
