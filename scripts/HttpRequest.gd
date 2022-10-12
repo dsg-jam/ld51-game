@@ -1,6 +1,6 @@
 extends HTTPRequest
 
-@export var lobby_url = "http://localhost:8000/lobby"
+@export var lobby_url: String = "http://localhost:8000/lobby"
 @export var game_id_path: NodePath
 
 @onready var lobby_scene = preload("res://scenes/lobby.tscn")
@@ -10,8 +10,7 @@ extends HTTPRequest
 func _ready():
 	self.request_completed.connect(self._on_request_completed)
 
-# TODO: correct typo
-func _on_creat_new_game_button_pressed():
+func _on_create_new_game_button_pressed():
 	self.request(lobby_url, [], false, HTTPClient.METHOD_POST)
 
 func _on_request_completed(_result: int, _response_code: int, _headers: PackedStringArray, body: PackedByteArray):
@@ -21,7 +20,6 @@ func _on_request_completed(_result: int, _response_code: int, _headers: PackedSt
 		get_tree().change_scene_to_packed(lobby_scene)
 
 func _on_join_button_pressed():
-	# TODO: Further check game id before sending a (unnecessary) request
 	var game_id = game_id_input.text
 	if len(game_id) == 36:
 		self.request(lobby_url + "/" + game_id_input.text)

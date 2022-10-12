@@ -13,6 +13,9 @@ func get_x() -> int:
 func get_y() -> int:
 	return self._y
 
+func get_vec() -> Vector2:
+	return Vector2(self._x, self._y)
+
 func get_dict() -> Dictionary:
 	return {
 		"x": self._x,

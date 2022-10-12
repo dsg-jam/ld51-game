@@ -20,7 +20,6 @@ script = ExtResource("1_ua71p")
 game_id_path = NodePath("../ColorRect/VBoxContainer/HBoxContainer/GameID")
 
 [node name="ColorRect" type="ColorRect" parent="."]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -29,7 +28,6 @@ grow_vertical = 2
 color = Color(0.996078, 0.815686, 0.619608, 1)
 
 [node name="HSeparatorLine" type="HSeparator" parent="ColorRect"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -39,7 +37,6 @@ size_flags_vertical = 6
 theme_override_styles/separator = SubResource("StyleBoxLine_xko28")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ColorRect"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -48,7 +45,6 @@ grow_vertical = 2
 alignment = 1
 
 [node name="VBoxContainerTop" type="VBoxContainer" parent="ColorRect/VBoxContainer"]
-layout_mode = 2
 offset_top = 133.0
 offset_right = 1152.0
 offset_bottom = 189.0
@@ -56,26 +52,23 @@ size_flags_vertical = 6
 
 [node name="creatNewGameButton" type="Button" parent="ColorRect/VBoxContainer/VBoxContainerTop"]
 custom_minimum_size = Vector2i(512, 0)
-layout_mode = 2
 offset_left = 320.0
 offset_right = 832.0
 offset_bottom = 56.0
 size_flags_horizontal = 4
 theme_override_fonts/font = ExtResource("2_pw6rl")
 theme_override_font_sizes/font_size = 32
-text = "Creat New Game"
+text = "Create New Game"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
-layout_mode = 2
-offset_left = 336.0
+offset_left = 324.0
 offset_top = 459.0
-offset_right = 815.0
+offset_right = 827.0
 offset_bottom = 515.0
 size_flags_horizontal = 4
 size_flags_vertical = 6
 
 [node name="Label" type="Label" parent="ColorRect/VBoxContainer/HBoxContainer"]
-layout_mode = 2
 offset_top = 2.0
 offset_right = 143.0
 offset_bottom = 53.0
@@ -86,7 +79,6 @@ text = "Game ID: "
 
 [node name="GameID" type="LineEdit" parent="ColorRect/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2i(256, 0)
-layout_mode = 2
 offset_left = 147.0
 offset_right = 403.0
 offset_bottom = 56.0
@@ -94,14 +86,13 @@ theme_override_fonts/font = ExtResource("2_pw6rl")
 theme_override_font_sizes/font_size = 32
 
 [node name="Button" type="Button" parent="ColorRect/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2i(72, 0)
-layout_mode = 2
+custom_minimum_size = Vector2i(96, 0)
 offset_left = 407.0
-offset_right = 479.0
+offset_right = 503.0
 offset_bottom = 56.0
 theme_override_fonts/font = ExtResource("2_pw6rl")
 theme_override_font_sizes/font_size = 32
-text = "join"
+text = "Join"
 
-[connection signal="pressed" from="ColorRect/VBoxContainer/VBoxContainerTop/creatNewGameButton" to="CreatLobbyHttpRequest" method="_on_creat_new_game_button_pressed"]
+[connection signal="pressed" from="ColorRect/VBoxContainer/VBoxContainerTop/creatNewGameButton" to="CreatLobbyHttpRequest" method="_on_create_new_game_button_pressed"]
 [connection signal="pressed" from="ColorRect/VBoxContainer/HBoxContainer/Button" to="CreatLobbyHttpRequest" method="_on_join_button_pressed"]
