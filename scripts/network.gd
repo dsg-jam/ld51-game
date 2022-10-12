@@ -2,6 +2,9 @@ extends Node
 
 signal message_received(String)
 
+const SERVER_USE_TLS: bool = true
+const SERVER_HOST: String = "51.jam.dsg.link"
+
 var _client := WebSocketClient.new()
 var _pending_messages: Array[Dictionary] = []
 
@@ -20,7 +23,13 @@ func _get_peer() -> WebSocketPeer:
 func is_online() -> bool:
 	return self._get_peer().is_connected_to_host()
 
-func connect_websocket(url: String) -> bool:
+func connect_to_lobby(lobby_id: String) -> bool:
+	var protocol: String
+	if SERVER_USE_TLS:
+		protocol = "wss"
+	else:
+		protocol = "ws"
+	var url := "%s://%s/lobby/%s/join" % [protocol, SERVER_HOST, lobby_id]
 	if self._client.connect_to_url(url, []) != OK:
 		return false
 	self._get_peer().set_write_mode(WebSocketPeer.WRITE_MODE_TEXT)
