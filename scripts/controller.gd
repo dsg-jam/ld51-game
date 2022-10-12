@@ -49,6 +49,8 @@ func _input(_event):
 		self._append_move(ACTIONS.NO_ACTION)
 	elif Input.is_action_just_pressed("REMOVE_MOVE"):
 		self._remove_latest_move()
+	elif Input.is_action_just_pressed("SELECT_NEXT"):
+		self._select_next_piece()
 
 func _on_ws_received_message(_msg_type: String) -> void:
 	while true:
@@ -86,9 +88,8 @@ func _animate_round(payload: Dictionary):
 
 func _on_update_selected_piece(piece_id, piece_player_id):
 	if GlobalVariables.player_id == piece_player_id:
-		self._board.turn_all_player_piece_lights_on(self._selectable_light_intensity)
-		self._board.get_piece_by_id(piece_id).turn_light_on(self._selected_light_intensity)
 		self._selected_piece_id = piece_id
+		self._update_lights()
 
 func _remove_latest_move():
 	if self._next_moves.size() <= 0:
@@ -116,6 +117,22 @@ func _on_timer_timeout():
 		})
 	self._current_state = STATES.AWAITING_RESULT
 	self._board.turn_all_piece_lights_off()
+
+func _select_next_piece():
+	self._selected_piece_id = self._get_next_piece_id()
+	self._update_lights()
+
+func _get_next_piece_id() -> String:
+	var sorted = self._board.get_sorted_player_pieces()
+	if self._selected_piece_id == "":
+		return sorted[0]
+	var idx = sorted.find(self._selected_piece_id)
+	var next_idx = (idx + 1) % len(sorted)
+	return sorted[next_idx]
+
+func _update_lights():
+	self._board.turn_all_player_piece_lights_on(self._selectable_light_intensity)
+	self._board.get_piece_by_id(self._selected_piece_id).turn_light_on(self._selected_light_intensity)
 
 func _update_labels():
 	self._moves_message.text = "Moves left: " + str(self._moves_left)
