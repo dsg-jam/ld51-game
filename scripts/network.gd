@@ -6,13 +6,13 @@ var _client := WebSocketClient.new()
 var _pending_messages: Array[Dictionary] = []
 
 func _ready():
-	_client.connection_closed.connect(_closed)
-	_client.connection_error.connect(_closed)
-	_client.connection_established.connect(_connected)
-	_client.data_received.connect(_on_data)	
+	self._client.connection_closed.connect(self._closed)
+	self._client.connection_error.connect(self._closed)
+	self._client.connection_established.connect(self._connected)
+	self._client.data_received.connect(self._on_data)	
 
 func _process(_delta):
-	_client.poll()
+	self._client.poll()
 
 func _get_peer() -> WebSocketPeer:
 	return self._client.get_peer(1)
@@ -21,13 +21,13 @@ func is_online() -> bool:
 	return self._get_peer().is_connected_to_host()
 
 func connect_websocket(url: String) -> bool:
-	if _client.connect_to_url(url, []) != OK:
+	if self._client.connect_to_url(url, []) != OK:
 		return false
 	self._get_peer().set_write_mode(WebSocketPeer.WRITE_MODE_TEXT)
 	return true
 
 func disconnect_websocket():
-	_client.disconnect_from_host()
+	self._client.disconnect_from_host()
 
 func send(payload: Dictionary):
 	var raw_msg := JSON.stringify(payload).to_utf8_buffer()

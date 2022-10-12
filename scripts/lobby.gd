@@ -9,23 +9,23 @@ var MSG_FILTER := PackedStringArray([
 	DSGMessageType.SERVER_START_GAME,
 ])
 
-var _amount_of_players = 1
-var _selected_map_idx = -1
+var _amount_of_players: int = 1
+var _selected_map_idx: int = -1
 
-@export var start_button: Button
-@export var label_id_value: Label
-@export var label_amount_of_players: Label
-@export var label_players: Label
-@export var map_list: ItemList
-@export var ws_address = "127.0.0.1:8000"
+@export var _start_button: Button
+@export var _label_id_value: Label
+@export var _label_amount_of_players: Label
+@export var _label_players: Label
+@export var _map_list: ItemList
+@export var _ws_address = "127.0.0.1:8000"
 
-@onready var board_scene = preload("res://scenes/board_game.tscn")
+@onready var _board_scene = preload("res://scenes/board_game.tscn")
 
 func _ready():
 	self._display_maps()
 	self._update_labels()
 	DSGNetwork.message_received.connect(_on_ws_received_message)
-	var ok := DSGNetwork.connect_websocket("ws://%s/lobby/%s/join" % [ws_address, GlobalVariables.id])
+	var ok := DSGNetwork.connect_websocket("ws://%s/lobby/%s/join" % [self._ws_address, GlobalVariables.id])
 	assert(ok)
 
 func _on_start_game_button_pressed():
@@ -53,7 +53,7 @@ func _on_ws_received_message(_msg_type: String) -> void:
 				self._player_joined(msg["payload"])
 			DSGMessageType.SERVER_START_GAME:
 				GlobalVariables.map = Utils.parse_dict_to_map(msg["payload"])
-				get_tree().change_scene_to_packed(self.board_scene)
+				get_tree().change_scene_to_packed(self._board_scene)
 
 func _server_hello(payload: Variant):
 	if not payload["is_host"]:
@@ -65,19 +65,19 @@ func _player_joined(_payload: Variant):
 	self._update_labels()
 
 func _setup_non_host():
-	self.start_button.queue_free()
-	self.label_amount_of_players.visible = false
-	self.label_players.visible = false
-	self.map_list.visible = false
+	self._start_button.queue_free()
+	self._label_amount_of_players.visible = false
+	self._label_players.visible = false
+	self._map_list.visible = false
 	GlobalVariables.is_host = false
 
 func _update_labels():
-	self.label_id_value.text = GlobalVariables.id
-	self.label_amount_of_players.text = str(self._amount_of_players)
+	self._label_id_value.text = GlobalVariables.id
+	self._label_amount_of_players.text = str(self._amount_of_players)
 
 func _display_maps():
 	for map in MapsDb.MAPS:
-		map_list.add_item(map["name"])
+		self._map_list.add_item(map["name"])
 
 func _on_maps_list_item_clicked(index, _at_position, _mouse_button_index):
 	self._selected_map_idx = index

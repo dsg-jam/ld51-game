@@ -15,14 +15,12 @@ offset_bottom = 51.0
 grow_horizontal = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
-layout_mode = 2
 offset_right = 1152.0
 offset_bottom = 51.0
 theme_override_constants/separation = 100
 alignment = 1
 
 [node name="TimerLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
-layout_mode = 2
 anchors_preset = -1
 offset_left = 11.0
 offset_right = 138.0
@@ -32,7 +30,6 @@ theme_override_font_sizes/font_size = 32
 text = "[TIMER]"
 
 [node name="MessageLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
-layout_mode = 2
 offset_left = 238.0
 offset_right = 699.0
 offset_bottom = 51.0
@@ -41,7 +38,6 @@ theme_override_font_sizes/font_size = 32
 text = "SELECTED PIECE: [PIECE_ID]"
 
 [node name="MovesLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
-layout_mode = 2
 anchors_preset = -1
 offset_left = 799.0
 offset_right = 1140.0
@@ -50,11 +46,11 @@ theme_override_fonts/font = ExtResource("2_n1wtn")
 theme_override_font_sizes/font_size = 32
 text = "[REMAINING_MOVES]"
 
-[node name="DSGController" type="Node2D" parent="." node_paths=PackedStringArray("message", "moves_message", "timer_message")]
+[node name="DSGController" type="Node2D" parent="." node_paths=PackedStringArray("_message", "_moves_message", "_timer_message")]
 script = ExtResource("1_q3buc")
-message = NodePath("../VBoxContainer/HBoxContainer/MessageLabel")
-moves_message = NodePath("../VBoxContainer/HBoxContainer/MovesLabel")
-timer_message = NodePath("../VBoxContainer/HBoxContainer/TimerLabel")
+_message = NodePath("../VBoxContainer/HBoxContainer/MessageLabel")
+_moves_message = NodePath("../VBoxContainer/HBoxContainer/MovesLabel")
+_timer_message = NodePath("../VBoxContainer/HBoxContainer/TimerLabel")
 
 [node name="Board" parent="DSGController" instance=ExtResource("2_aieau")]
 position = Vector2(320, 85)
