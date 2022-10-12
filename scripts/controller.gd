@@ -19,6 +19,8 @@ var _round_number: int = 0
 @export var _message: Label
 @export var _moves_message: Label
 @export var _timer_message: Label
+@export var _selectable_light_intensity: float = 0.4
+@export var _selected_light_intensity: float = 0.6
 
 @onready var _board = $Board
 @onready var _timer = $Timer
@@ -72,7 +74,7 @@ func _start_round(payload: Dictionary):
 	for piece in pieces:
 		var piece_pos = Position.get_obj_from_dict(piece["position"])
 		self._board.place_piece(piece["piece_id"], piece["player_id"], piece_pos.get_vec())
-	self._board.turn_all_player_piece_lights_on(0.4)
+	self._board.turn_all_player_piece_lights_on(self._selectable_light_intensity)
 
 func _animate_round(payload: Dictionary):
 	await self._board.animate_events(payload["timeline"])
@@ -84,8 +86,8 @@ func _animate_round(payload: Dictionary):
 
 func _on_update_selected_piece(piece_id, piece_player_id):
 	if GlobalVariables.player_id == piece_player_id:
-		self._board.turn_all_player_piece_lights_on(0.4)
-		self._board.get_piece_by_id(piece_id).turn_light_on(0.6)
+		self._board.turn_all_player_piece_lights_on(self._selectable_light_intensity)
+		self._board.get_piece_by_id(piece_id).turn_light_on(self._selected_light_intensity)
 		self._selected_piece_id = piece_id
 
 func _remove_latest_move():

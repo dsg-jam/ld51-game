@@ -88,14 +88,14 @@ func _animate_piece_move(piece: Piece, direction: Vector2, delay: float = 0.0, t
 
 func _animate(outcome: Dictionary):
 	if outcome["type"] == "push":
-		var pusher_piece = get_piece_by_id(outcome["payload"]["pusher_piece_id"])
+		var pusher_piece = self.get_piece_by_id(outcome["payload"]["pusher_piece_id"])
 		var victim_piece_ids = outcome["payload"]["victim_piece_ids"]
 		var direction = directions[outcome["payload"]["direction"]]
 		self._animate_piece_rotation(pusher_piece, direction)
 		self._animate_piece_move(pusher_piece, direction)
 		var i = 1
 		for victim_piece_id in victim_piece_ids:
-			var victim_piece = get_piece_by_id(victim_piece_id)
+			var victim_piece = self.get_piece_by_id(victim_piece_id)
 			self._animate_piece_rotation(victim_piece, direction)
 			self._animate_piece_move(victim_piece, direction, 0.125 * i)
 			i += 1
@@ -114,7 +114,7 @@ func _animate(outcome: Dictionary):
 	elif outcome["type"] == "push_conflict":
 		var piece_ids = outcome["payload"]["piece_ids"]
 		for piece_id in piece_ids:
-			var piece = self._get_piece_by_id(piece_id)
+			var piece = self.get_piece_by_id(piece_id)
 			self._tween_rotate.tween_property(piece, "rotation", 2*PI, 1).set_trans(Tween.TRANS_BACK)
 
 func _get_position_on_grid(coordinates: Vector2) -> Vector2:
