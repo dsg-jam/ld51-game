@@ -32,9 +32,28 @@ func _ready():
 func get_piece_by_id(piece_id: String) -> Piece:
 	return self._pieces[piece_id]
 
+func get_sorted_player_pieces() -> Array[String]:
+	var piece_ids = self._pieces.keys().filter(self._filter_player_pieces)
+	piece_ids.sort_custom(self._sort_by_position)
+	return piece_ids
+
+func _filter_player_pieces(piece_id: String) -> bool:
+	var piece = self.get_piece_by_id(piece_id)
+	return piece.is_player_owning()
+
+func _sort_by_position(piece_id_a: String, piece_id_b: String) -> bool:
+	var piece_a = self.get_piece_by_id(piece_id_a)
+	var piece_b = self.get_piece_by_id(piece_id_b)
+	if piece_a.position.y < piece_b.position.y:
+		return true
+	if piece_a.position.y == piece_b.position.y && piece_a.position.x < piece_b.position.x:
+		return true
+	return false
+
 func turn_all_player_piece_lights_on(intensity: float):
 	for piece in self._pieces.values():
-		piece.turn_light_on(intensity)
+		if piece.is_player_owning():
+			piece.turn_light_on(intensity)
 
 func turn_all_piece_lights_off():
 	for piece in self._pieces.values():

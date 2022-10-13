@@ -12,10 +12,12 @@ func setup(piece_id: String, player_id: String):
 	self._piece_id = piece_id
 	self._player_id = player_id
 
+func is_player_owning() -> bool:
+	return self._player_id == GlobalVariables.player_id
+
 func turn_light_on(intensity: float):
-	if self._player_id == GlobalVariables.player_id:
-		self._light_source.set_energy(intensity)
-		self._light_source.set_enabled(true)
+	self._light_source.set_energy(intensity)
+	self._light_source.set_enabled(true)
 		
 func turn_light_off():
 	self._light_source.set_enabled(false)
