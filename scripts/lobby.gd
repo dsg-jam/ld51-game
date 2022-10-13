@@ -17,7 +17,6 @@ var _selected_map_idx: int = -1
 @export var _label_amount_of_players: Label
 @export var _label_players: Label
 @export var _map_list: ItemList
-@export var _ws_address = "127.0.0.1:8000"
 
 @onready var _board_scene = preload("res://scenes/board_game.tscn")
 
@@ -25,7 +24,7 @@ func _ready():
 	self._display_maps()
 	self._update_labels()
 	DSGNetwork.message_received.connect(_on_ws_received_message)
-	var ok := DSGNetwork.connect_websocket("ws://%s/lobby/%s/join" % [self._ws_address, GlobalVariables.id])
+	var ok := DSGNetwork.connect_to_lobby(GlobalVariables.id)
 	assert(ok)
 
 func _on_start_game_button_pressed():
