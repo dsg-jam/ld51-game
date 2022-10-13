@@ -4,6 +4,7 @@ enum ACTIONS {NO_ACTION, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT, MOVE_UP}
 enum STATES {AWAITING_ROUND, AWAITING_RESULT}
 
 const MAX_MOVES: int = 5
+const Piece = preload("res://scripts/piece.gd")
 
 var MSG_FILTER := PackedStringArray([
 	DSGMessageType.ROUND_RESULT,
@@ -124,6 +125,8 @@ func _select_next_piece():
 
 func _get_next_piece_id() -> String:
 	var sorted = self._board.get_sorted_player_pieces()
+	if sorted.is_empty():
+		return ""
 	if self._selected_piece_id == "":
 		return sorted[0]
 	var idx = sorted.find(self._selected_piece_id)
@@ -132,7 +135,9 @@ func _get_next_piece_id() -> String:
 
 func _update_lights():
 	self._board.turn_all_player_piece_lights_on(self._selectable_light_intensity)
-	self._board.get_piece_by_id(self._selected_piece_id).turn_light_on(self._selected_light_intensity)
+	var piece: Piece = self._board.get_piece_by_id(self._selected_piece_id)
+	if piece != null:
+		piece.turn_light_on(self._selected_light_intensity)
 
 func _update_labels():
 	self._moves_message.text = "Moves left: " + str(self._moves_left)
