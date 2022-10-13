@@ -31,6 +31,8 @@ func _ready():
 	self._draw_board()
 
 func get_piece_by_id(piece_id: String) -> Piece:
+	if not piece_id in self._pieces:
+		return null
 	return self._pieces[piece_id]
 
 func get_sorted_player_pieces() -> Array[String]:
