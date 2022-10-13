@@ -94,12 +94,7 @@ func animate_events(events: Array):
 		if self._tween_move_back.is_valid():
 			self._tween_move_back.play()
 			await self._tween_move_back.tween_interval(MOVE_BACK_ANIMATION_DURATION).finished
-		for piece_id in self._pieces.keys():
-			var piece = self._pieces[piece_id]
-			var piece_coordinates = self._get_coordinates_from_position(piece.position)
-			if not piece_coordinates in self._floor_coordinates:
-				self._pieces.erase(piece_id)
-				piece.queue_free()
+		self._handle_falling_pieces()
 
 func _animate_event(outcomes: Array):
 	for outcome in outcomes:
@@ -112,7 +107,6 @@ func _animate_piece_rotation(piece: Piece, direction: Vector2, delay: float = 0.
 func _animate_piece_move(piece: Piece, direction: Vector2, delay: float = 0.0, transition: int = Tween.TRANS_CUBIC):
 	var new_position = piece.position + direction * self._tile_size
 	self._tween_move.tween_property(piece, "position", new_position, MOVE_ANIMATION_DURATION).set_trans(transition).set_delay(delay)
-
 
 func _animate(outcome: Dictionary):
 	if outcome["type"] == "push":
@@ -144,6 +138,14 @@ func _animate(outcome: Dictionary):
 		for piece_id in piece_ids:
 			var piece = self.get_piece_by_id(piece_id)
 			self._tween_rotate.tween_property(piece, "rotation", 2*PI, 1).set_trans(Tween.TRANS_BACK)
+
+func _handle_falling_pieces():
+	for piece_id in self._pieces.keys():
+		var piece = self._pieces[piece_id]
+		var piece_coordinates = self._get_coordinates_from_position(piece.position)
+		if not piece_coordinates in self._floor_coordinates:
+			self._pieces.erase(piece_id)
+			piece.queue_free()
 
 func _get_position_on_grid(coordinates: Vector2) -> Vector2:
 	return Vector2(self._tile_size/2, self._tile_size/2) + coordinates * self._tile_size	
