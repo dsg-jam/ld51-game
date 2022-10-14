@@ -31,9 +31,7 @@ func _ready():
 	self._draw_board()
 
 func get_piece_by_id(piece_id: String) -> Piece:
-	if not piece_id in self._pieces:
-		return null
-	return self._pieces[piece_id]
+	return self._pieces.get(piece_id)
 
 func get_sorted_player_pieces() -> Array[String]:
 	var piece_ids = self._pieces.keys().filter(self._filter_player_pieces)
@@ -160,11 +158,12 @@ func _draw_board():
 	for tile in GlobalVariables.map.get_tiles():
 		# TODO: Set tile texture
 		var tile_type = tile.get_tile_type()
-		if tile_type != "floor":
-			continue
 		var tile_position = tile.get_position().get_vec()
-		self._floor_coordinates.append(tile_position)
 		var new_tile = tile_prefab.instantiate()
+		if tile_type == "floor":
+			self._floor_coordinates.append(tile_position)
+		else:
+			new_tile.set_void_texture()
 		new_tile.scale_texture(self._tile_size)
 		add_child(new_tile)
 		new_tile.position = tile_position * self._tile_size
