@@ -12,6 +12,7 @@ const directions = {
 const Piece = preload("res://scripts/piece.gd")
 
 var _pieces: Dictionary
+var _floor_coordinates: Array[Vector2]
 var _tile_size: float
 var _tween_move: Tween
 var _tween_move_back: Tween
@@ -30,7 +31,7 @@ func _ready():
 	self._draw_board()
 
 func get_piece_by_id(piece_id: String) -> Piece:
-	return self._pieces[piece_id]
+	return self._pieces.get(piece_id)
 
 func get_sorted_player_pieces() -> Array[String]:
 	var piece_ids = self._pieces.keys().filter(self._filter_player_pieces)
@@ -91,6 +92,7 @@ func animate_events(events: Array):
 		if self._tween_move_back.is_valid():
 			self._tween_move_back.play()
 			await self._tween_move_back.tween_interval(MOVE_BACK_ANIMATION_DURATION).finished
+		self._handle_falling_pieces()
 
 func _animate_event(outcomes: Array):
 	for outcome in outcomes:
@@ -103,7 +105,6 @@ func _animate_piece_rotation(piece: Piece, direction: Vector2, delay: float = 0.
 func _animate_piece_move(piece: Piece, direction: Vector2, delay: float = 0.0, transition: int = Tween.TRANS_CUBIC):
 	var new_position = piece.position + direction * self._tile_size
 	self._tween_move.tween_property(piece, "position", new_position, MOVE_ANIMATION_DURATION).set_trans(transition).set_delay(delay)
-
 
 func _animate(outcome: Dictionary):
 	if outcome["type"] == "push":
@@ -136,8 +137,19 @@ func _animate(outcome: Dictionary):
 			var piece = self.get_piece_by_id(piece_id)
 			self._tween_rotate.tween_property(piece, "rotation", 2*PI, 1).set_trans(Tween.TRANS_BACK)
 
+func _handle_falling_pieces():
+	for piece_id in self._pieces.keys():
+		var piece = self._pieces[piece_id]
+		var piece_coordinates = self._get_coordinates_from_position(piece.position)
+		if not piece_coordinates in self._floor_coordinates:
+			self._pieces.erase(piece_id)
+			piece.queue_free()
+
 func _get_position_on_grid(coordinates: Vector2) -> Vector2:
 	return Vector2(self._tile_size/2, self._tile_size/2) + coordinates * self._tile_size	
+
+func _get_coordinates_from_position(grid_position: Vector2) -> Vector2:
+	return (grid_position - Vector2(self._tile_size/2, self._tile_size/2)) / self._tile_size
 
 func _on_click(piece_id, piece_player_id):
 	emit_signal("update_selected_piece", piece_id, piece_player_id)
@@ -146,10 +158,12 @@ func _draw_board():
 	for tile in GlobalVariables.map.get_tiles():
 		# TODO: Set tile texture
 		var tile_type = tile.get_tile_type()
-		if tile_type != "floor":
-			continue
 		var tile_position = tile.get_position().get_vec()
 		var new_tile = tile_prefab.instantiate()
+		if tile_type == "floor":
+			self._floor_coordinates.append(tile_position)
+		else:
+			new_tile.set_void_texture()
 		new_tile.scale_texture(self._tile_size)
 		add_child(new_tile)
 		new_tile.position = tile_position * self._tile_size

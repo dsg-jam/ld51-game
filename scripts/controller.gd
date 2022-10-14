@@ -1,7 +1,7 @@
 extends Node2D
 
 enum ACTIONS {NO_ACTION, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT, MOVE_UP}
-enum STATES {AWAITING_ROUND, AWAITING_RESULT}
+enum STATES {AWAITING_ROUND, ONGOING_ROUND, AWAITING_RESULT, ONGOING_ANIMATION}
 
 const MAX_MOVES: int = 5
 const Piece = preload("res://scripts/piece.gd")
@@ -38,6 +38,8 @@ func _process(_delta):
 	self._update_labels()
 
 func _input(_event):
+	if self._current_state != STATES.ONGOING_ROUND:
+		return
 	if Input.is_action_just_pressed("MOVE_DOWN"):
 		self._append_move(ACTIONS.MOVE_DOWN)
 	elif Input.is_action_just_pressed("MOVE_LEFT"):
@@ -63,9 +65,11 @@ func _on_ws_received_message(_msg_type: String) -> void:
 			DSGMessageType.ROUND_START:
 				if self._current_state == STATES.AWAITING_ROUND:
 					self._start_round(msg["payload"])
+					self._current_state = STATES.ONGOING_ROUND
 			DSGMessageType.ROUND_RESULT:
 				if self._current_state == STATES.AWAITING_RESULT:
 					self._animate_round(msg["payload"])
+					self._current_state = STATES.ONGOING_ANIMATION
 
 func _start_round(payload: Dictionary):
 	self._next_moves = []
@@ -134,6 +138,8 @@ func _get_next_piece_id() -> String:
 	return sorted[next_idx]
 
 func _update_lights():
+	if self._current_state != STATES.ONGOING_ROUND:
+		return
 	self._board.turn_all_player_piece_lights_on(self._selectable_light_intensity)
 	var piece: Piece = self._board.get_piece_by_id(self._selected_piece_id)
 	if piece != null:
