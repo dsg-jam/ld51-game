@@ -113,13 +113,12 @@ func _append_move(action: ACTIONS):
 
 func _on_timer_timeout():
 	$GongAudio.play()
-	if DSGNetwork.is_online():
-		DSGNetwork.send({
-			"type": DSGMessageType.PLAYER_MOVES,
-			"payload": {
-				"moves": self._next_moves
-			}
-		})
+	DSGNetwork.send({
+		"type": DSGMessageType.PLAYER_MOVES,
+		"payload": {
+			"moves": self._next_moves
+		}
+	})
 	self._current_state = STATES.AWAITING_RESULT
 	self._board.turn_all_piece_lights_off()
 

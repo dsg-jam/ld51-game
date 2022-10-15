@@ -1,9 +1,25 @@
-[gd_scene load_steps=3 format=3 uid="uid://4rmus8xw4nio"]
+[gd_scene load_steps=5 format=3 uid="uid://4rmus8xw4nio"]
 
 [ext_resource type="Script" path="res://scripts/lobby.gd" id="1_ykju5"]
 [ext_resource type="FontFile" uid="uid://ddtswll5v6p3s" path="res://assets/font/Stick-Regular.ttf" id="2_ery7r"]
 
-[node name="Control" type="Control" node_paths=PackedStringArray("_start_button", "_label_id_value", "_label_amount_of_players", "_label_players", "_map_list")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m5261"]
+bg_color = Color(0, 0, 0, 0.768627)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jq6nn"]
+bg_color = Color(0.996078, 0.815686, 0.619608, 1)
+border_width_left = 12
+border_width_top = 12
+border_width_right = 12
+border_width_bottom = 12
+border_color = Color(0.94902, 0.623529, 0.184314, 1)
+border_blend = true
+corner_radius_top_left = 32
+corner_radius_top_right = 32
+corner_radius_bottom_right = 32
+corner_radius_bottom_left = 32
+
+[node name="Control" type="Control" node_paths=PackedStringArray("_start_button", "_label_id_value", "_label_amount_of_players", "_label_players", "_map_list", "_pop_up")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -18,8 +34,10 @@ _label_id_value = NodePath("ColorRect/VBoxContainer/GameInfo/IDValue")
 _label_amount_of_players = NodePath("ColorRect/VBoxContainer/PlayerInfo/LableAmountOfPlyers")
 _label_players = NodePath("ColorRect/VBoxContainer/PlayerInfo/LablePlayers")
 _map_list = NodePath("ColorRect/VBoxContainer/MapSelection/ScrollContainer/MapsList")
+_pop_up = NodePath("ColorRect/PopUp")
 
 [node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -30,6 +48,7 @@ size_flags_vertical = 3
 color = Color(0.996078, 0.815686, 0.619608, 1)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ColorRect"]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -38,6 +57,7 @@ grow_vertical = 2
 alignment = 1
 
 [node name="GameInfo" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
+layout_mode = 2
 offset_left = 359.0
 offset_top = 51.0
 offset_right = 792.0
@@ -47,6 +67,7 @@ size_flags_vertical = 6
 theme_override_constants/separation = 16
 
 [node name="IDLabel" type="Label" parent="ColorRect/VBoxContainer/GameInfo"]
+layout_mode = 2
 offset_top = 2.0
 offset_right = 143.0
 offset_bottom = 53.0
@@ -60,6 +81,7 @@ theme_override_font_sizes/font_size = 32
 text = "Game ID: "
 
 [node name="IDValue" type="Label" parent="ColorRect/VBoxContainer/GameInfo"]
+layout_mode = 2
 offset_left = 159.0
 offset_top = 2.0
 offset_right = 335.0
@@ -74,6 +96,7 @@ theme_override_font_sizes/font_size = 32
 text = "00000001"
 
 [node name="CopyButton" type="Button" parent="ColorRect/VBoxContainer/GameInfo"]
+layout_mode = 2
 offset_left = 351.0
 offset_right = 433.0
 offset_bottom = 56.0
@@ -82,6 +105,7 @@ theme_override_font_sizes/font_size = 32
 text = "Copy"
 
 [node name="PlayerInfo" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
+layout_mode = 2
 offset_left = 435.0
 offset_top = 163.0
 offset_right = 716.0
@@ -90,6 +114,7 @@ size_flags_horizontal = 4
 size_flags_vertical = 3
 
 [node name="LablePlayers" type="Label" parent="ColorRect/VBoxContainer/PlayerInfo"]
+layout_mode = 2
 offset_top = 54.0
 offset_right = 255.0
 offset_bottom = 105.0
@@ -103,6 +128,7 @@ theme_override_font_sizes/font_size = 32
 text = "Players in lobby: "
 
 [node name="LableAmountOfPlyers" type="Label" parent="ColorRect/VBoxContainer/PlayerInfo"]
+layout_mode = 2
 offset_left = 259.0
 offset_top = 54.0
 offset_right = 281.0
@@ -117,6 +143,7 @@ theme_override_font_sizes/font_size = 32
 text = "1"
 
 [node name="MapSelection" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
+layout_mode = 2
 offset_top = 326.0
 offset_right = 1152.0
 offset_bottom = 485.0
@@ -125,12 +152,14 @@ alignment = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="ColorRect/VBoxContainer/MapSelection"]
 custom_minimum_size = Vector2i(512, 0)
+layout_mode = 2
 offset_left = 320.0
 offset_right = 832.0
 offset_bottom = 159.0
 horizontal_scroll_mode = 3
 
 [node name="MapsList" type="ItemList" parent="ColorRect/VBoxContainer/MapSelection/ScrollContainer"]
+layout_mode = 2
 offset_right = 512.0
 offset_bottom = 159.0
 size_flags_horizontal = 3
@@ -139,6 +168,7 @@ theme_override_fonts/font = ExtResource("2_ery7r")
 theme_override_font_sizes/font_size = 32
 
 [node name="StartGame" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
+layout_mode = 2
 offset_left = 320.0
 offset_top = 489.0
 offset_right = 832.0
@@ -148,6 +178,7 @@ size_flags_vertical = 3
 
 [node name="StartGameButton" type="Button" parent="ColorRect/VBoxContainer/StartGame"]
 custom_minimum_size = Vector2i(512, 0)
+layout_mode = 2
 offset_top = 51.0
 offset_right = 512.0
 offset_bottom = 107.0
@@ -156,6 +187,49 @@ size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("2_ery7r")
 theme_override_font_sizes/font_size = 32
 text = "start game"
+
+[node name="PopUp" type="Panel" parent="ColorRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_m5261")
+
+[node name="Panel" type="Panel" parent="ColorRect/PopUp"]
+custom_minimum_size = Vector2i(512, 128)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_jq6nn")
+
+[node name="Label" type="Label" parent="ColorRect/PopUp/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -183.5
+offset_top = -25.5
+offset_right = 183.5
+offset_bottom = 25.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.458824, 0.384314, 0.305882, 1)
+theme_override_fonts/font = ExtResource("2_ery7r")
+theme_override_font_sizes/font_size = 32
+text = "Establishing connection..."
 
 [connection signal="pressed" from="ColorRect/VBoxContainer/GameInfo/CopyButton" to="." method="_on_copy_button_pressed"]
 [connection signal="item_clicked" from="ColorRect/VBoxContainer/MapSelection/ScrollContainer/MapsList" to="." method="_on_maps_list_item_clicked"]

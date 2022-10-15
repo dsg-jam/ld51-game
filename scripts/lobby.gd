@@ -17,6 +17,7 @@ var _selected_map_idx: int = -1
 @export var _label_amount_of_players: Label
 @export var _label_players: Label
 @export var _map_list: ItemList
+@export var _pop_up: Panel
 
 @onready var _board_scene = preload("res://scenes/board_game.tscn")
 
@@ -24,8 +25,8 @@ func _ready():
 	self._display_maps()
 	self._update_labels()
 	DSGNetwork.message_received.connect(_on_ws_received_message)
-	var ok := DSGNetwork.connect_to_lobby(GlobalVariables.id)
-	assert(ok)
+	DSGNetwork.connected_to_server.connect(_on_ws_connected)
+	DSGNetwork.connect_to_lobby(GlobalVariables.id)
 
 func _on_start_game_button_pressed():
 	if self._selected_map_idx < 0:
@@ -39,6 +40,9 @@ func _on_start_game_button_pressed():
 		}
 	}
 	DSGNetwork.send(start_message)
+
+func _on_ws_connected():
+	self._pop_up.set_visible(false)
 
 func _on_ws_received_message(_msg_type: String) -> void:
 	while true:
