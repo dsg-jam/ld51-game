@@ -18,16 +18,28 @@ var _selected_map_idx: int = -1
 @export var _label_players: Label
 @export var _map_list: ItemList
 @export var _pop_up: Panel
+@export var _info: Label
 
 @onready var _board_scene = preload("res://scenes/board_game.tscn")
 
 func _ready():
+	DSGNetwork.message_received.connect(_on_ws_received_message)
+	DSGNetwork.connected_to_server.connect(_on_ws_connected)
+	self._setup_lobby()
+
+func _setup_lobby():
 	self._display_maps()
 	self._update_labels()
 	self._start_button.set_visible(false)
-	DSGNetwork.message_received.connect(_on_ws_received_message)
-	DSGNetwork.connected_to_server.connect(_on_ws_connected)
-	DSGNetwork.connect_to_lobby(GlobalVariables.id)
+	if not DSGNetwork.is_online():
+		DSGNetwork.connect_to_lobby(GlobalVariables.id)
+		return
+	self._info.text = "Player %s has won!" % GlobalVariables.get_player_color(GlobalVariables.winner_id)
+	if not GlobalVariables.is_host:
+		self._setup_non_host()
+	self._pop_up.set_visible(false)
+	self._amount_of_players = len(GlobalVariables.players)
+	self._update_labels()
 
 func _on_start_game_button_pressed():
 	if self._selected_map_idx < 0:
@@ -65,6 +77,7 @@ func _server_hello(payload: Variant):
 	GlobalVariables.player_id = player["id"]
 	GlobalVariables.player_number = player["number"]
 	GlobalVariables.session_id = payload["session_id"]
+	self._info.text = "Welcome! You play %s." % GlobalVariables.COLOR_MAPPING[GlobalVariables.player_number]
 
 func _player_joined(_payload: Variant):
 	self._amount_of_players += 1
@@ -74,7 +87,7 @@ func _server_start_game(payload: Dictionary):
 	GlobalVariables.map = Utils.parse_dict_to_map(payload)
 	var players = payload["players"]
 	for player in players:
-		GlobalVariables.players[player["id"]] = player["number"]
+		GlobalVariables.players[player["id"]] = int(player["number"])
 	GlobalVariables.pieces = payload["pieces"]
 	get_tree().change_scene_to_packed(self._board_scene)
 
@@ -88,7 +101,8 @@ func _setup_non_host():
 func _update_labels():
 	self._label_id_value.text = GlobalVariables.id
 	self._label_amount_of_players.text = str(self._amount_of_players)
-	self._start_button.set_visible(self._amount_of_players > 1)
+	if GlobalVariables.is_host:
+		self._start_button.set_visible(self._amount_of_players > 1)
 
 func _display_maps():
 	for map in MapsDb.MAPS:

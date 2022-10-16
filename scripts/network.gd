@@ -53,8 +53,8 @@ func clear() -> void:
 	last_state = socket.get_ready_state()
 
 
-func get_socket() -> WebSocketPeer:
-	return socket
+func is_online() -> bool:
+	return last_state == WebSocketPeer.STATE_OPEN
 
 
 func poll() -> void:

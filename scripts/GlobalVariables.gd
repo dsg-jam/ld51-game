@@ -18,6 +18,10 @@ var is_host: bool = true
 var map: BoardPlatform = null
 var players: Dictionary = {}
 var pieces: Array = []
+var winner_id: String = ""
 
-static func get_piece_image(piece_player_number: int) -> ImageTexture:
+func get_piece_image(piece_player_number: int) -> ImageTexture:
 	return load(PLAYER_ASSET_PATH % COLOR_MAPPING[piece_player_number])
+
+func get_player_color(player_id: String) -> String:
+	return COLOR_MAPPING[players[player_id]]

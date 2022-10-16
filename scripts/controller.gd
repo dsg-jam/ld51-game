@@ -91,6 +91,9 @@ func _place_pieces(pieces: Array):
 
 func _animate_round(payload: Dictionary):
 	await self._board.animate_events(payload["timeline"])
+	if not payload["game_over"] == null:
+		GlobalVariables.winner_id = payload["game_over"]["winner_player_id"]
+		get_tree().change_scene_to_file("res://scenes/lobby.tscn")
 	self._current_state = STATES.AWAITING_ROUND
 	DSGNetwork.send({
 		"type": DSGMessageType.READY_FOR_NEXT_ROUND,

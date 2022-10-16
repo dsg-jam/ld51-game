@@ -147,10 +147,10 @@ func _handle_falling_pieces():
 			piece.queue_free()
 
 func _get_position_on_grid(coordinates: Vector2) -> Vector2:
-	return Vector2(self._tile_size/2, self._tile_size/2) + coordinates * self._tile_size	
+	return Vector2(self._tile_size/2.0, self._tile_size/2.0) + coordinates * self._tile_size	
 
 func _get_coordinates_from_position(grid_position: Vector2) -> Vector2:
-	return (grid_position - Vector2(self._tile_size/2, self._tile_size/2)) / self._tile_size
+	return (grid_position - Vector2(self._tile_size/2.0, self._tile_size/2.0)) / self._tile_size
 
 func _on_click(piece_id, piece_player_id):
 	emit_signal("update_selected_piece", piece_id, piece_player_id)
@@ -180,4 +180,4 @@ func _get_tile_size() -> float:
 		if y > max_width:
 			max_width = y
 	max_width += 1
-	return min(texture.polygon[2].x, texture.polygon[2].y)/max_width
+	return roundf(min(texture.polygon[2].x, texture.polygon[2].y)/max_width)
