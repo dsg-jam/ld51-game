@@ -65,6 +65,7 @@ func place_piece(piece_id: String, player_id: String, piece_position: Vector2):
 		self.get_piece_by_id(piece_id).position = self._get_position_on_grid(piece_position)
 		return
 	var new_piece = piece_prefab.instantiate()
+	new_piece.set_texture(GlobalVariables.players[player_id])
 	var piece_scale = min(
 		self._tile_size / new_piece.get_node("Texture").get_rect().size.x,
 		self._tile_size / new_piece.get_node("Texture").get_rect().size.y

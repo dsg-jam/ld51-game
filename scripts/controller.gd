@@ -30,6 +30,7 @@ func _ready():
 	DSGNetwork.message_received.connect(self._on_ws_received_message)
 	self._board.update_selected_piece.connect(self._on_update_selected_piece)
 	self._current_state = STATES.AWAITING_ROUND
+	self._place_pieces(GlobalVariables.pieces)
 
 	# catch up on all the messages we missed while loading
 	self._on_ws_received_message("")
@@ -80,10 +81,13 @@ func _start_round(payload: Dictionary):
 	self._round_number = payload["round_number"]
 	self._timer.start(payload["round_duration"])
 	var pieces = payload["board_state"]
+	self._place_pieces(pieces)
+	self._board.turn_all_player_piece_lights_on(self._selectable_light_intensity)
+
+func _place_pieces(pieces: Array):
 	for piece in pieces:
 		var piece_pos = Position.get_obj_from_dict(piece["position"])
 		self._board.place_piece(piece["piece_id"], piece["player_id"], piece_pos.get_vec())
-	self._board.turn_all_player_piece_lights_on(self._selectable_light_intensity)
 
 func _animate_round(payload: Dictionary):
 	await self._board.animate_events(payload["timeline"])

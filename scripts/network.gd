@@ -4,8 +4,8 @@ signal connected_to_server()
 signal connection_closed()
 signal message_received(message: String)
 
-const SERVER_USE_TLS: bool = true
-const SERVER_HOST: String = "51.jam.dsg.link"
+const SERVER_USE_TLS: bool = false
+const SERVER_HOST: String = "127.0.0.1:8000"
 
 var socket := WebSocketPeer.new()
 var last_state = WebSocketPeer.STATE_CLOSED

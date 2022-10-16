@@ -56,8 +56,7 @@ func _on_ws_received_message(_msg_type: String) -> void:
 			DSGMessageType.PLAYER_JOINED:
 				self._player_joined(msg["payload"])
 			DSGMessageType.SERVER_START_GAME:
-				GlobalVariables.map = Utils.parse_dict_to_map(msg["payload"])
-				get_tree().change_scene_to_packed(self._board_scene)
+				self._server_start_game(msg["payload"])
 
 func _server_hello(payload: Variant):
 	if not payload["is_host"]:
@@ -65,10 +64,19 @@ func _server_hello(payload: Variant):
 	var player = payload["player"]
 	GlobalVariables.player_id = player["id"]
 	GlobalVariables.player_number = player["number"]
+	GlobalVariables.session_id = payload["session_id"]
 
 func _player_joined(_payload: Variant):
 	self._amount_of_players += 1
 	self._update_labels()
+
+func _server_start_game(payload: Dictionary):
+	GlobalVariables.map = Utils.parse_dict_to_map(payload)
+	var players = payload["players"]
+	for player in players:
+		GlobalVariables.players[player["id"]] = player["number"]
+	GlobalVariables.pieces = payload["pieces"]
+	get_tree().change_scene_to_packed(self._board_scene)
 
 func _setup_non_host():
 	self._start_button.queue_free()
