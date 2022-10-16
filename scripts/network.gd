@@ -53,8 +53,8 @@ func clear() -> void:
 	last_state = socket.get_ready_state()
 
 
-func get_socket() -> WebSocketPeer:
-	return socket
+func is_online() -> bool:
+	return last_state == WebSocketPeer.STATE_OPEN
 
 
 func poll() -> void:
@@ -66,9 +66,7 @@ func poll() -> void:
 		if state == socket.STATE_OPEN:
 			connected_to_server.emit()
 		elif state == socket.STATE_CLOSED:
-			print(socket.get_close_code())
-			print(socket.get_close_reason())
-			print("closed")
+			print("closed:", socket.get_close_code(), socket.get_close_reason())
 			connection_closed.emit()
 	while socket.get_ready_state() == socket.STATE_OPEN and socket.get_available_packet_count():
 		get_message()

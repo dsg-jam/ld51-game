@@ -15,6 +15,9 @@ func setup(piece_id: String, player_id: String):
 func is_player_owning() -> bool:
 	return self._player_id == GlobalVariables.player_id
 
+func set_texture(player_number: int):
+	$Texture.texture = GlobalVariables.get_piece_image(player_number)
+
 func turn_light_on(intensity: float):
 	self._light_source.set_energy(intensity)
 	self._light_source.set_enabled(true)

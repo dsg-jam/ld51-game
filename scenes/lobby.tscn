@@ -19,7 +19,7 @@ corner_radius_top_right = 32
 corner_radius_bottom_right = 32
 corner_radius_bottom_left = 32
 
-[node name="Control" type="Control" node_paths=PackedStringArray("_start_button", "_label_id_value", "_label_amount_of_players", "_label_players", "_map_list", "_pop_up")]
+[node name="Control" type="Control" node_paths=PackedStringArray("_start_button", "_label_id_value", "_label_amount_of_players", "_map_list", "_pop_up", "_info")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,9 +32,9 @@ script = ExtResource("1_ykju5")
 _start_button = NodePath("ColorRect/VBoxContainer/StartGame/StartGameButton")
 _label_id_value = NodePath("ColorRect/VBoxContainer/GameInfo/IDValue")
 _label_amount_of_players = NodePath("ColorRect/VBoxContainer/PlayerInfo/LableAmountOfPlyers")
-_label_players = NodePath("ColorRect/VBoxContainer/PlayerInfo/LablePlayers")
 _map_list = NodePath("ColorRect/VBoxContainer/MapSelection/ScrollContainer/MapsList")
 _pop_up = NodePath("ColorRect/PopUp")
+_info = NodePath("ColorRect/VBoxContainer/LobbyInfo/LabelInfo")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 1
@@ -59,9 +59,9 @@ alignment = 1
 [node name="GameInfo" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
 layout_mode = 2
 offset_left = 359.0
-offset_top = 51.0
+offset_top = 35.0
 offset_right = 792.0
-offset_bottom = 107.0
+offset_bottom = 91.0
 size_flags_horizontal = 4
 size_flags_vertical = 6
 theme_override_constants/separation = 16
@@ -104,20 +104,42 @@ theme_override_fonts/font = ExtResource("2_ery7r")
 theme_override_font_sizes/font_size = 32
 text = "Copy"
 
+[node name="LobbyInfo" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
+layout_mode = 2
+offset_left = 575.0
+offset_top = 130.0
+offset_right = 576.0
+offset_bottom = 256.0
+size_flags_horizontal = 4
+size_flags_vertical = 3
+
+[node name="LabelInfo" type="Label" parent="ColorRect/VBoxContainer/LobbyInfo"]
+layout_mode = 2
+offset_top = 39.0
+offset_right = 1.0
+offset_bottom = 87.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+theme_override_colors/font_color = Color(0.458824, 0.384314, 0.305882, 1)
+theme_override_fonts/font = ExtResource("2_ery7r")
+theme_override_font_sizes/font_size = 32
+
 [node name="PlayerInfo" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
 layout_mode = 2
 offset_left = 435.0
-offset_top = 163.0
+offset_top = 260.0
 offset_right = 716.0
-offset_bottom = 322.0
+offset_bottom = 387.0
 size_flags_horizontal = 4
 size_flags_vertical = 3
 
 [node name="LablePlayers" type="Label" parent="ColorRect/VBoxContainer/PlayerInfo"]
 layout_mode = 2
-offset_top = 54.0
+offset_top = 38.0
 offset_right = 255.0
-offset_bottom = 105.0
+offset_bottom = 89.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
@@ -130,9 +152,9 @@ text = "Players in lobby: "
 [node name="LableAmountOfPlyers" type="Label" parent="ColorRect/VBoxContainer/PlayerInfo"]
 layout_mode = 2
 offset_left = 259.0
-offset_top = 54.0
+offset_top = 38.0
 offset_right = 281.0
-offset_bottom = 105.0
+offset_bottom = 89.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
@@ -144,9 +166,9 @@ text = "1"
 
 [node name="MapSelection" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
 layout_mode = 2
-offset_top = 326.0
+offset_top = 391.0
 offset_right = 1152.0
-offset_bottom = 485.0
+offset_bottom = 517.0
 size_flags_vertical = 3
 alignment = 1
 
@@ -155,13 +177,13 @@ custom_minimum_size = Vector2i(512, 0)
 layout_mode = 2
 offset_left = 320.0
 offset_right = 832.0
-offset_bottom = 159.0
+offset_bottom = 126.0
 horizontal_scroll_mode = 3
 
 [node name="MapsList" type="ItemList" parent="ColorRect/VBoxContainer/MapSelection/ScrollContainer"]
 layout_mode = 2
 offset_right = 512.0
-offset_bottom = 159.0
+offset_bottom = 126.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("2_ery7r")
@@ -169,14 +191,15 @@ theme_override_font_sizes/font_size = 32
 
 [node name="StartGame" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
 layout_mode = 2
-offset_left = 320.0
-offset_top = 489.0
-offset_right = 832.0
+offset_left = 576.0
+offset_top = 521.0
+offset_right = 576.0
 offset_bottom = 648.0
 size_flags_horizontal = 4
 size_flags_vertical = 3
 
 [node name="StartGameButton" type="Button" parent="ColorRect/VBoxContainer/StartGame"]
+visible = false
 custom_minimum_size = Vector2i(512, 0)
 layout_mode = 2
 offset_top = 51.0

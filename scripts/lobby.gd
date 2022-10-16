@@ -15,18 +15,30 @@ var _selected_map_idx: int = -1
 @export var _start_button: Button
 @export var _label_id_value: Label
 @export var _label_amount_of_players: Label
-@export var _label_players: Label
 @export var _map_list: ItemList
 @export var _pop_up: Panel
+@export var _info: Label
 
 @onready var _board_scene = preload("res://scenes/board_game.tscn")
 
 func _ready():
-	self._display_maps()
-	self._update_labels()
 	DSGNetwork.message_received.connect(_on_ws_received_message)
 	DSGNetwork.connected_to_server.connect(_on_ws_connected)
-	DSGNetwork.connect_to_lobby(GlobalVariables.id)
+	self._setup_lobby()
+
+func _setup_lobby():
+	self._display_maps()
+	self._update_labels()
+	self._start_button.set_visible(false)
+	if not DSGNetwork.is_online():
+		DSGNetwork.connect_to_lobby(GlobalVariables.id)
+		return
+	self._info.text = "Player %s has won!" % GlobalVariables.get_player_color(GlobalVariables.winner_id)
+	if not GlobalVariables.is_host:
+		self._setup_non_host()
+	self._pop_up.set_visible(false)
+	self._amount_of_players = len(GlobalVariables.players)
+	self._update_labels()
 
 func _on_start_game_button_pressed():
 	if self._selected_map_idx < 0:
@@ -55,28 +67,41 @@ func _on_ws_received_message(_msg_type: String) -> void:
 			DSGMessageType.PLAYER_JOINED:
 				self._player_joined(msg["payload"])
 			DSGMessageType.SERVER_START_GAME:
-				GlobalVariables.map = Utils.parse_dict_to_map(msg["payload"])
-				get_tree().change_scene_to_packed(self._board_scene)
+				self._server_start_game(msg["payload"])
 
 func _server_hello(payload: Variant):
 	if not payload["is_host"]:
 		self._setup_non_host()
-	GlobalVariables.player_id = payload["player_id"]
+	var player = payload["player"]
+	GlobalVariables.player_id = player["id"]
+	GlobalVariables.player_number = player["number"]
+	GlobalVariables.session_id = payload["session_id"]
+	self._amount_of_players = len(payload["other_players"]) + 1
+	self._update_labels()
+	self._info.text = "Welcome! You play %s." % GlobalVariables.COLOR_MAPPING[GlobalVariables.player_number]
 
 func _player_joined(_payload: Variant):
 	self._amount_of_players += 1
 	self._update_labels()
 
+func _server_start_game(payload: Dictionary):
+	GlobalVariables.map = Utils.parse_dict_to_map(payload)
+	var players = payload["players"]
+	for player in players:
+		GlobalVariables.players[player["id"]] = int(player["number"])
+	GlobalVariables.pieces = payload["pieces"]
+	get_tree().change_scene_to_packed(self._board_scene)
+
 func _setup_non_host():
 	self._start_button.queue_free()
-	self._label_amount_of_players.visible = false
-	self._label_players.visible = false
 	self._map_list.visible = false
 	GlobalVariables.is_host = false
 
 func _update_labels():
 	self._label_id_value.text = GlobalVariables.id
 	self._label_amount_of_players.text = str(self._amount_of_players)
+	if GlobalVariables.is_host:
+		self._start_button.set_visible(self._amount_of_players > 1)
 
 func _display_maps():
 	for map in MapsDb.MAPS:

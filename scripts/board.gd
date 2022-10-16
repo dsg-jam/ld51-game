@@ -62,9 +62,10 @@ func turn_all_piece_lights_off():
 
 func place_piece(piece_id: String, player_id: String, piece_position: Vector2):
 	if piece_id in self._pieces:
-		self._pieces[piece_id].position = self._get_position_on_grid(piece_position)
+		self.get_piece_by_id(piece_id).position = self._get_position_on_grid(piece_position)
 		return
 	var new_piece = piece_prefab.instantiate()
+	new_piece.set_texture(GlobalVariables.players[player_id])
 	var piece_scale = min(
 		self._tile_size / new_piece.get_node("Texture").get_rect().size.x,
 		self._tile_size / new_piece.get_node("Texture").get_rect().size.y
@@ -139,17 +140,17 @@ func _animate(outcome: Dictionary):
 
 func _handle_falling_pieces():
 	for piece_id in self._pieces.keys():
-		var piece = self._pieces[piece_id]
+		var piece = self.get_piece_by_id(piece_id)
 		var piece_coordinates = self._get_coordinates_from_position(piece.position)
 		if not piece_coordinates in self._floor_coordinates:
 			self._pieces.erase(piece_id)
 			piece.queue_free()
 
 func _get_position_on_grid(coordinates: Vector2) -> Vector2:
-	return Vector2(self._tile_size/2, self._tile_size/2) + coordinates * self._tile_size	
+	return Vector2(self._tile_size/2.0, self._tile_size/2.0) + coordinates * self._tile_size	
 
 func _get_coordinates_from_position(grid_position: Vector2) -> Vector2:
-	return (grid_position - Vector2(self._tile_size/2, self._tile_size/2)) / self._tile_size
+	return (grid_position - Vector2(self._tile_size/2.0, self._tile_size/2.0)) / self._tile_size
 
 func _on_click(piece_id, piece_player_id):
 	emit_signal("update_selected_piece", piece_id, piece_player_id)
@@ -179,4 +180,4 @@ func _get_tile_size() -> float:
 		if y > max_width:
 			max_width = y
 	max_width += 1
-	return min(texture.polygon[2].x, texture.polygon[2].y)/max_width
+	return roundf(min(texture.polygon[2].x, texture.polygon[2].y)/max_width)
