@@ -129,6 +129,7 @@ func _on_timer_timeout():
 			"moves": self._next_moves
 		}
 	})
+	self._board.purge_arrows()
 	self._board.turn_all_piece_lights_off()
 
 func _select_next_piece():

@@ -13,6 +13,7 @@ const Piece = preload("res://scripts/piece.gd")
 
 var _pieces: Dictionary
 var _virtual_piece_positions: Dictionary
+var _move_arrows: Array
 var _floor_coordinates: Array[Vector2]
 var _tile_size: float
 var _tween_move: Tween
@@ -33,15 +34,20 @@ func _ready():
 	self._draw_board()
 
 func place_arrow(piece_id: String, direction: Vector2):
-	var arr = self._arrow.instantiate()
+	var arrow = self._arrow.instantiate()
 	var pos = self._virtual_piece_positions[piece_id]
-	arr.position = self._get_position_on_grid(pos) + self._tile_size * direction / 2.0
-	arr.rotation = Vector2.RIGHT.angle_to(direction)
-	var scale = self._tile_size / arr.get_rect().size.x
-	arr.scale.x = scale
-	arr.scale.y = scale
-	add_child(arr)
+	arrow.position = self._get_position_on_grid(pos) + self._tile_size * direction / 2.0
+	arrow.rotation = Vector2.RIGHT.angle_to(direction)
+	var scale = self._tile_size / arrow.get_rect().size.x
+	arrow.scale = scale * Vector2.ONE
+	add_child(arrow)
+	self._move_arrows.append(arrow)
 	self._virtual_piece_positions[piece_id] += direction
+
+func purge_arrows():
+	for arrow in self._move_arrows:
+		arrow.queue_free()
+	self._move_arrows = []
 
 func get_piece_by_id(piece_id: String) -> Piece:
 	return self._pieces.get(piece_id)
