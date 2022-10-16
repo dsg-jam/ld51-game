@@ -62,7 +62,7 @@ func turn_all_piece_lights_off():
 
 func place_piece(piece_id: String, player_id: String, piece_position: Vector2):
 	if piece_id in self._pieces:
-		self._pieces[piece_id].position = self._get_position_on_grid(piece_position)
+		self.get_piece_by_id(piece_id).position = self._get_position_on_grid(piece_position)
 		return
 	var new_piece = piece_prefab.instantiate()
 	var piece_scale = min(
@@ -139,7 +139,7 @@ func _animate(outcome: Dictionary):
 
 func _handle_falling_pieces():
 	for piece_id in self._pieces.keys():
-		var piece = self._pieces[piece_id]
+		var piece = self.get_piece_by_id(piece_id)
 		var piece_coordinates = self._get_coordinates_from_position(piece.position)
 		if not piece_coordinates in self._floor_coordinates:
 			self._pieces.erase(piece_id)

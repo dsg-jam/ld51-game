@@ -64,12 +64,14 @@ func _on_ws_received_message(_msg_type: String) -> void:
 		match msg["type"]:
 			DSGMessageType.ROUND_START:
 				if self._current_state == STATES.AWAITING_ROUND:
-					self._start_round(msg["payload"])
 					self._current_state = STATES.ONGOING_ROUND
+					self._start_round(msg["payload"])
 			DSGMessageType.ROUND_RESULT:
 				if self._current_state == STATES.AWAITING_RESULT:
-					self._animate_round(msg["payload"])
 					self._current_state = STATES.ONGOING_ANIMATION
+					self._animate_round(msg["payload"])
+			DSGMessageType.ERROR:
+				print("There was an error: ", msg)
 
 func _start_round(payload: Dictionary):
 	self._next_moves = []
@@ -85,11 +87,11 @@ func _start_round(payload: Dictionary):
 
 func _animate_round(payload: Dictionary):
 	await self._board.animate_events(payload["timeline"])
+	self._current_state = STATES.AWAITING_ROUND
 	DSGNetwork.send({
 		"type": DSGMessageType.READY_FOR_NEXT_ROUND,
 		"payload": {}
 	})
-	self._current_state = STATES.AWAITING_ROUND
 
 func _on_update_selected_piece(piece_id, piece_player_id):
 	if GlobalVariables.player_id == piece_player_id:
@@ -113,13 +115,13 @@ func _append_move(action: ACTIONS):
 
 func _on_timer_timeout():
 	$GongAudio.play()
+	self._current_state = STATES.AWAITING_RESULT
 	DSGNetwork.send({
 		"type": DSGMessageType.PLAYER_MOVES,
 		"payload": {
 			"moves": self._next_moves
 		}
 	})
-	self._current_state = STATES.AWAITING_RESULT
 	self._board.turn_all_piece_lights_off()
 
 func _select_next_piece():

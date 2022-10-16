@@ -24,6 +24,7 @@ var _selected_map_idx: int = -1
 func _ready():
 	self._display_maps()
 	self._update_labels()
+	self._start_button.set_visible(false)
 	DSGNetwork.message_received.connect(_on_ws_received_message)
 	DSGNetwork.connected_to_server.connect(_on_ws_connected)
 	DSGNetwork.connect_to_lobby(GlobalVariables.id)
@@ -61,7 +62,9 @@ func _on_ws_received_message(_msg_type: String) -> void:
 func _server_hello(payload: Variant):
 	if not payload["is_host"]:
 		self._setup_non_host()
-	GlobalVariables.player_id = payload["player_id"]
+	var player = payload["player"]
+	GlobalVariables.player_id = player["id"]
+	GlobalVariables.player_number = player["number"]
 
 func _player_joined(_payload: Variant):
 	self._amount_of_players += 1
@@ -77,6 +80,7 @@ func _setup_non_host():
 func _update_labels():
 	self._label_id_value.text = GlobalVariables.id
 	self._label_amount_of_players.text = str(self._amount_of_players)
+	self._start_button.set_visible(self._amount_of_players > 1)
 
 func _display_maps():
 	for map in MapsDb.MAPS:
