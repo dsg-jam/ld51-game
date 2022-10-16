@@ -15,7 +15,6 @@ var _selected_map_idx: int = -1
 @export var _start_button: Button
 @export var _label_id_value: Label
 @export var _label_amount_of_players: Label
-@export var _label_players: Label
 @export var _map_list: ItemList
 @export var _pop_up: Panel
 @export var _info: Label
@@ -77,6 +76,8 @@ func _server_hello(payload: Variant):
 	GlobalVariables.player_id = player["id"]
 	GlobalVariables.player_number = player["number"]
 	GlobalVariables.session_id = payload["session_id"]
+	self._amount_of_players = len(payload["other_players"]) + 1
+	self._update_labels()
 	self._info.text = "Welcome! You play %s." % GlobalVariables.COLOR_MAPPING[GlobalVariables.player_number]
 
 func _player_joined(_payload: Variant):
@@ -93,8 +94,6 @@ func _server_start_game(payload: Dictionary):
 
 func _setup_non_host():
 	self._start_button.queue_free()
-	self._label_amount_of_players.visible = false
-	self._label_players.visible = false
 	self._map_list.visible = false
 	GlobalVariables.is_host = false
 

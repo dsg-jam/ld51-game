@@ -71,8 +71,6 @@ func _on_ws_received_message(_msg_type: String) -> void:
 				if self._current_state == STATES.AWAITING_RESULT:
 					self._current_state = STATES.ONGOING_ANIMATION
 					self._animate_round(msg["payload"])
-			DSGMessageType.ERROR:
-				print("There was an error: ", msg)
 
 func _start_round(payload: Dictionary):
 	self._next_moves = []
@@ -91,14 +89,14 @@ func _place_pieces(pieces: Array):
 
 func _animate_round(payload: Dictionary):
 	await self._board.animate_events(payload["timeline"])
-	if not payload["game_over"] == null:
-		GlobalVariables.winner_id = payload["game_over"]["winner_player_id"]
-		get_tree().change_scene_to_file("res://scenes/lobby.tscn")
 	self._current_state = STATES.AWAITING_ROUND
 	DSGNetwork.send({
 		"type": DSGMessageType.READY_FOR_NEXT_ROUND,
 		"payload": {}
 	})
+	if not payload["game_over"] == null:
+		GlobalVariables.winner_id = payload["game_over"]["winner_player_id"]
+		get_tree().change_scene_to_file("res://scenes/lobby.tscn")
 
 func _on_update_selected_piece(piece_id, piece_player_id):
 	if GlobalVariables.player_id == piece_player_id:

@@ -19,7 +19,7 @@ corner_radius_top_right = 32
 corner_radius_bottom_right = 32
 corner_radius_bottom_left = 32
 
-[node name="Control" type="Control" node_paths=PackedStringArray("_start_button", "_label_id_value", "_label_amount_of_players", "_label_players", "_map_list", "_pop_up", "_info")]
+[node name="Control" type="Control" node_paths=PackedStringArray("_start_button", "_label_id_value", "_label_amount_of_players", "_map_list", "_pop_up", "_info")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,7 +32,6 @@ script = ExtResource("1_ykju5")
 _start_button = NodePath("ColorRect/VBoxContainer/StartGame/StartGameButton")
 _label_id_value = NodePath("ColorRect/VBoxContainer/GameInfo/IDValue")
 _label_amount_of_players = NodePath("ColorRect/VBoxContainer/PlayerInfo/LableAmountOfPlyers")
-_label_players = NodePath("ColorRect/VBoxContainer/PlayerInfo/LablePlayers")
 _map_list = NodePath("ColorRect/VBoxContainer/MapSelection/ScrollContainer/MapsList")
 _pop_up = NodePath("ColorRect/PopUp")
 _info = NodePath("ColorRect/VBoxContainer/LobbyInfo/LabelInfo")
