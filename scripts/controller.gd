@@ -42,15 +42,15 @@ func _input(_event):
 	if self._current_state != STATES.ONGOING_ROUND:
 		return
 	if Input.is_action_just_pressed("MOVE_DOWN"):
-		self._append_move(ACTIONS.MOVE_DOWN)
+		self._append_move(ACTIONS.MOVE_DOWN, Vector2.DOWN)
 	elif Input.is_action_just_pressed("MOVE_LEFT"):
-		self._append_move(ACTIONS.MOVE_LEFT)
+		self._append_move(ACTIONS.MOVE_LEFT, Vector2.LEFT)
 	elif Input.is_action_just_pressed("MOVE_RIGHT"):
-		self._append_move(ACTIONS.MOVE_RIGHT)
+		self._append_move(ACTIONS.MOVE_RIGHT, Vector2.RIGHT)
 	elif Input.is_action_just_pressed("MOVE_UP"):
-		self._append_move(ACTIONS.MOVE_UP)
+		self._append_move(ACTIONS.MOVE_UP, Vector2.UP)
 	elif Input.is_action_just_pressed("NO_ACTION"):
-		self._append_move(ACTIONS.NO_ACTION)
+		self._append_move(ACTIONS.NO_ACTION, Vector2.ZERO)
 	elif Input.is_action_just_pressed("REMOVE_MOVE"):
 		self._remove_latest_move()
 	elif Input.is_action_just_pressed("SELECT_NEXT"):
@@ -107,15 +107,18 @@ func _remove_latest_move():
 	if self._next_moves.size() <= 0:
 		return
 	self._next_moves.pop_back()
+	self._board.remove_latest_arrow()
 	self._moves_left += 1
 
-func _append_move(action: ACTIONS):
+func _append_move(action: ACTIONS, direction: Vector2):
 	if self._selected_piece_id == "" or self._moves_left <= 0:
 		return
 	self._next_moves.append({
 		"piece_id": self._selected_piece_id,
 		"action": ACTIONS.keys()[action].to_lower()
 	})
+	if direction != Vector2.ZERO:
+		self._board.place_arrow(self._selected_piece_id, direction)
 	self._moves_left -= 1
 
 func _on_timer_timeout():
@@ -127,6 +130,7 @@ func _on_timer_timeout():
 			"moves": self._next_moves
 		}
 	})
+	self._board.purge_arrows()
 	self._board.turn_all_piece_lights_off()
 
 func _select_next_piece():

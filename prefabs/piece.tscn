@@ -8,6 +8,7 @@
 size = Vector2(816, 912)
 
 [node name="Area2d" type="Area2D" node_paths=PackedStringArray("_light_source")]
+z_index = 1
 script = ExtResource("1_jfprr")
 _light_source = NodePath("Light")
 
