@@ -12,6 +12,7 @@ const directions = {
 const Piece = preload("res://scripts/piece.gd")
 
 var _pieces: Dictionary
+var _virtual_piece_positions: Dictionary
 var _floor_coordinates: Array[Vector2]
 var _tile_size: float
 var _tween_move: Tween
@@ -25,10 +26,22 @@ var _tween_rotate: Tween
 @onready var texture = $Texture
 @onready var tile_prefab = preload("res://prefabs/tile.tscn")
 @onready var piece_prefab = preload("res://prefabs/piece.tscn")
+@onready var _arrow = preload("res://prefabs/arrow.tscn")
 
 func _ready():	
 	self._tile_size = self._get_tile_size()
 	self._draw_board()
+
+func place_arrow(piece_id: String, direction: Vector2):
+	var arr = self._arrow.instantiate()
+	var pos = self._virtual_piece_positions[piece_id]
+	arr.position = self._get_position_on_grid(pos) + self._tile_size * direction / 2.0
+	arr.rotation = Vector2.RIGHT.angle_to(direction)
+	var scale = self._tile_size / arr.get_rect().size.x
+	arr.scale.x = scale
+	arr.scale.y = scale
+	add_child(arr)
+	self._virtual_piece_positions[piece_id] += direction
 
 func get_piece_by_id(piece_id: String) -> Piece:
 	return self._pieces.get(piece_id)
@@ -61,6 +74,7 @@ func turn_all_piece_lights_off():
 		piece.turn_light_off()
 
 func place_piece(piece_id: String, player_id: String, piece_position: Vector2):
+	self._virtual_piece_positions[piece_id] = piece_position
 	if piece_id in self._pieces:
 		self.get_piece_by_id(piece_id).position = self._get_position_on_grid(piece_position)
 		return

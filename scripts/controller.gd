@@ -43,6 +43,7 @@ func _input(_event):
 		return
 	if Input.is_action_just_pressed("MOVE_DOWN"):
 		self._append_move(ACTIONS.MOVE_DOWN)
+		self._board.place_arrow(self._selected_piece_id, Vector2.DOWN)
 	elif Input.is_action_just_pressed("MOVE_LEFT"):
 		self._append_move(ACTIONS.MOVE_LEFT)
 	elif Input.is_action_just_pressed("MOVE_RIGHT"):
