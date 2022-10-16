@@ -107,6 +107,7 @@ func _remove_latest_move():
 	if self._next_moves.size() <= 0:
 		return
 	self._next_moves.pop_back()
+	self._board.remove_latest_arrow()
 	self._moves_left += 1
 
 func _append_move(action: ACTIONS, direction: Vector2):

@@ -41,13 +41,24 @@ func place_arrow(piece_id: String, direction: Vector2):
 	var scale = self._tile_size / arrow.get_rect().size.x
 	arrow.scale = scale * Vector2.ONE
 	add_child(arrow)
-	self._move_arrows.append(arrow)
+	self._move_arrows.append({
+		"arrow": arrow,
+		"piece_id": piece_id,
+		"direction": direction
+	})
 	self._virtual_piece_positions[piece_id] += direction
 
 func purge_arrows():
-	for arrow in self._move_arrows:
-		arrow.queue_free()
+	for move_arrow in self._move_arrows:
+		move_arrow["arrow"].queue_free()
 	self._move_arrows = []
+
+func remove_latest_arrow():
+	if len(self._move_arrows) < 1:
+		return
+	var move_arrow = self._move_arrows.pop_back()
+	move_arrow["arrow"].queue_free()
+	self._virtual_piece_positions[move_arrow["piece_id"]] -= move_arrow["direction"]
 
 func get_piece_by_id(piece_id: String) -> Piece:
 	return self._pieces.get(piece_id)
