@@ -12,7 +12,6 @@ const directions = {
 const Piece = preload("res://scripts/piece.gd")
 
 var _pieces: Dictionary
-var _virtual_piece_positions: Dictionary
 var _move_arrows: Array
 var _floor_coordinates: Array[Vector2]
 var _tile_size: float
@@ -34,31 +33,30 @@ func _ready():
 	self._draw_board()
 
 func place_arrow(piece_id: String, direction: Vector2):
+	var piece: Piece = self.get_piece_by_id(piece_id)
 	var arrow = self._arrow.instantiate()
-	var pos = self._virtual_piece_positions[piece_id]
-	arrow.position = self._get_position_on_grid(pos) + self._tile_size * direction / 2.0
-	arrow.rotation = Vector2.RIGHT.angle_to(direction)
+	
 	var scale = self._tile_size / arrow.get_rect().size.x
+	arrow.setup(piece_id, direction)
 	arrow.scale = scale * Vector2.ONE
+	arrow.position = self._get_position_on_grid(piece.get_virtual_coordinates()) + self._tile_size * direction / 2.0
+	arrow.rotation = Vector2.RIGHT.angle_to(direction)
 	add_child(arrow)
-	self._move_arrows.append({
-		"arrow": arrow,
-		"piece_id": piece_id,
-		"direction": direction
-	})
-	self._virtual_piece_positions[piece_id] += direction
+	self._move_arrows.append(arrow)
+	piece.add_to_virtual_coordinates(direction)
 
 func purge_arrows():
 	for move_arrow in self._move_arrows:
-		move_arrow["arrow"].queue_free()
+		move_arrow.queue_free()
 	self._move_arrows = []
 
 func remove_latest_arrow():
 	if len(self._move_arrows) < 1:
 		return
 	var move_arrow = self._move_arrows.pop_back()
-	move_arrow["arrow"].queue_free()
-	self._virtual_piece_positions[move_arrow["piece_id"]] -= move_arrow["direction"]
+	var piece = self.get_piece_by_id(move_arrow.get_piece_id())
+	piece.add_to_virtual_coordinates(- move_arrow.get_direction())
+	move_arrow.queue_free()
 
 func get_piece_by_id(piece_id: String) -> Piece:
 	return self._pieces.get(piece_id)
@@ -90,10 +88,11 @@ func turn_all_piece_lights_off():
 	for piece in self._pieces.values():
 		piece.turn_light_off()
 
-func place_piece(piece_id: String, player_id: String, piece_position: Vector2):
-	self._virtual_piece_positions[piece_id] = piece_position
+func place_piece(piece_id: String, player_id: String, piece_coordinates: Vector2):
 	if piece_id in self._pieces:
-		self.get_piece_by_id(piece_id).position = self._get_position_on_grid(piece_position)
+		var piece = self.get_piece_by_id(piece_id)
+		piece.set_coordinates(piece_coordinates)
+		piece.position = self._get_position_on_grid(piece_coordinates)
 		return
 	var new_piece = piece_prefab.instantiate()
 	new_piece.set_texture(GlobalVariables.players[player_id])
@@ -103,8 +102,8 @@ func place_piece(piece_id: String, player_id: String, piece_position: Vector2):
 	)
 	new_piece.scale.x = piece_scale
 	new_piece.scale.y = piece_scale
-	new_piece.setup(piece_id, player_id)
-	new_piece.position = self._get_position_on_grid(piece_position)
+	new_piece.setup(piece_id, player_id, piece_coordinates)
+	new_piece.position = self._get_position_on_grid(piece_coordinates)
 	new_piece.piece_selected.connect(_on_click)
 	add_child(new_piece)
 	self._pieces[piece_id] = new_piece
@@ -145,11 +144,13 @@ func _animate(outcome: Dictionary):
 		var direction = directions[outcome["payload"]["direction"]]
 		self._animate_piece_rotation(pusher_piece, direction)
 		self._animate_piece_move(pusher_piece, direction)
+		pusher_piece.add_to_coordinates(direction)
 		var i = 1
 		for victim_piece_id in victim_piece_ids:
 			var victim_piece = self.get_piece_by_id(victim_piece_id)
 			self._animate_piece_rotation(victim_piece, direction)
 			self._animate_piece_move(victim_piece, direction, 0.125 * i)
+			victim_piece.add_to_coordinates(direction)
 			i += 1
 	elif outcome["type"] == "move_conflict":
 		var new_coordinates = Vector2(outcome["payload"]["collision_point"]["x"], outcome["payload"]["collision_point"]["y"])
@@ -172,16 +173,12 @@ func _animate(outcome: Dictionary):
 func _handle_falling_pieces():
 	for piece_id in self._pieces.keys():
 		var piece = self.get_piece_by_id(piece_id)
-		var piece_coordinates = self._get_coordinates_from_position(piece.position)
-		if not piece_coordinates in self._floor_coordinates:
+		if not piece.get_coordinates() in self._floor_coordinates:
 			self._pieces.erase(piece_id)
 			piece.queue_free()
 
 func _get_position_on_grid(coordinates: Vector2) -> Vector2:
-	return Vector2(self._tile_size/2.0, self._tile_size/2.0) + coordinates * self._tile_size	
-
-func _get_coordinates_from_position(grid_position: Vector2) -> Vector2:
-	return (grid_position - Vector2(self._tile_size/2.0, self._tile_size/2.0)) / self._tile_size
+	return Vector2(self._tile_size/2.0, self._tile_size/2.0) + coordinates * self._tile_size
 
 func _on_click(piece_id, piece_player_id):
 	emit_signal("update_selected_piece", piece_id, piece_player_id)
