@@ -8,7 +8,7 @@ var facing_direction: Vector2 = Vector2.DOWN
 var _coordinates: Vector2
 var _virtual_coordinates: Vector2
 
-@export var _light_source: PointLight2D
+@export var _light_source: Sprite2D
 
 func setup(piece_id: String, player_id: String, coordinates: Vector2):
 	self._piece_id = piece_id
@@ -38,11 +38,11 @@ func set_texture(player_number: int):
 	$Texture.texture = GlobalVariables.get_piece_image(player_number)
 
 func turn_light_on(intensity: float):
-	self._light_source.set_energy(intensity)
-	self._light_source.set_enabled(true)
+	self._light_source.set_modulate(Color(1, 1, 1, intensity))
+	self._light_source.set_visible(true)
 		
 func turn_light_off():
-	self._light_source.set_enabled(false)
+	self._light_source.set_visible(false)
 
 func _input_event(_viewport, event, _shape_idx):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:

@@ -19,10 +19,7 @@ texture = ExtResource("1_iuh12")
 [node name="CollisionShape2d" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_8f7yi")
 
-[node name="Light" type="PointLight2D" parent="."]
-enabled = false
-color = Color(1, 0.878431, 0.686275, 1)
-energy = 0.5
-range_item_cull_mask = 2
+[node name="Light" type="Sprite2D" parent="."]
+visible = false
+modulate = Color(1, 1, 1, 0.498039)
 texture = ExtResource("3_v80cm")
-height = 100.0
