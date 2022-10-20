@@ -27,6 +27,9 @@ var _round_number: int = 0
 @onready var _timer = $Timer
 
 func _ready():
+	var viewport = get_tree().get_root().size
+	position.x = max(viewport.x / 2 - viewport.y / 2, 0)
+	position.y = max(viewport.y / 2 - viewport.x / 2, 0)
 	DSGNetwork.message_received.connect(self._on_ws_received_message)
 	self._board.update_selected_piece.connect(self._on_update_selected_piece)
 	self._current_state = STATES.AWAITING_ROUND

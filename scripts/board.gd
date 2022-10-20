@@ -28,7 +28,10 @@ var _tween_rotate: Tween
 @onready var piece_prefab = preload("res://prefabs/piece.tscn")
 @onready var _arrow = preload("res://prefabs/arrow.tscn")
 
-func _ready():	
+func _ready():
+	var viewport = get_tree().get_root().size
+	var map_size = min(viewport.x, viewport.y)
+	texture.polygon *= Transform2D.IDENTITY * map_size 
 	self._tile_size = self._get_tile_size()
 	self._draw_board()
 

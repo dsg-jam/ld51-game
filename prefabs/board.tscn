@@ -6,4 +6,5 @@
 script = ExtResource("1_fnhnb")
 
 [node name="Texture" type="Polygon2D" parent="."]
-polygon = PackedVector2Array(0, 0, 512, 0, 512, 512, 0, 512)
+color = Color(1, 1, 1, 0)
+polygon = PackedVector2Array(0, 0, 1, 0, 1, 1, 0, 1)
