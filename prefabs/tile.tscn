@@ -1,12 +1,12 @@
 [gd_scene load_steps=3 format=3 uid="uid://g7x2pl77ta40"]
 
 [ext_resource type="Script" path="res://scripts/tile.gd" id="1_s5aot"]
-[ext_resource type="Texture2D" uid="uid://q6c7fhctplst" path="res://assets/background/Grass_Centre_Tile.png" id="1_u8k7t"]
+[ext_resource type="Texture2D" uid="uid://bhroy04o7kp23" path="res://assets/background/Sand_Centre_Tile.png" id="2_il42r"]
 
 [node name="Tile" type="Node2D" node_paths=PackedStringArray("_tile_texture")]
 script = ExtResource("1_s5aot")
 _tile_texture = NodePath("Texture")
 
 [node name="Texture" type="Sprite2D" parent="."]
-texture = ExtResource("1_u8k7t")
+texture = ExtResource("2_il42r")
 centered = false

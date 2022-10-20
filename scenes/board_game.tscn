@@ -5,43 +5,72 @@
 [ext_resource type="FontFile" uid="uid://ddtswll5v6p3s" path="res://assets/font/Stick-Regular.ttf" id="2_n1wtn"]
 [ext_resource type="AudioStream" uid="uid://bnoxq8cy6egds" path="res://assets/sounds/Gong-hit.wav" id="3_oei84"]
 
-[node name="Node2d" type="Node2D"]
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.184314, 0.282353, 0.345098, 1)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-anchors_preset = 10
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
-offset_right = 1152.0
-offset_bottom = 51.0
+anchor_bottom = 1.0
 grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
 offset_right = 1152.0
 offset_bottom = 51.0
 theme_override_constants/separation = 100
 alignment = 1
 
 [node name="TimerLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
 anchors_preset = -1
 offset_left = 11.0
 offset_right = 138.0
 offset_bottom = 51.0
+theme_override_colors/font_color = Color(0.996078, 0.815686, 0.619608, 1)
 theme_override_fonts/font = ExtResource("2_n1wtn")
 theme_override_font_sizes/font_size = 32
 text = "[TIMER]"
 
 [node name="MessageLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
 offset_left = 238.0
 offset_right = 699.0
 offset_bottom = 51.0
+size_flags_vertical = 2
+theme_override_colors/font_color = Color(0.996078, 0.815686, 0.619608, 1)
 theme_override_fonts/font = ExtResource("2_n1wtn")
 theme_override_font_sizes/font_size = 32
 text = "SELECTED PIECE: [PIECE_ID]"
 
 [node name="MovesLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
 anchors_preset = -1
 offset_left = 799.0
 offset_right = 1140.0
 offset_bottom = 51.0
+theme_override_colors/font_color = Color(0.996078, 0.815686, 0.619608, 1)
 theme_override_fonts/font = ExtResource("2_n1wtn")
 theme_override_font_sizes/font_size = 32
 text = "[REMAINING_MOVES]"
@@ -53,7 +82,6 @@ _moves_message = NodePath("../VBoxContainer/HBoxContainer/MovesLabel")
 _timer_message = NodePath("../VBoxContainer/HBoxContainer/TimerLabel")
 
 [node name="Board" parent="DSGController" instance=ExtResource("2_aieau")]
-position = Vector2(320, 85)
 
 [node name="Timer" type="Timer" parent="DSGController"]
 one_shot = true
