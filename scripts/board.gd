@@ -115,21 +115,28 @@ func place_piece(piece_id: String, player_id: String, piece_coordinates: Vector2
 
 func animate_events(events: Array):
 	for event in events:
+		# setup tweens
+		self._tween_rotate = get_tree().create_tween().set_parallel()
 		self._tween_move = get_tree().create_tween().set_parallel()
 		self._tween_move_back = get_tree().create_tween().set_parallel()
+		self._tween_rotate.stop()
 		self._tween_move.stop()
 		self._tween_move_back.stop()
-		self._tween_rotate = get_tree().create_tween().set_parallel()
+		# set animations and place arrows
 		self._animate_event(event["outcomes"])
-		await self._tween_rotate.tween_interval(ROTATION_ANIMATION_DURATION).finished
-		if self._tween_move.is_valid():
-			self._tween_move.play()
-			await self._tween_move.tween_interval(MOVE_ANIMATION_DURATION).finished
-		if self._tween_move_back.is_valid():
-			self._tween_move_back.play()
-			await self._tween_move_back.tween_interval(MOVE_BACK_ANIMATION_DURATION).finished
+		# play animations
+		await self._play_animation(self._tween_rotate, ROTATION_ANIMATION_DURATION)
+		await self._play_animation(self._tween_move, MOVE_ANIMATION_DURATION)
+		await self._play_animation(self._tween_move_back, MOVE_BACK_ANIMATION_DURATION)
+		# get rid of off-the-board pieces
 		self._handle_falling_pieces()
+		# get rid of previously placed arrows
 		self.purge_arrows()
+
+func _play_animation(sel_tween: Tween, duration: float) -> Signal:
+	sel_tween.tween_interval(duration)
+	sel_tween.play()
+	return sel_tween.finished
 
 func _animate_event(outcomes: Array):
 	for outcome in outcomes:
