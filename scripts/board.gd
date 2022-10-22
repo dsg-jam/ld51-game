@@ -12,6 +12,7 @@ const directions = {
 const Piece = preload("res://scripts/piece.gd")
 
 var _pieces: Dictionary
+var _pieces_garbage: Array[Piece]
 var _move_arrows: Array
 var _floor_coordinates: Array[Vector2]
 var _tile_size: float
@@ -174,11 +175,19 @@ func _animate(outcome: Dictionary):
 			self._tween_rotate.tween_property(piece, "rotation", 2*PI, 1).set_trans(Tween.TRANS_BACK)
 
 func _handle_falling_pieces():
+	var falling_tween = get_tree().create_tween().set_parallel()
+	falling_tween.connect("finished", self._clean_garbage)
 	for piece_id in self._pieces.keys():
 		var piece = self.get_piece_by_id(piece_id)
 		if not piece.get_coordinates() in self._floor_coordinates:
 			self._pieces.erase(piece_id)
-			piece.queue_free()
+			self._pieces_garbage.append(piece)
+			falling_tween.tween_property(piece, "scale", Vector2(), 1)
+
+func _clean_garbage():
+	for piece in self._pieces_garbage:
+		piece.queue_free()
+	self._pieces_garbage = []
 
 func _get_position_on_grid(coordinates: Vector2) -> Vector2:
 	return Vector2(self._tile_size/2.0, self._tile_size/2.0) + coordinates * self._tile_size
