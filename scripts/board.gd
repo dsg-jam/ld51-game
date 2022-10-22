@@ -36,18 +36,19 @@ func _ready():
 	self._tile_size = self._get_tile_size()
 	self._draw_board()
 
-func place_arrow(piece_id: String, direction: Vector2):
+func place_move_arrow(piece_id: String, dir: Vector2):
 	var piece: Piece = self.get_piece_by_id(piece_id)
+	var pos = self._get_position_on_grid(piece.get_virtual_coordinates())
+	self._place_move_arrow(pos, dir, piece)
+	piece.add_to_virtual_coordinates(dir)
+
+func _place_move_arrow(pos: Vector2, dir: Vector2, piece: Piece = null):
 	var arrow = self._arrow.instantiate()
-	
-	var scale = self._tile_size / arrow.get_rect().size.x
-	arrow.setup(piece_id, direction)
-	arrow.scale = scale * Vector2.ONE
-	arrow.position = self._get_position_on_grid(piece.get_virtual_coordinates()) + self._tile_size * direction / 2.0
-	arrow.rotation = Vector2.RIGHT.angle_to(direction)
+	var arrow_scale = self._tile_size / arrow.get_rect().size.x
+	var arrow_pos = pos + self._tile_size * dir / 2.0
+	arrow.setup(piece, dir, arrow_scale, arrow_pos)
 	add_child(arrow)
 	self._move_arrows.append(arrow)
-	piece.add_to_virtual_coordinates(direction)
 
 func purge_arrows():
 	for move_arrow in self._move_arrows:
@@ -58,7 +59,7 @@ func remove_latest_arrow():
 	if len(self._move_arrows) < 1:
 		return
 	var move_arrow = self._move_arrows.pop_back()
-	var piece = self.get_piece_by_id(move_arrow.get_piece_id())
+	var piece = move_arrow.get_piece()
 	piece.add_to_virtual_coordinates(- move_arrow.get_direction())
 	move_arrow.queue_free()
 
@@ -128,6 +129,7 @@ func animate_events(events: Array):
 			self._tween_move_back.play()
 			await self._tween_move_back.tween_interval(MOVE_BACK_ANIMATION_DURATION).finished
 		self._handle_falling_pieces()
+		self.purge_arrows()
 
 func _animate_event(outcomes: Array):
 	for outcome in outcomes:
@@ -139,6 +141,7 @@ func _animate_piece_rotation(piece: Piece, direction: Vector2, delay: float = 0.
 
 func _animate_piece_move(piece: Piece, direction: Vector2, delay: float = 0.0, transition: int = Tween.TRANS_CUBIC):
 	var new_position = piece.position + direction * self._tile_size
+	self._place_move_arrow(piece.position, direction)
 	self._tween_move.tween_property(piece, "position", new_position, MOVE_ANIMATION_DURATION).set_trans(transition).set_delay(delay)
 
 func _animate(outcome: Dictionary):

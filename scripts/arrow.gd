@@ -1,14 +1,19 @@
 extends Sprite2D
 
-var _piece_id: String
+const Piece = preload("res://scripts/piece.gd")
+
+var _piece: Piece
 var _direction: Vector2
 
-func setup(piece_id: String, direction: Vector2):
-	self._piece_id = piece_id
-	self._direction = direction
+func setup(piece: Piece, dir: Vector2, arrow_scale: float, pos: Vector2):
+	self._piece = piece
+	self._direction = dir
+	scale = arrow_scale * Vector2.ONE
+	rotation = Vector2.RIGHT.angle_to(dir)
+	position = pos
 
-func get_piece_id() -> String:
-	return self._piece_id
+func get_piece() -> Piece:
+	return self._piece
 
 func get_direction() -> Vector2:
 	return self._direction

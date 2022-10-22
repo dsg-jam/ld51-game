@@ -121,7 +121,7 @@ func _append_move(action: ACTIONS, direction: Vector2):
 		"action": ACTIONS.keys()[action].to_lower()
 	})
 	if direction != Vector2.ZERO:
-		self._board.place_arrow(self._selected_piece_id, direction)
+		self._board.place_move_arrow(self._selected_piece_id, direction)
 	self._moves_left -= 1
 
 func _on_timer_timeout():
