@@ -5,7 +5,7 @@ signal connection_closed()
 signal message_received(message: String)
 
 const SERVER_USE_TLS: bool = true
-const SERVER_HOST: String = "51.jam.dsg.link"
+const SERVER_HOST: String = "ld51-server.jam.dsg.li"
 
 var socket := WebSocketPeer.new()
 var last_state = WebSocketPeer.STATE_CLOSED
