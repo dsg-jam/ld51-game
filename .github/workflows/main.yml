@@ -44,7 +44,11 @@ jobs:
         uses: actions/checkout@v3.0.2
         with:
           fetch-depth: 0
+
+      - name: set web export presets
+        id: set_preset
         run: |
+          cd $GITHUB_WORKSPACE
           mv export_presets.cfg.web export_presets.cfg
 
       - name: get tag
