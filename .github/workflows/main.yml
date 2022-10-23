@@ -43,7 +43,9 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3.0.2
         with:
-          ref: web-export
+          fetch-depth: 0
+        run: |
+          mv export_presets.cfg.web export_presets.cfg
 
       - name: get tag
         id: tag_version
