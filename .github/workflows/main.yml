@@ -28,6 +28,38 @@ jobs:
           archive_output: true
           use_godot_4: true
 
+      - name: create release
+        uses: softprops/action-gh-release@v0.1.14
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          generate_release_notes: true
+          tag_name: ${{ steps.tag_version.outputs.TAG_VERSION }}
+          files: ${{ steps.export.outputs.archive_directory }}/*
+
+  create_web_release:
+    runs-on: ubuntu-latest
+    name: create & deploy new web release
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3.0.2
+        with:
+          ref: web-export
+
+      - name: get tag
+        id: tag_version
+        run: |
+          echo ::set-output name=TAG_VERSION::${GITHUB_REF#refs/tags/v}
+
+      - name: export game
+        id: export
+        uses: firebelley/godot-export@v4.2.0
+        with:
+          godot_executable_download_url: https://downloads.tuxfamily.org/godotengine/4.0/beta3/Godot_v4.0-beta3_linux.x86_64.zip
+          godot_export_templates_download_url: https://dl.dropboxusercontent.com/s/b8tx66olhc70rti/Godot_4_beta_custom_templates.zip
+          relative_project_path: ./
+          archive_output: true
+          use_godot_4: true
+
       - name: prepare release & deployment
         run: |
           mkdir -p remote/${{ steps.tag_version.outputs.TAG_VERSION }}
@@ -42,11 +74,3 @@ jobs:
           FOLDER: remote
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CLEAR_GLOBS_FILE: ".clear-target-files"
-
-      - name: create release
-        uses: softprops/action-gh-release@v0.1.14
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          generate_release_notes: true
-          tag_name: ${{ steps.tag_version.outputs.TAG_VERSION }}
-          files: ${{ steps.export.outputs.archive_directory }}/*
