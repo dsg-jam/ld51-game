@@ -1,12 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://g7x2pl77ta40"]
+[gd_scene load_steps=5 format=3 uid="uid://g7x2pl77ta40"]
 
 [ext_resource type="Script" path="res://scripts/tile.gd" id="1_s5aot"]
+[ext_resource type="Shader" path="res://shaders/tile.gdshader" id="2_7xqgx"]
 [ext_resource type="Texture2D" uid="uid://bhroy04o7kp23" path="res://assets/background/Sand_Centre_Tile.png" id="2_il42r"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3t8rp"]
+resource_local_to_scene = true
+shader = ExtResource("2_7xqgx")
+shader_parameter/offset = null
 
 [node name="Tile" type="Node2D" node_paths=PackedStringArray("_tile_texture")]
 script = ExtResource("1_s5aot")
 _tile_texture = NodePath("Texture")
 
 [node name="Texture" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_3t8rp")
 texture = ExtResource("2_il42r")
 centered = false

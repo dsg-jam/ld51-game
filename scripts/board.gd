@@ -84,10 +84,12 @@ func _sort_by_position(piece_id_a: String, piece_id_b: String) -> bool:
 		return true
 	return false
 
-func turn_all_player_piece_lights_on(intensity: float):
+func turn_all_player_piece_lights_on():
 	for piece in self._pieces.values():
 		if piece.is_player_owning():
-			piece.turn_light_on(intensity)
+			piece.turn_light_on()
+		else:
+			piece.turn_dim_on()
 
 func turn_all_piece_lights_off():
 	for piece in self._pieces.values():

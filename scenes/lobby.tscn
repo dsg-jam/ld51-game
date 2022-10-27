@@ -37,7 +37,6 @@ _pop_up = NodePath("ColorRect/PopUp")
 _info = NodePath("ColorRect/VBoxContainer/LobbyInfo/LabelInfo")
 
 [node name="ColorRect" type="ColorRect" parent="."]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -48,7 +47,6 @@ size_flags_vertical = 3
 color = Color(0.996078, 0.815686, 0.619608, 1)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ColorRect"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -57,7 +55,6 @@ grow_vertical = 2
 alignment = 1
 
 [node name="GameInfo" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
-layout_mode = 2
 offset_left = 359.0
 offset_top = 35.0
 offset_right = 792.0
@@ -67,7 +64,6 @@ size_flags_vertical = 6
 theme_override_constants/separation = 16
 
 [node name="IDLabel" type="Label" parent="ColorRect/VBoxContainer/GameInfo"]
-layout_mode = 2
 offset_top = 2.0
 offset_right = 143.0
 offset_bottom = 53.0
@@ -81,7 +77,6 @@ theme_override_font_sizes/font_size = 32
 text = "Game ID: "
 
 [node name="IDValue" type="Label" parent="ColorRect/VBoxContainer/GameInfo"]
-layout_mode = 2
 offset_left = 159.0
 offset_top = 2.0
 offset_right = 335.0
@@ -96,7 +91,6 @@ theme_override_font_sizes/font_size = 32
 text = "00000001"
 
 [node name="CopyButton" type="Button" parent="ColorRect/VBoxContainer/GameInfo"]
-layout_mode = 2
 offset_left = 351.0
 offset_right = 433.0
 offset_bottom = 56.0
@@ -105,7 +99,6 @@ theme_override_font_sizes/font_size = 32
 text = "Copy"
 
 [node name="LobbyInfo" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
-layout_mode = 2
 offset_left = 575.0
 offset_top = 130.0
 offset_right = 576.0
@@ -114,7 +107,6 @@ size_flags_horizontal = 4
 size_flags_vertical = 3
 
 [node name="LabelInfo" type="Label" parent="ColorRect/VBoxContainer/LobbyInfo"]
-layout_mode = 2
 offset_top = 39.0
 offset_right = 1.0
 offset_bottom = 87.0
@@ -127,7 +119,6 @@ theme_override_fonts/font = ExtResource("2_ery7r")
 theme_override_font_sizes/font_size = 32
 
 [node name="PlayerInfo" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
-layout_mode = 2
 offset_left = 435.0
 offset_top = 260.0
 offset_right = 716.0
@@ -136,7 +127,6 @@ size_flags_horizontal = 4
 size_flags_vertical = 3
 
 [node name="LablePlayers" type="Label" parent="ColorRect/VBoxContainer/PlayerInfo"]
-layout_mode = 2
 offset_top = 38.0
 offset_right = 255.0
 offset_bottom = 89.0
@@ -150,7 +140,6 @@ theme_override_font_sizes/font_size = 32
 text = "Players in lobby: "
 
 [node name="LableAmountOfPlyers" type="Label" parent="ColorRect/VBoxContainer/PlayerInfo"]
-layout_mode = 2
 offset_left = 259.0
 offset_top = 38.0
 offset_right = 281.0
@@ -165,7 +154,6 @@ theme_override_font_sizes/font_size = 32
 text = "1"
 
 [node name="MapSelection" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
-layout_mode = 2
 offset_top = 391.0
 offset_right = 1152.0
 offset_bottom = 517.0
@@ -174,14 +162,12 @@ alignment = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="ColorRect/VBoxContainer/MapSelection"]
 custom_minimum_size = Vector2i(512, 0)
-layout_mode = 2
 offset_left = 320.0
 offset_right = 832.0
 offset_bottom = 126.0
 horizontal_scroll_mode = 3
 
 [node name="MapsList" type="ItemList" parent="ColorRect/VBoxContainer/MapSelection/ScrollContainer"]
-layout_mode = 2
 offset_right = 512.0
 offset_bottom = 126.0
 size_flags_horizontal = 3
@@ -190,7 +176,6 @@ theme_override_fonts/font = ExtResource("2_ery7r")
 theme_override_font_sizes/font_size = 32
 
 [node name="StartGame" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
-layout_mode = 2
 offset_left = 576.0
 offset_top = 521.0
 offset_right = 576.0
@@ -201,7 +186,6 @@ size_flags_vertical = 3
 [node name="StartGameButton" type="Button" parent="ColorRect/VBoxContainer/StartGame"]
 visible = false
 custom_minimum_size = Vector2i(512, 0)
-layout_mode = 2
 offset_top = 51.0
 offset_right = 512.0
 offset_bottom = 107.0
@@ -212,7 +196,6 @@ theme_override_font_sizes/font_size = 32
 text = "start game"
 
 [node name="PopUp" type="Panel" parent="ColorRect"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -222,7 +205,6 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_m5261")
 
 [node name="Panel" type="Panel" parent="ColorRect/PopUp"]
 custom_minimum_size = Vector2i(512, 128)
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -237,7 +219,6 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_jq6nn")
 
 [node name="Label" type="Label" parent="ColorRect/PopUp/Panel"]
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
