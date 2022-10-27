@@ -8,8 +8,6 @@ var facing_direction: Vector2 = Vector2.DOWN
 var _coordinates: Vector2
 var _virtual_coordinates: Vector2
 
-@export var _light_source: Sprite2D
-
 func setup(piece_id: String, player_id: String, coordinates: Vector2):
 	self._piece_id = piece_id
 	self._player_id = player_id
