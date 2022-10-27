@@ -37,12 +37,17 @@ func is_player_owning() -> bool:
 func set_texture(player_number: int):
 	$Texture.texture = GlobalVariables.get_piece_image(player_number)
 
-func turn_light_on(intensity: float):
-	self._light_source.set_modulate(Color(1, 1, 1, intensity))
-	self._light_source.set_visible(true)
+func turn_light_on(is_selected: bool = false):
+	$Texture.material.set_shader_parameter("is_flashing", true)
+	$Texture.material.set_shader_parameter("is_selected", is_selected)
+
+func turn_dim_on():
+	$Texture.material.set_shader_parameter("is_dim", true);
 		
 func turn_light_off():
-	self._light_source.set_visible(false)
+	$Texture.material.set_shader_parameter("is_flashing", false)
+	$Texture.material.set_shader_parameter("is_selected", false)
+	$Texture.material.set_shader_parameter("is_dim", false);
 
 func _input_event(_viewport, event, _shape_idx):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:

@@ -1,8 +1,15 @@
-[gd_scene load_steps=5 format=3 uid="uid://deekub7q5864t"]
+[gd_scene load_steps=6 format=3 uid="uid://deekub7q5864t"]
 
 [ext_resource type="Texture2D" uid="uid://ddj4i2o10l4fy" path="res://assets/player/Player_Blue.png" id="1_iuh12"]
 [ext_resource type="Script" path="res://scripts/piece.gd" id="1_jfprr"]
-[ext_resource type="Texture2D" uid="uid://luw6nhn53pku" path="res://assets/light.png" id="3_v80cm"]
+[ext_resource type="Shader" path="res://shaders/piece.gdshader" id="2_x2beh"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pq66j"]
+resource_local_to_scene = true
+shader = ExtResource("2_x2beh")
+shader_parameter/is_dim = false
+shader_parameter/is_flashing = null
+shader_parameter/is_selected = false
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8f7yi"]
 size = Vector2(816, 912)
@@ -10,16 +17,12 @@ size = Vector2(816, 912)
 [node name="Area2d" type="Area2D" node_paths=PackedStringArray("_light_source")]
 z_index = 1
 script = ExtResource("1_jfprr")
-_light_source = NodePath("Light")
+_light_source = NodePath("")
 
 [node name="Texture" type="Sprite2D" parent="."]
 light_mask = 2
+material = SubResource("ShaderMaterial_pq66j")
 texture = ExtResource("1_iuh12")
 
 [node name="CollisionShape2d" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_8f7yi")
-
-[node name="Light" type="Sprite2D" parent="."]
-visible = false
-modulate = Color(1, 1, 1, 0.498039)
-texture = ExtResource("3_v80cm")

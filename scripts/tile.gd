@@ -2,6 +2,9 @@ extends Node2D
 
 @export var _tile_texture: Sprite2D
 
+func _ready():
+	self._tile_texture.material.set_shader_parameter("offset", randf_range(0.0, PI))
+
 func scale_texture(max_size: float):
 	if self._tile_texture.texture == null:
 		return
