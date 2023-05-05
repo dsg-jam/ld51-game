@@ -83,7 +83,7 @@ func _start_round(payload: Dictionary):
 	self._timer.start(payload["round_duration"])
 	var pieces = payload["board_state"]
 	self._place_pieces(pieces)
-	self._board.turn_all_player_piece_lights_on(self._selectable_light_intensity)
+	self._board.turn_all_player_piece_lights_on()
 
 func _place_pieces(pieces: Array):
 	for piece in pieces:
@@ -153,10 +153,10 @@ func _get_next_piece_id() -> String:
 func _update_lights():
 	if self._current_state != STATES.ONGOING_ROUND:
 		return
-	self._board.turn_all_player_piece_lights_on(self._selectable_light_intensity)
+	self._board.turn_all_player_piece_lights_on()
 	var piece: Piece = self._board.get_piece_by_id(self._selected_piece_id)
 	if piece != null:
-		piece.turn_light_on(self._selected_light_intensity)
+		piece.turn_light_on(true)
 
 func _update_labels():
 	self._moves_message.text = "Moves left: " + str(self._moves_left)
