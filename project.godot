@@ -20,11 +20,6 @@ config/icon="res://assets/icon.svg"
 GlobalVariables="*res://scripts/GlobalVariables.gd"
 DSGNetwork="*res://scripts/network.gd"
 
-[display]
-
-window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
-
 [input]
 
 NO_ACTION={
