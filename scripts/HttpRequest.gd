@@ -25,7 +25,7 @@ func _on_create_new_game_button_pressed() -> void:
 		"Content-length: 0",
 		"Content-Type: application/json",
 	]
-	self.request(url, headers, DSGNetwork.SERVER_USE_TLS, HTTPClient.METHOD_POST)
+	self.request(url, headers, HTTPClient.METHOD_POST)
 
 func _start_joining_lobby(lobby_id: String) -> void:
 	GlobalVariables.id = lobby_id

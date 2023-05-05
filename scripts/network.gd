@@ -19,7 +19,7 @@ func connect_to_lobby(lobby_id: String) -> int:
 	else:
 		protocol = "ws"
 	var url := "%s://%s/lobby/%s/join" % [protocol, SERVER_HOST, lobby_id]
-	var err = socket.connect_to_url(url, SERVER_USE_TLS)
+	var err = socket.connect_to_url(url, TLSOptions.client())
 	if err != OK:
 		return err
 	last_state = socket.get_ready_state()
