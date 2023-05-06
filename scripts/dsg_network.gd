@@ -41,7 +41,7 @@ func _on_ws_open():
 	
 
 func _on_ws_closed():
-	print("closed:", socket.get_close_code(), socket.get_close_reason())
+	print("closed:", self.socket.get_close_code(), self.socket.get_close_reason())
 	if _try_to_reconnect() == OK:
 		return
 	connection_closed.emit()
@@ -57,10 +57,10 @@ func _build_url(query: String) -> String:
 
 
 func _get_message():
-	if socket.get_available_packet_count() < 1:
+	if self.socket.get_available_packet_count() < 1:
 		return null
-	var pkt = socket.get_packet()
-	if not socket.was_string_packet():
+	var pkt = self.socket.get_packet()
+	if not self.socket.was_string_packet():
 		return null
 	var raw_msg = pkt.get_string_from_utf8()
 	var msg: Dictionary = JSON.parse_string(raw_msg)
@@ -70,30 +70,30 @@ func _get_message():
 
 func _close(code := 1000, reason := "") -> void:
 	self.socket.close(code, reason)
-	last_state = socket.get_ready_state()
+	self.last_state = self.socket.get_ready_state()
 
 
 func _clear() -> void:
-	socket = WebSocketPeer.new()
-	last_state = socket.get_ready_state()
+	self.socket = WebSocketPeer.new()
+	self.last_state = self.socket.get_ready_state()
 
 
 func connect_to_lobby(query: String = "") -> int:
 	var url = _build_url(query)
-	var err = socket.connect_to_url(url, TLSOptions.client())
+	var err = self.socket.connect_to_url(url, TLSOptions.client())
 	if err != OK:
 		return err
-	last_state = socket.get_ready_state()
+	self.last_state = self.socket.get_ready_state()
 	return OK
 
 
 func send(payload: Dictionary) -> int:
 	var raw_msg := JSON.stringify(payload)
-	return socket.send_text(raw_msg)
+	return self.socket.send_text(raw_msg)
 
 
 func is_online() -> bool:
-	return last_state == WebSocketPeer.STATE_OPEN
+	return self.last_state == WebSocketPeer.STATE_OPEN
 
 
 func has_pending_messages(filter: PackedStringArray) -> bool:
