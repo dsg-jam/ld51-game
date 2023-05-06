@@ -2,6 +2,7 @@ class_name Board
 extends Node2D
 
 signal update_selected_piece
+signal ready_for_next_round
 
 const directions = {
 	"up": Vector2.UP,
@@ -13,7 +14,8 @@ const directions = {
 var _pieces: Dictionary
 var _move_arrows: Array
 var _floor_coordinates: Array[Vector2]
-var _running_animations: Array[Signal]
+var _running_animations: int
+var _animation_events: Array
 var tile_size: float
 
 @onready var texture = $Texture
@@ -170,11 +172,26 @@ func place_piece(piece_id: String, player_id: String, piece_coordinates: Vector2
 
 
 func animate_events(events: Array):
-	for event in events:
-		self._running_animations = []
-		BoardAnimation.animate_event(self, event["outcomes"])
-		for running_animation in self._running_animations:
-			if running_animation:
-				await running_animation
-		self._handle_falling_pieces()
-		self.purge_arrows()
+	self._animation_events = events
+	animate_next_event()
+
+
+func animate_next_event():
+	if self._animation_events.size() <= 0:
+		ready_for_next_round.emit()
+		return
+	var event = self._animation_events.pop_front()
+	self._running_animations = 0
+	BoardAnimation.animate_event(self, event["outcomes"])
+
+
+func outcome_animation_finished():
+	self._running_animations -= 1
+	if self._running_animations <= 0:
+		event_animation_finished()
+
+
+func event_animation_finished():
+	self._handle_falling_pieces()
+	self.purge_arrows()
+	self.animate_next_event()

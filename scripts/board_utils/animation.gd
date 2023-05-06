@@ -45,15 +45,18 @@ static func _animate_push_conflict_outcome(board: Board, payload: Dictionary):
 static func _rotate_and_move_piece(board: Board, piece: Piece, direction: Vector2, delay: float = 0.0):
 	board.place_move_arrow(piece.position, direction)
 	var finished = piece.animate_rotation_and_move(direction * board.tile_size, delay, false)
-	board._running_animations.append(finished)
+	finished.connect(board.outcome_animation_finished)
+	board._running_animations += 1
 
 
 static func _rotate_and_collide_piece(board: Board, piece: Piece, direction: Vector2):
 	board.place_move_arrow(piece.position, direction)
 	var finished = piece.animate_rotation_and_move(direction * board.tile_size, 0.0, true)
-	board._running_animations.append(finished)
+	finished.connect(board.outcome_animation_finished)
+	board._running_animations += 1
 
 	
 static func _rotate_piece(board: Board, piece: Piece, angle: float):
 	var finished = piece.animate_rotation(angle)
-	board._running_animations.append(finished)
+	finished.connect(board.outcome_animation_finished)
+	board._running_animations += 1

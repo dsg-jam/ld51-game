@@ -16,6 +16,7 @@ var _moves_left: int = 0
 var _next_moves: Array
 var _current_state: STATES
 var _round_number: int = 0
+var _latest_round_result: Dictionary
 
 @export var _message: Label
 @export var _moves_message: Label
@@ -30,14 +31,17 @@ func _ready():
 	position.y = max(viewport.y / 2 - viewport.x / 2, 0)
 	DSGNetwork.message_received.connect(self._on_ws_received_message)
 	self._board.update_selected_piece.connect(self._on_update_selected_piece)
+	self._board.ready_for_next_round.connect(_ready_for_next_round)
 	self._current_state = STATES.AWAITING_ROUND
 	self._place_pieces(GlobalVariables.pieces)
 
 	# catch up on all the messages we missed while loading
 	self._on_ws_received_message("")
 
+
 func _process(_delta):
 	self._update_labels()
+
 
 func _input(_event):
 	if self._current_state != STATES.ONGOING_ROUND:
@@ -57,6 +61,7 @@ func _input(_event):
 	elif Input.is_action_just_pressed("SELECT_NEXT"):
 		self._select_next_piece()
 
+
 func _on_ws_received_message(_msg_type: String) -> void:
 	while true:
 		var msg: Variant = DSGNetwork.pop_pending_message(MSG_FILTER)
@@ -73,6 +78,7 @@ func _on_ws_received_message(_msg_type: String) -> void:
 					self._current_state = STATES.ONGOING_ANIMATION
 					self._animate_round(msg["payload"])
 
+
 func _start_round(payload: Dictionary):
 	self._next_moves = []
 	self._moves_left = 5
@@ -83,28 +89,37 @@ func _start_round(payload: Dictionary):
 	self._place_pieces(pieces)
 	self._board.turn_all_player_piece_lights_on()
 
+
 func _place_pieces(pieces: Array):
 	for piece in pieces:
 		var piece_pos = Position.get_obj_from_dict(piece["position"])
 		self._board.place_piece(piece["piece_id"], piece["player_id"], piece_pos.get_vec())
 
+
 func _animate_round(payload: Dictionary):
-	await self._board.animate_events(payload["timeline"])
+	self._latest_round_result = payload
+	self._board.animate_events(payload["timeline"])
+
+
+func _ready_for_next_round():
 	self._current_state = STATES.AWAITING_ROUND
 	DSGNetwork.send({
 		"type": DSGMessageType.READY_FOR_NEXT_ROUND,
 		"payload": {}
 	})
+	var payload = self._latest_round_result
 	if not "game_over" in payload:
 		return
 	if not payload["game_over"] == null:
 		GlobalVariables.winner_id = payload["game_over"]["winner_player_id"]
 		get_tree().change_scene_to_file("res://scenes/lobby.tscn")
 
+
 func _on_update_selected_piece(piece_id, piece_player_id):
 	if GlobalVariables.player_id == piece_player_id:
 		self._selected_piece_id = piece_id
 		self._update_lights()
+
 
 func _remove_latest_move():
 	if self._next_moves.size() <= 0:
@@ -112,6 +127,7 @@ func _remove_latest_move():
 	self._next_moves.pop_back()
 	self._board.remove_latest_arrow()
 	self._moves_left += 1
+
 
 func _append_move(action: ACTIONS, direction: Vector2):
 	if self._selected_piece_id == "" or self._moves_left <= 0:
@@ -123,6 +139,7 @@ func _append_move(action: ACTIONS, direction: Vector2):
 	if direction != Vector2.ZERO:
 		self._board.place_input_arrow(self._selected_piece_id, direction)
 	self._moves_left -= 1
+
 
 func _on_timer_timeout():
 	$GongAudio.play()
@@ -136,9 +153,11 @@ func _on_timer_timeout():
 	self._board.purge_arrows()
 	self._board.turn_all_piece_lights_off()
 
+
 func _select_next_piece():
 	self._selected_piece_id = self._get_next_piece_id()
 	self._update_lights()
+
 
 func _get_next_piece_id() -> String:
 	var sorted = self._board.get_sorted_player_pieces()
@@ -150,6 +169,7 @@ func _get_next_piece_id() -> String:
 	var next_idx = (idx + 1) % len(sorted)
 	return sorted[next_idx]
 
+
 func _update_lights():
 	if self._current_state != STATES.ONGOING_ROUND:
 		return
@@ -157,6 +177,7 @@ func _update_lights():
 	var piece: Piece = self._board.get_piece_by_id(self._selected_piece_id)
 	if piece != null:
 		piece.turn_light_on(true)
+
 
 func _update_labels():
 	self._moves_message.text = "Moves left: " + str(self._moves_left)
