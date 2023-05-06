@@ -5,6 +5,7 @@ signal connection_closed()
 signal message_received(message: String)
 
 const SERVER_USE_TLS: bool = true
+const SERVER_WS_PROTOCOL: String = "wss" if SERVER_USE_TLS else "ws"
 const SERVER_HOST: String = "ld51-server.jam.dsg.li"
 
 var socket := WebSocketPeer.new()
@@ -12,13 +13,73 @@ var last_state = WebSocketPeer.STATE_CLOSED
 var _pending_messages: Array[Dictionary] = []
 
 
-func connect_to_lobby(lobby_id: String) -> int:
-	var protocol: String
-	if SERVER_USE_TLS:
-		protocol = "wss"
-	else:
-		protocol = "ws"
-	var url := "%s://%s/lobby/%s/join" % [protocol, SERVER_HOST, lobby_id]
+func _process(_delta):
+	_poll()
+
+
+func _poll() -> void:
+	if self.socket.get_ready_state() != WebSocketPeer.STATE_CLOSED:
+		self.socket.poll()
+	var state = self.socket.get_ready_state()
+	if self.last_state != state:
+		_handle_state_change(state)
+	while self.socket.get_ready_state() == WebSocketPeer.STATE_OPEN and self.socket.get_available_packet_count():
+		_get_message()
+
+
+func _handle_state_change(state):
+	self.last_state = state
+	match self.last_state:
+		WebSocketPeer.STATE_OPEN:
+			_on_ws_open()
+		WebSocketPeer.STATE_CLOSED:
+			_on_ws_closed()
+
+
+func _on_ws_open():
+	connected_to_server.emit()
+	
+
+func _on_ws_closed():
+	print("closed:", socket.get_close_code(), socket.get_close_reason())
+	if _try_to_reconnect() == OK:
+		return
+	connection_closed.emit()
+
+
+func _try_to_reconnect() -> int:
+	var query = "?session_id=%s" % GlobalVariables.session_id
+	return connect_to_lobby(query)
+
+
+func _build_url(query: String) -> String:
+	return "%s://%s/lobby/%s/join%s" % [SERVER_WS_PROTOCOL, SERVER_HOST, GlobalVariables.lobby_id, query]
+
+
+func _get_message():
+	if socket.get_available_packet_count() < 1:
+		return null
+	var pkt = socket.get_packet()
+	if not socket.was_string_packet():
+		return null
+	var raw_msg = pkt.get_string_from_utf8()
+	var msg: Dictionary = JSON.parse_string(raw_msg)
+	self._pending_messages.append(msg)
+	self.message_received.emit(msg["type"])
+
+
+func _close(code := 1000, reason := "") -> void:
+	self.socket.close(code, reason)
+	last_state = socket.get_ready_state()
+
+
+func _clear() -> void:
+	socket = WebSocketPeer.new()
+	last_state = socket.get_ready_state()
+
+
+func connect_to_lobby(query: String = "") -> int:
+	var url = _build_url(query)
 	var err = socket.connect_to_url(url, TLSOptions.client())
 	if err != OK:
 		return err
@@ -31,49 +92,8 @@ func send(payload: Dictionary) -> int:
 	return socket.send_text(raw_msg)
 
 
-func get_message():
-	if socket.get_available_packet_count() < 1:
-		return null
-	var pkt = socket.get_packet()
-	if not socket.was_string_packet():
-		return null
-	var raw_msg = pkt.get_string_from_utf8()
-	var msg: Dictionary = JSON.parse_string(raw_msg)
-	self._pending_messages.append(msg)
-	self.message_received.emit(msg["type"])
-
-
-func close(code := 1000, reason := "") -> void:
-	socket.close(code, reason)
-	last_state = socket.get_ready_state()
-
-
-func clear() -> void:
-	socket = WebSocketPeer.new()
-	last_state = socket.get_ready_state()
-
-
 func is_online() -> bool:
 	return last_state == WebSocketPeer.STATE_OPEN
-
-
-func poll() -> void:
-	if socket.get_ready_state() != socket.STATE_CLOSED:
-		socket.poll()
-	var state = socket.get_ready_state()
-	if last_state != state:
-		last_state = state
-		if state == socket.STATE_OPEN:
-			connected_to_server.emit()
-		elif state == socket.STATE_CLOSED:
-			print("closed:", socket.get_close_code(), socket.get_close_reason())
-			connection_closed.emit()
-	while socket.get_ready_state() == socket.STATE_OPEN and socket.get_available_packet_count():
-		get_message()
-
-
-func _process(_delta):
-	poll()
 
 
 func has_pending_messages(filter: PackedStringArray) -> bool:

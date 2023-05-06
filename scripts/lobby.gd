@@ -31,7 +31,7 @@ func _setup_lobby():
 	self._update_labels()
 	self._start_button.set_visible(false)
 	if not DSGNetwork.is_online():
-		DSGNetwork.connect_to_lobby(GlobalVariables.id)
+		DSGNetwork.connect_to_lobby()
 		return
 	self._info.text = "Player %s has won!" % GlobalVariables.get_player_color(GlobalVariables.winner_id)
 	if not GlobalVariables.is_host:
@@ -98,7 +98,7 @@ func _setup_non_host():
 	GlobalVariables.is_host = false
 
 func _update_labels():
-	self._label_id_value.text = GlobalVariables.id
+	self._label_id_value.text = GlobalVariables.lobby_id
 	self._label_amount_of_players.text = str(self._amount_of_players)
 	if GlobalVariables.is_host:
 		self._start_button.set_visible(self._amount_of_players > 1)
@@ -111,4 +111,4 @@ func _on_maps_list_item_clicked(index, _at_position, _mouse_button_index):
 	self._selected_map_idx = index
 
 func _on_copy_button_pressed():
-	DisplayServer.clipboard_set(GlobalVariables.id)
+	DisplayServer.clipboard_set(GlobalVariables.lobby_id)

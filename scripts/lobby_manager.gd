@@ -1,6 +1,7 @@
 extends HTTPRequest
 
 const UUID_LEN := 36
+const SERVER_PROTOCOL: String = "https" if DSGNetwork.SERVER_USE_TLS else "http"
 
 @export var game_id_path: NodePath
 
@@ -12,12 +13,7 @@ func _ready():
 	self.request_completed.connect(self._on_request_completed)
 
 func _build_url(path: String) -> String:
-	var protocol: String
-	if DSGNetwork.SERVER_USE_TLS:
-		protocol = "https"
-	else:
-		protocol = "http"
-	return "%s://%s%s" % [protocol, DSGNetwork.SERVER_HOST, path]
+	return "%s://%s%s" % [SERVER_PROTOCOL, DSGNetwork.SERVER_HOST, path]
 
 func _on_create_new_game_button_pressed() -> void:
 	var url := self._build_url("/lobby")
@@ -28,7 +24,7 @@ func _on_create_new_game_button_pressed() -> void:
 	self.request(url, headers, HTTPClient.METHOD_POST)
 
 func _start_joining_lobby(lobby_id: String) -> void:
-	GlobalVariables.id = lobby_id
+	GlobalVariables.lobby_id = lobby_id
 	get_tree().change_scene_to_packed(lobby_scene)
 
 func _on_request_completed(_result: int, _response_code: int, _headers: PackedStringArray, body: PackedByteArray):
