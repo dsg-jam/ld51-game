@@ -27,12 +27,8 @@ var _latest_round_result: Dictionary
 @onready var _timer = $Timer
 
 func _ready():
-	var viewport = get_tree().get_root().size
-	_control.hide()
-	if viewport.x < viewport.y:
-		_control.show()
-	position.x = max(viewport.x / 2 - viewport.y / 2, 0)
-	position.y = max(viewport.y / 2 - viewport.x / 2, 0)
+	_handle_screen_resize()
+	get_tree().get_root().connect("size_changed", _handle_screen_resize)
 	DSGNetwork.message_received.connect(self._on_ws_received_message)
 	self._board.update_selected_piece.connect(self._on_update_selected_piece)
 	self._board.ready_for_next_round.connect(_ready_for_next_round)
@@ -41,6 +37,22 @@ func _ready():
 
 	# catch up on all the messages we missed while loading
 	self._on_ws_received_message("")
+
+
+func _is_mobile_device() -> bool:
+	if OS.has_feature("web"):
+		if JavaScriptBridge.eval("/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)") == "1":
+			return true
+	return false
+
+
+func _handle_screen_resize():
+	var viewport = get_tree().get_root().size
+	_control.hide()
+	if _is_mobile_device():
+		_control.show()
+	position.x = max(viewport.x / 2 - viewport.y / 2, 0)
+	position.y = max(viewport.y / 2 - viewport.x / 2, 0)
 
 
 func _process(_delta):
