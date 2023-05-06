@@ -20,8 +20,6 @@ var _round_number: int = 0
 @export var _message: Label
 @export var _moves_message: Label
 @export var _timer_message: Label
-@export var _selectable_light_intensity: float = 0.4
-@export var _selected_light_intensity: float = 0.6
 
 @onready var _board = $Board
 @onready var _timer = $Timer
@@ -97,6 +95,8 @@ func _animate_round(payload: Dictionary):
 		"type": DSGMessageType.READY_FOR_NEXT_ROUND,
 		"payload": {}
 	})
+	if not "game_over" in payload:
+		return
 	if not payload["game_over"] == null:
 		GlobalVariables.winner_id = payload["game_over"]["winner_player_id"]
 		get_tree().change_scene_to_file("res://scenes/lobby.tscn")
@@ -121,7 +121,7 @@ func _append_move(action: ACTIONS, direction: Vector2):
 		"action": ACTIONS.keys()[action].to_lower()
 	})
 	if direction != Vector2.ZERO:
-		self._board.place_move_arrow(self._selected_piece_id, direction)
+		self._board.place_input_arrow(self._selected_piece_id, direction)
 	self._moves_left -= 1
 
 func _on_timer_timeout():

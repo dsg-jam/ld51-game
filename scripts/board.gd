@@ -1,3 +1,4 @@
+class_name Board
 extends Node2D
 
 signal update_selected_piece
@@ -9,20 +10,11 @@ const directions = {
 	"right": Vector2.RIGHT
 }
 
-const Piece = preload("res://scripts/piece.gd")
-
 var _pieces: Dictionary
-var _pieces_garbage: Array[Piece]
 var _move_arrows: Array
 var _floor_coordinates: Array[Vector2]
-var _tile_size: float
-var _tween_move: Tween
-var _tween_move_back: Tween
-var _tween_rotate: Tween
-
-@export var ROTATION_ANIMATION_DURATION: float = 1.0
-@export var MOVE_ANIMATION_DURATION: float = 1.0
-@export var MOVE_BACK_ANIMATION_DURATION: float = 0.2
+var _running_animations: Array[Signal]
+var tile_size: float
 
 @onready var texture = $Texture
 @onready var tile_prefab = preload("res://prefabs/tile.tscn")
@@ -33,19 +25,19 @@ func _ready():
 	var viewport = get_tree().get_root().size
 	var map_size = min(viewport.x, viewport.y)
 	texture.polygon *= Transform2D.IDENTITY * map_size 
-	self._tile_size = self._get_tile_size()
+	self.tile_size = self._get_tile_size()
 	self._draw_board()
 
-func place_move_arrow(piece_id: String, dir: Vector2):
+func place_input_arrow(piece_id: String, dir: Vector2):
 	var piece: Piece = self.get_piece_by_id(piece_id)
 	var pos = self._get_position_on_grid(piece.get_virtual_coordinates())
-	self._place_move_arrow(pos, dir, piece)
+	self.place_move_arrow(pos, dir, piece)
 	piece.add_to_virtual_coordinates(dir)
 
-func _place_move_arrow(pos: Vector2, dir: Vector2, piece: Piece = null):
+func place_move_arrow(pos: Vector2, dir: Vector2, piece: Piece = null):
 	var arrow = self._arrow.instantiate()
-	var arrow_scale = self._tile_size / arrow.get_rect().size.x
-	var arrow_pos = pos + self._tile_size * dir / 2.0
+	var arrow_scale = self.tile_size / arrow.get_rect().size.x
+	var arrow_pos = pos + self.tile_size * dir / 2.0
 	arrow.setup(piece, dir, arrow_scale, arrow_pos)
 	add_child(arrow)
 	self._move_arrows.append(arrow)
@@ -101,11 +93,11 @@ func place_piece(piece_id: String, player_id: String, piece_coordinates: Vector2
 		piece.set_coordinates(piece_coordinates)
 		piece.position = self._get_position_on_grid(piece_coordinates)
 		return
-	var new_piece = piece_prefab.instantiate()
+	var new_piece: Piece = piece_prefab.instantiate()
 	new_piece.set_texture(GlobalVariables.players[player_id])
 	var piece_scale = min(
-		self._tile_size / new_piece.get_node("Texture").get_rect().size.x,
-		self._tile_size / new_piece.get_node("Texture").get_rect().size.y
+		self.tile_size / new_piece.get_node("Texture").get_rect().size.x,
+		self.tile_size / new_piece.get_node("Texture").get_rect().size.y
 	)
 	new_piece.scale.x = piece_scale
 	new_piece.scale.y = piece_scale
@@ -117,92 +109,33 @@ func place_piece(piece_id: String, player_id: String, piece_coordinates: Vector2
 
 func animate_events(events: Array):
 	for event in events:
-		# setup tweens
-		self._tween_rotate = get_tree().create_tween().set_parallel()
-		self._tween_move = get_tree().create_tween().set_parallel()
-		self._tween_move_back = get_tree().create_tween().set_parallel()
-		self._tween_rotate.stop()
-		self._tween_move.stop()
-		self._tween_move_back.stop()
-		# set animations and place arrows
-		self._animate_event(event["outcomes"])
-		# play animations
-		await self._play_animation(self._tween_rotate, ROTATION_ANIMATION_DURATION)
-		await self._play_animation(self._tween_move, MOVE_ANIMATION_DURATION)
-		await self._play_animation(self._tween_move_back, MOVE_BACK_ANIMATION_DURATION)
-		# get rid of off-the-board pieces
+		self._running_animations = []
+		BoardAnimation.animate_event(self, event["outcomes"])
+		
+		for running_animation in self._running_animations:
+			if running_animation:
+				await running_animation
+		
 		self._handle_falling_pieces()
-		# get rid of previously placed arrows
+		
 		self.purge_arrows()
 
-func _play_animation(sel_tween: Tween, duration: float) -> Signal:
-	sel_tween.tween_interval(duration)
-	sel_tween.play()
-	return sel_tween.finished
-
-func _animate_event(outcomes: Array):
-	for outcome in outcomes:
-		self._animate(outcome)
-
-func _animate_piece_rotation(piece: Piece, direction: Vector2, delay: float = 0.0, transition: int = Tween.TRANS_BACK):
-	var angle = piece.facing_direction.angle_to(direction)
-	self._tween_rotate.tween_property(piece, "rotation", angle, ROTATION_ANIMATION_DURATION).set_trans(transition).set_delay(delay)
-
-func _animate_piece_move(piece: Piece, direction: Vector2, delay: float = 0.0, transition: int = Tween.TRANS_CUBIC):
-	var new_position = piece.position + direction * self._tile_size
-	self._place_move_arrow(piece.position, direction)
-	self._tween_move.tween_property(piece, "position", new_position, MOVE_ANIMATION_DURATION).set_trans(transition).set_delay(delay)
-
-func _animate(outcome: Dictionary):
-	if outcome["type"] == "push":
-		var pusher_piece = self.get_piece_by_id(outcome["payload"]["pusher_piece_id"])
-		var victim_piece_ids = outcome["payload"]["victim_piece_ids"]
-		var direction = directions[outcome["payload"]["direction"]]
-		self._animate_piece_rotation(pusher_piece, direction)
-		self._animate_piece_move(pusher_piece, direction)
-		pusher_piece.add_to_coordinates(direction)
-		var i = 1
-		for victim_piece_id in victim_piece_ids:
-			var victim_piece = self.get_piece_by_id(victim_piece_id)
-			self._animate_piece_rotation(victim_piece, direction)
-			self._animate_piece_move(victim_piece, direction, 0.125 * i)
-			victim_piece.add_to_coordinates(direction)
-			i += 1
-	elif outcome["type"] == "move_conflict":
-		var new_coordinates = Vector2(outcome["payload"]["collision_point"]["x"], outcome["payload"]["collision_point"]["y"])
-		var moving_pieces = {}
-		for moving_piece_id in outcome["payload"]["piece_ids"]:
-			var current_piece = self.get_piece_by_id(moving_piece_id)
-			moving_pieces[current_piece] = current_piece.position
-			var new_position = self._get_position_on_grid(new_coordinates)
-			var direction = (new_position-current_piece.position).normalized()
-			self._animate_piece_rotation(current_piece, direction)
-			self._animate_piece_move(current_piece, direction/2)
-		for moving_piece in moving_pieces:
-			self._tween_move_back.tween_property(moving_piece, "position", moving_pieces[moving_piece], MOVE_BACK_ANIMATION_DURATION).set_trans(Tween.TRANS_BOUNCE)
-	elif outcome["type"] == "push_conflict":
-		var piece_ids = outcome["payload"]["piece_ids"]
-		for piece_id in piece_ids:
-			var piece = self.get_piece_by_id(piece_id)
-			self._tween_rotate.tween_property(piece, "rotation", 2*PI, 1).set_trans(Tween.TRANS_BACK)
 
 func _handle_falling_pieces():
-	var falling_tween = get_tree().create_tween().set_parallel()
-	falling_tween.connect("finished", self._clean_garbage)
 	for piece_id in self._pieces.keys():
 		var piece = self.get_piece_by_id(piece_id)
-		if not piece.get_coordinates() in self._floor_coordinates:
-			self._pieces.erase(piece_id)
-			self._pieces_garbage.append(piece)
-			falling_tween.tween_property(piece, "scale", Vector2(), 1)
+		if piece.get_coordinates() in self._floor_coordinates:
+			continue
+		self._pieces.erase(piece_id)
+		piece.animate_falling().connect(_remove_piece.bind(piece))
 
-func _clean_garbage():
-	for piece in self._pieces_garbage:
-		piece.queue_free()
-	self._pieces_garbage = []
+
+func _remove_piece(piece: Piece):
+	piece.queue_free()
+
 
 func _get_position_on_grid(coordinates: Vector2) -> Vector2:
-	return Vector2(self._tile_size/2.0, self._tile_size/2.0) + coordinates * self._tile_size
+	return Vector2(self.tile_size/2.0, self.tile_size/2.0) + coordinates * self.tile_size
 
 func _on_click(piece_id, piece_player_id):
 	emit_signal("update_selected_piece", piece_id, piece_player_id)
@@ -217,9 +150,9 @@ func _draw_board():
 			self._floor_coordinates.append(tile_position)
 		else:
 			new_tile.set_void_texture()
-		new_tile.scale_texture(self._tile_size)
+		new_tile.scale_texture(self.tile_size)
 		add_child(new_tile)
-		new_tile.position = tile_position * self._tile_size
+		new_tile.position = tile_position * self.tile_size
 
 func _get_tile_size() -> float:
 	var max_width = 0

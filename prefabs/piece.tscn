@@ -7,9 +7,9 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pq66j"]
 resource_local_to_scene = true
 shader = ExtResource("2_x2beh")
-shader_parameter/is_dim = false
-shader_parameter/is_flashing = null
+shader_parameter/is_flashing = false
 shader_parameter/is_selected = false
+shader_parameter/is_dim = false
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8f7yi"]
 size = Vector2(816, 912)
