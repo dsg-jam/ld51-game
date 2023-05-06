@@ -21,12 +21,16 @@ var _latest_round_result: Dictionary
 @export var _message: Label
 @export var _moves_message: Label
 @export var _timer_message: Label
+@export var _control: HBoxContainer
 
 @onready var _board = $Board
 @onready var _timer = $Timer
 
 func _ready():
 	var viewport = get_tree().get_root().size
+	_control.hide()
+	if viewport.x < viewport.y:
+		_control.show()
 	position.x = max(viewport.x / 2 - viewport.y / 2, 0)
 	position.y = max(viewport.y / 2 - viewport.x / 2, 0)
 	DSGNetwork.message_received.connect(self._on_ws_received_message)
@@ -53,6 +57,7 @@ func _input(_event):
 	elif Input.is_action_just_pressed("MOVE_RIGHT"):
 		self._append_move(ACTIONS.MOVE_RIGHT, Vector2.RIGHT)
 	elif Input.is_action_just_pressed("MOVE_UP"):
+		print("move up")
 		self._append_move(ACTIONS.MOVE_UP, Vector2.UP)
 	elif Input.is_action_just_pressed("NO_ACTION"):
 		self._append_move(ACTIONS.NO_ACTION, Vector2.ZERO)
@@ -183,3 +188,19 @@ func _update_labels():
 	self._moves_message.text = "Moves left: " + str(self._moves_left)
 	self._timer_message.text = "Time left: %.1f" % self._timer.time_left
 	self._message.text = "Round " + str(self._round_number)
+
+
+func _on_up_button_pressed():
+	self._append_move(ACTIONS.MOVE_UP, Vector2.UP)
+
+
+func _on_down_button_pressed():
+	self._append_move(ACTIONS.MOVE_DOWN, Vector2.DOWN)
+
+
+func _on_left_button_pressed():
+	self._append_move(ACTIONS.MOVE_LEFT, Vector2.LEFT)
+
+
+func _on_right_button_pressed():
+	self._append_move(ACTIONS.MOVE_RIGHT, Vector2.RIGHT)

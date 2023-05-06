@@ -65,11 +65,41 @@ theme_override_fonts/font = ExtResource("2_n1wtn")
 theme_override_font_sizes/font_size = 32
 text = "[REMAINING_MOVES]"
 
-[node name="DSGController" type="Node2D" parent="." node_paths=PackedStringArray("_message", "_moves_message", "_timer_message")]
+[node name="VSplitContainer" type="VSplitContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Controls" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 100
+alignment = 1
+
+[node name="UpButton" type="Button" parent="VBoxContainer/Controls"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "UP"
+
+[node name="DownButton" type="Button" parent="VBoxContainer/Controls"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Down"
+
+[node name="LeftButton" type="Button" parent="VBoxContainer/Controls"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Left"
+
+[node name="RightButton" type="Button" parent="VBoxContainer/Controls"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Right"
+
+[node name="DSGController" type="Node2D" parent="." node_paths=PackedStringArray("_message", "_moves_message", "_timer_message", "_control")]
 script = ExtResource("1_q3buc")
 _message = NodePath("../VBoxContainer/HBoxContainer/MessageLabel")
 _moves_message = NodePath("../VBoxContainer/HBoxContainer/MovesLabel")
 _timer_message = NodePath("../VBoxContainer/HBoxContainer/TimerLabel")
+_control = NodePath("../VBoxContainer/Controls")
 
 [node name="Board" parent="DSGController" instance=ExtResource("2_aieau")]
 
@@ -80,4 +110,8 @@ one_shot = true
 stream = ExtResource("3_oei84")
 attenuation = 3.605
 
+[connection signal="pressed" from="VBoxContainer/Controls/UpButton" to="DSGController" method="_on_up_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Controls/DownButton" to="DSGController" method="_on_down_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Controls/LeftButton" to="DSGController" method="_on_left_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Controls/RightButton" to="DSGController" method="_on_right_button_pressed"]
 [connection signal="timeout" from="DSGController/Timer" to="DSGController" method="_on_timer_timeout"]
