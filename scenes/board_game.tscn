@@ -8,7 +8,6 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_r7sbu"]
 shader = ExtResource("1_mis6b")
-shader_parameter/screen_resolution = null
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -23,7 +22,7 @@ mouse_filter = 2
 
 [node name="ColorRect" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_r7sbu")
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -32,7 +31,7 @@ mouse_filter = 2
 color = Color(0.184314, 0.282353, 0.345098, 1)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -40,25 +39,19 @@ grow_vertical = 2
 size_flags_vertical = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
-offset_right = 1152.0
-offset_bottom = 51.0
+layout_mode = 2
 theme_override_constants/separation = 100
 alignment = 1
 
 [node name="TimerLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
-anchors_preset = -1
-offset_left = 11.0
-offset_right = 138.0
-offset_bottom = 51.0
+layout_mode = 2
 theme_override_colors/font_color = Color(0.996078, 0.815686, 0.619608, 1)
 theme_override_fonts/font = ExtResource("2_n1wtn")
 theme_override_font_sizes/font_size = 32
 text = "[TIMER]"
 
 [node name="MessageLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
-offset_left = 238.0
-offset_right = 699.0
-offset_bottom = 51.0
+layout_mode = 2
 size_flags_vertical = 2
 theme_override_colors/font_color = Color(0.996078, 0.815686, 0.619608, 1)
 theme_override_fonts/font = ExtResource("2_n1wtn")
@@ -66,10 +59,7 @@ theme_override_font_sizes/font_size = 32
 text = "SELECTED PIECE: [PIECE_ID]"
 
 [node name="MovesLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
-anchors_preset = -1
-offset_left = 799.0
-offset_right = 1140.0
-offset_bottom = 51.0
+layout_mode = 2
 theme_override_colors/font_color = Color(0.996078, 0.815686, 0.619608, 1)
 theme_override_fonts/font = ExtResource("2_n1wtn")
 theme_override_font_sizes/font_size = 32
