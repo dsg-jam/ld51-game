@@ -10,7 +10,7 @@ const COLOR_MAPPING = {
 	5: "Base"
 }
 
-var id: String = "0"
+var lobby_id: String = "0"
 var player_id: String = ""
 var session_id: String = ""
 var winner_id: String = ""
