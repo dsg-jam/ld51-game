@@ -17,8 +17,8 @@ config/icon="res://assets/icon.svg"
 
 [autoload]
 
-GlobalVariables="*res://scripts/GlobalVariables.gd"
-DSGNetwork="*res://scripts/network.gd"
+GlobalVariables="*res://scripts/global_variables.gd"
+DSGNetwork="*res://scripts/dsg_network.gd"
 
 [input]
 

@@ -1,6 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://wsqw657evcg"]
+[gd_scene load_steps=4 format=3 uid="uid://b8n0vwymoq2x"]
 
-[ext_resource type="Script" path="res://scripts/HttpRequest.gd" id="1_ua71p"]
+[ext_resource type="Script" path="res://scripts/lobby_manager.gd" id="1_5enwb"]
 [ext_resource type="FontFile" uid="uid://ddtswll5v6p3s" path="res://assets/font/Stick-Regular.ttf" id="2_pw6rl"]
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_xko28"]
@@ -16,7 +16,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="CreatLobbyHttpRequest" type="HTTPRequest" parent="."]
-script = ExtResource("1_ua71p")
+script = ExtResource("1_5enwb")
 game_id_path = NodePath("../ColorRect/VBoxContainer/HBoxContainer/GameID")
 
 [node name="ColorRect" type="ColorRect" parent="."]
