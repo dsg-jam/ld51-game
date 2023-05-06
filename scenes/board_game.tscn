@@ -30,6 +30,22 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.184314, 0.282353, 0.345098, 1)
 
+[node name="DSGController" type="Node2D" parent="." node_paths=PackedStringArray("_message", "_moves_message", "_timer_message", "_control")]
+script = ExtResource("1_q3buc")
+_message = NodePath("../VBoxContainer/HBoxContainer/MessageLabel")
+_moves_message = NodePath("../VBoxContainer/HBoxContainer/MovesLabel")
+_timer_message = NodePath("../VBoxContainer/HBoxContainer/TimerLabel")
+_control = NodePath("../VBoxContainer/Controls")
+
+[node name="Board" parent="DSGController" instance=ExtResource("2_aieau")]
+
+[node name="Timer" type="Timer" parent="DSGController"]
+one_shot = true
+
+[node name="GongAudio" type="AudioStreamPlayer2D" parent="DSGController"]
+stream = ExtResource("3_oei84")
+attenuation = 3.605
+
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 0
 anchor_right = 1.0
@@ -69,49 +85,72 @@ text = "[REMAINING_MOVES]"
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Controls" type="HBoxContainer" parent="VBoxContainer"]
+[node name="Controls" type="VBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 100
 alignment = 1
 
-[node name="UpButton" type="Button" parent="VBoxContainer/Controls"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Controls"]
+layout_mode = 2
+alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Controls/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="UpButton" type="Button" parent="VBoxContainer/Controls/HBoxContainer/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "UP"
+text = "^"
 
-[node name="DownButton" type="Button" parent="VBoxContainer/Controls"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/Controls"]
+layout_mode = 2
+alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Controls/HBoxContainer2"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="LeftButton" type="Button" parent="VBoxContainer/Controls/HBoxContainer2/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "Down"
+text = "<"
 
-[node name="LeftButton" type="Button" parent="VBoxContainer/Controls"]
+[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer/Controls/HBoxContainer2"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="RightButton" type="Button" parent="VBoxContainer/Controls/HBoxContainer2/MarginContainer2"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "Left"
+text = ">"
 
-[node name="RightButton" type="Button" parent="VBoxContainer/Controls"]
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/Controls"]
+layout_mode = 2
+alignment = 1
+
+[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer/Controls/HBoxContainer3"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="DownButton" type="Button" parent="VBoxContainer/Controls/HBoxContainer3/MarginContainer2"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "Right"
+text = "v"
 
-[node name="DSGController" type="Node2D" parent="." node_paths=PackedStringArray("_message", "_moves_message", "_timer_message", "_control")]
-script = ExtResource("1_q3buc")
-_message = NodePath("../VBoxContainer/HBoxContainer/MessageLabel")
-_moves_message = NodePath("../VBoxContainer/HBoxContainer/MovesLabel")
-_timer_message = NodePath("../VBoxContainer/HBoxContainer/TimerLabel")
-_control = NodePath("../VBoxContainer/Controls")
-
-[node name="Board" parent="DSGController" instance=ExtResource("2_aieau")]
-
-[node name="Timer" type="Timer" parent="DSGController"]
-one_shot = true
-
-[node name="GongAudio" type="AudioStreamPlayer2D" parent="DSGController"]
-stream = ExtResource("3_oei84")
-attenuation = 3.605
-
-[connection signal="pressed" from="VBoxContainer/Controls/UpButton" to="DSGController" method="_on_up_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/Controls/DownButton" to="DSGController" method="_on_down_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/Controls/LeftButton" to="DSGController" method="_on_left_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/Controls/RightButton" to="DSGController" method="_on_right_button_pressed"]
 [connection signal="timeout" from="DSGController/Timer" to="DSGController" method="_on_timer_timeout"]
+[connection signal="pressed" from="VBoxContainer/Controls/HBoxContainer/MarginContainer/UpButton" to="DSGController" method="_on_up_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Controls/HBoxContainer2/MarginContainer/LeftButton" to="DSGController" method="_on_left_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Controls/HBoxContainer2/MarginContainer2/RightButton" to="DSGController" method="_on_right_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Controls/HBoxContainer3/MarginContainer2/DownButton" to="DSGController" method="_on_down_button_pressed"]

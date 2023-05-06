@@ -21,7 +21,7 @@ var _latest_round_result: Dictionary
 @export var _message: Label
 @export var _moves_message: Label
 @export var _timer_message: Label
-@export var _control: HBoxContainer
+@export var _control: VBoxContainer
 
 @onready var _board = $Board
 @onready var _timer = $Timer
