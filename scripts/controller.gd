@@ -39,17 +39,10 @@ func _ready():
 	self._on_ws_received_message("")
 
 
-func _is_mobile_device() -> bool:
-	if OS.has_feature("web"):
-		if JavaScriptBridge.eval("/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)") == 1:
-			return true
-	return false
-
-
 func _handle_screen_resize():
 	var viewport = get_tree().get_root().size
 	_control.hide()
-	if _is_mobile_device():
+	if Utils.is_mobile_device():
 		_control.show()
 	position.x = max(viewport.x / 2 - viewport.y / 2, 0)
 	position.y = max(viewport.y / 2 - viewport.x / 2, 0)

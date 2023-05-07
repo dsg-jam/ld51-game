@@ -46,7 +46,8 @@ alignment = 1
 
 [node name="VBoxContainerTop" type="VBoxContainer" parent="ColorRect/VBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 6
+size_flags_vertical = 3
+alignment = 1
 
 [node name="creatNewGameButton" type="Button" parent="ColorRect/VBoxContainer/VBoxContainerTop"]
 custom_minimum_size = Vector2(512, 0)
@@ -58,8 +59,8 @@ text = "Create New Game"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 6
+size_flags_vertical = 3
+alignment = 1
 
 [node name="Label" type="Label" parent="ColorRect/VBoxContainer/HBoxContainer"]
 layout_mode = 2
@@ -71,12 +72,14 @@ text = "Game ID: "
 [node name="GameID" type="LineEdit" parent="ColorRect/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(256, 0)
 layout_mode = 2
+size_flags_vertical = 4
 theme_override_fonts/font = ExtResource("2_pw6rl")
 theme_override_font_sizes/font_size = 32
 
 [node name="PasteButton" type="Button" parent="ColorRect/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(112, 0)
 layout_mode = 2
+size_flags_vertical = 4
 theme_override_fonts/font = ExtResource("2_pw6rl")
 theme_override_font_sizes/font_size = 32
 text = "Paste

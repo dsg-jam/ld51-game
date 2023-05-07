@@ -20,6 +20,12 @@ config/icon="res://assets/icon.svg"
 GlobalVariables="*res://scripts/global_variables.gd"
 DSGNetwork="*res://scripts/dsg_network.gd"
 
+[display]
+
+window/size/viewport_width=1024
+window/size/viewport_height=600
+window/stretch/aspect="expand"
+
 [input]
 
 NO_ACTION={
