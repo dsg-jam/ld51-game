@@ -131,7 +131,7 @@ func get_piece_by_id(piece_id: String) -> Piece:
 	return self._pieces.get(piece_id)
 
 
-func get_sorted_player_pieces() -> Array[String]:
+func get_sorted_player_pieces() -> Array:
 	var piece_ids = self._pieces.keys().filter(self._filter_player_pieces)
 	piece_ids.sort_custom(self._sort_by_position)
 	return piece_ids

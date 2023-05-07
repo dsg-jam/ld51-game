@@ -21,14 +21,14 @@ var _latest_round_result: Dictionary
 @export var _message: Label
 @export var _moves_message: Label
 @export var _timer_message: Label
+@export var _control: HBoxContainer
 
 @onready var _board = $Board
 @onready var _timer = $Timer
 
 func _ready():
-	var viewport = get_tree().get_root().size
-	position.x = max(viewport.x / 2 - viewport.y / 2, 0)
-	position.y = max(viewport.y / 2 - viewport.x / 2, 0)
+	_handle_screen_resize()
+	get_tree().get_root().connect("size_changed", _handle_screen_resize)
 	DSGNetwork.message_received.connect(self._on_ws_received_message)
 	self._board.update_selected_piece.connect(self._on_update_selected_piece)
 	self._board.ready_for_next_round.connect(_ready_for_next_round)
@@ -37,6 +37,15 @@ func _ready():
 
 	# catch up on all the messages we missed while loading
 	self._on_ws_received_message("")
+
+
+func _handle_screen_resize():
+	var viewport = get_tree().get_root().size
+	_control.hide()
+	if Utils.is_mobile_device():
+		_control.show()
+	position.x = max(viewport.x / 2 - viewport.y / 2, 0)
+	position.y = max(viewport.y / 2 - viewport.x / 2, 0)
 
 
 func _process(_delta):
@@ -103,16 +112,19 @@ func _animate_round(payload: Dictionary):
 
 func _ready_for_next_round():
 	self._current_state = STATES.AWAITING_ROUND
+	GlobalVariables.winner_id = ""
 	DSGNetwork.send({
 		"type": DSGMessageType.READY_FOR_NEXT_ROUND,
 		"payload": {}
 	})
 	var payload = self._latest_round_result
-	if not "game_over" in payload:
+	var game_over = payload["game_over"]
+	if game_over == null:
 		return
-	if not payload["game_over"] == null:
-		GlobalVariables.winner_id = payload["game_over"]["winner_player_id"]
-		get_tree().change_scene_to_file("res://scenes/lobby.tscn")
+	var winner_player_id = game_over["winner_player_id"]
+	if winner_player_id != null:
+		GlobalVariables.winner_id = winner_player_id
+	get_tree().change_scene_to_file("res://scenes/lobby.tscn")
 
 
 func _on_update_selected_piece(piece_id, piece_player_id):
@@ -183,3 +195,19 @@ func _update_labels():
 	self._moves_message.text = "Moves left: " + str(self._moves_left)
 	self._timer_message.text = "Time left: %.1f" % self._timer.time_left
 	self._message.text = "Round " + str(self._round_number)
+
+
+func _on_up_button_pressed():
+	self._append_move(ACTIONS.MOVE_UP, Vector2.UP)
+
+
+func _on_down_button_pressed():
+	self._append_move(ACTIONS.MOVE_DOWN, Vector2.DOWN)
+
+
+func _on_left_button_pressed():
+	self._append_move(ACTIONS.MOVE_LEFT, Vector2.LEFT)
+
+
+func _on_right_button_pressed():
+	self._append_move(ACTIONS.MOVE_RIGHT, Vector2.RIGHT)

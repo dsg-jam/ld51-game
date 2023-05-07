@@ -13,6 +13,14 @@ static func parse_map_to_dict(map: String) -> Dictionary:
 	var platform = BoardPlatform.new(tiles)
 	return platform.get_dict()
 
+
 static func parse_dict_to_map(data: Dictionary) -> BoardPlatform:
 	assert("platform" in data, "Platform is missing in server_start_game message")
 	return BoardPlatform.get_obj_from_dict(data["platform"])
+
+
+static func is_mobile_device() -> bool:
+	if OS.has_feature("web"):
+		if JavaScriptBridge.eval("/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)") == 1:
+			return true
+	return false
