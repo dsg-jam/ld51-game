@@ -7,6 +7,11 @@ func _init(id: String, number: int):
 	self._id = id
 	self._number = number
 
+func get_id() -> String:
+	return self._id
+
+func get_number() -> int:
+	return self._number
 
 func to_dict() -> Dictionary:
 	return {

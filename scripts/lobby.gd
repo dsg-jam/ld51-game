@@ -33,13 +33,16 @@ func _setup_lobby():
 	if not DSGNetwork.is_online():
 		DSGNetwork.connect_to_lobby()
 		return
-	self._info.text = _get_game_result()
-	if not GlobalVariables.is_host:
-		self._setup_non_host()
-	self._pop_up.set_visible(false)
 	self._amount_of_players = len(GlobalVariables.players)
-	self._update_labels()
+	self._info.text = _get_game_result()
+	self._setup_after_connection()
 
+func _setup_after_connection():
+	self._pop_up.set_visible(false)
+	if not GlobalVariables.is_host:
+		self._start_button.queue_free()
+		self._map_list.visible = false
+	self._update_labels()
 
 func _get_game_result():
 	if GlobalVariables.winner_id == "":
@@ -74,16 +77,11 @@ func _on_ws_received_message() -> void:
 		if msg is DSGMessage.PlayerJoinedMessage:
 			self._player_joined(msg)
 
-func _server_hello(msg: DSGMessage.ServerHelloMessage):
-	if not msg._is_host:
-		self._setup_non_host()
-	var player = msg._player
-	GlobalVariables.player_id = player._id
-	GlobalVariables.player_number = player._number
-	GlobalVariables.session_id = msg._session_id
-	self._amount_of_players = len(msg._other_players) + 1
-	self._update_labels()
+func _server_hello(hello_message: DSGMessage.ServerHelloMessage):
+	hello_message.write_global_variables()
+	self._amount_of_players = hello_message.get_amount_of_players()
 	self._info.text = "Welcome! You play %s." % GlobalVariables.COLOR_MAPPING[GlobalVariables.player_number]
+	self._setup_after_connection()
 
 func _player_joined(_msg: DSGMessage.PlayerJoinedMessage):
 	self._amount_of_players += 1
@@ -92,14 +90,9 @@ func _player_joined(_msg: DSGMessage.PlayerJoinedMessage):
 func _server_start_game(msg: DSGMessage.ServerStartGameMessage):
 	GlobalVariables.map = msg.get_map()
 	for player in msg.get_players():
-		GlobalVariables.players[player._id] = int(player._number)
-	GlobalVariables.pieces = msg._pieces
+		GlobalVariables.players[player.get_id()] = player.get_number()
+	GlobalVariables.pieces = msg.get_pieces()
 	get_tree().change_scene_to_packed(self._board_scene)
-
-func _setup_non_host():
-	self._start_button.queue_free()
-	self._map_list.visible = false
-	GlobalVariables.is_host = false
 
 func _update_labels():
 	self._label_id_value.text = GlobalVariables.get_lobby_id_or_code()

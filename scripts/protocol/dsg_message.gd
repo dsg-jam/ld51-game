@@ -178,6 +178,14 @@ class ServerHelloMessage extends DSGMessage:
 		self._player = player
 		self._other_players = other_players
 	
+	func write_global_variables():
+		GlobalVariables.player_id = self._player._id
+		GlobalVariables.player_number = self._player._number
+		GlobalVariables.session_id = self._session_id
+		GlobalVariables.is_host = self._is_host
+	
+	func get_amount_of_players() -> int:
+		return len(self._other_players) + 1
 	
 	static func _is_valid(payload: Dictionary) -> bool:
 		if not "session_id" in payload:
@@ -302,6 +310,9 @@ class ServerStartGameMessage extends DSGMessage:
 		
 	func get_players() -> Array[PlayerInfo]:
 		return self._players
+	
+	func get_pieces() -> Array[PlayerPiecePosition]:
+		return self._pieces
 
 	static func _is_valid(payload: Dictionary) -> bool:
 		if not "platform" in payload:
