@@ -45,60 +45,55 @@ func _get_game_result():
 	if GlobalVariables.winner_id == "":
 		return "It's a draw!"
 	if GlobalVariables.winner_id == GlobalVariables.player_id:
-		return "Player %s has won!" % GlobalVariables.get_player_color(GlobalVariables.winner_id)
+		return "You have won!"
 	return "Player %s has won!" % GlobalVariables.get_player_color(GlobalVariables.winner_id)
 
 
 func _on_start_game_button_pressed():
 	if self._selected_map_idx < 0:
 		return
-	var start_message = {
-		"type": DSGMessageType.HOST_START_GAME,
-		"payload": {
-			"platform": Utils.parse_map_to_dict(
-				MapsDb.MAPS[self._selected_map_idx]["map_string"]
-				)
-		}
-	}
-	DSGNetwork.send(start_message)
+	var start_message = DSGMessage.HostStartGameMessage.new(
+		Utils.parse_map_to_dict(
+			MapsDb.MAPS[self._selected_map_idx]["map_string"]
+		)
+	)
+	DSGNetwork.send(start_message.to_dict())
 
 func _on_ws_connected():
 	self._pop_up.set_visible(false)
 
-func _on_ws_received_message(_msg_type: String) -> void:
+func _on_ws_received_message() -> void:
 	while true:
-		var msg: Variant = DSGNetwork.pop_pending_message(MSG_FILTER)
+		var msg: DSGMessage = DSGNetwork.pop_pending_message(MSG_FILTER)
 		if msg == null:
 			break
-		match msg["type"]:
-			DSGMessageType.SERVER_HELLO:
-				self._server_hello(msg["payload"])
-			DSGMessageType.PLAYER_JOINED:
-				self._player_joined(msg["payload"])
-			DSGMessageType.SERVER_START_GAME:
-				self._server_start_game(msg["payload"])
+		if msg is DSGMessage.ServerStartGameMessage:
+			self._server_start_game(msg)
+		if msg is DSGMessage.ServerHelloMessage:
+			self._server_hello(msg)
+		if msg is DSGMessage.PlayerJoinedMessage:
+			self._player_joined(msg)
 
-func _server_hello(payload: Variant):
-	if not payload["is_host"]:
+func _server_hello(msg: DSGMessage.ServerHelloMessage):
+	if not msg._is_host:
 		self._setup_non_host()
-	var player = payload["player"]
-	GlobalVariables.player_id = player["id"]
-	GlobalVariables.player_number = player["number"]
-	GlobalVariables.session_id = payload["session_id"]
-	self._amount_of_players = len(payload["other_players"]) + 1
+	var player = msg._player
+	GlobalVariables.player_id = player._id
+	GlobalVariables.player_number = player._number
+	GlobalVariables.session_id = msg._session_id
+	self._amount_of_players = len(msg._other_players) + 1
 	self._update_labels()
 	self._info.text = "Welcome! You play %s." % GlobalVariables.COLOR_MAPPING[GlobalVariables.player_number]
 
-func _player_joined(_payload: Variant):
+func _player_joined(_msg: DSGMessage.PlayerJoinedMessage):
 	self._amount_of_players += 1
 	self._update_labels()
 
-func _server_start_game(payload: Dictionary):
-	GlobalVariables.map = Utils.parse_dict_to_map(payload)
-	var players = payload["players"]
-	for player in players:
-		GlobalVariables.players[player["id"]] = int(player["number"])
-	GlobalVariables.pieces = payload["pieces"]
+func _server_start_game(msg: DSGMessage.ServerStartGameMessage):
+	GlobalVariables.map = msg.get_map()
+	for player in msg.get_players():
+		GlobalVariables.players[player._id] = int(player._number)
+	GlobalVariables.pieces = msg._pieces
 	get_tree().change_scene_to_packed(self._board_scene)
 
 func _setup_non_host():
@@ -107,7 +102,7 @@ func _setup_non_host():
 	GlobalVariables.is_host = false
 
 func _update_labels():
-	self._label_id_value.text = GlobalVariables.lobby_id
+	self._label_id_value.text = GlobalVariables.get_lobby_id_or_code()
 	self._label_amount_of_players.text = str(self._amount_of_players)
 	if GlobalVariables.is_host:
 		self._start_button.set_visible(self._amount_of_players > 1)
@@ -120,4 +115,4 @@ func _on_maps_list_item_clicked(index, _at_position, _mouse_button_index):
 	self._selected_map_idx = index
 
 func _on_copy_button_pressed():
-	DisplayServer.clipboard_set(GlobalVariables.lobby_id)
+	DisplayServer.clipboard_set(GlobalVariables.get_lobby_id_or_code())
