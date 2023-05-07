@@ -69,7 +69,6 @@ func _input(_event):
 	elif Input.is_action_just_pressed("MOVE_RIGHT"):
 		self._append_move(ACTIONS.MOVE_RIGHT, Vector2.RIGHT)
 	elif Input.is_action_just_pressed("MOVE_UP"):
-		print("move up")
 		self._append_move(ACTIONS.MOVE_UP, Vector2.UP)
 	elif Input.is_action_just_pressed("NO_ACTION"):
 		self._append_move(ACTIONS.NO_ACTION, Vector2.ZERO)

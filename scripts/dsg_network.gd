@@ -41,13 +41,14 @@ func _on_ws_open():
 	
 
 func _on_ws_closed():
-	print("closed:", self.socket.get_close_code(), self.socket.get_close_reason())
+	print("[DSGNetwork] connection closed:", self.socket.get_close_code(), self.socket.get_close_reason())
 	if _try_to_reconnect() == OK:
 		return
 	connection_closed.emit()
 
 
 func _try_to_reconnect() -> int:
+	print("[DSGNetwork] trying to reconnect with session-id %s" % GlobalVariables.session_id)
 	var query = "?session_id=%s" % GlobalVariables.session_id
 	return connect_to_lobby(query)
 
@@ -80,10 +81,13 @@ func _clear() -> void:
 
 func connect_to_lobby(query: String = "") -> int:
 	var url = _build_url(query)
+	print("[DSGNetwork] initiate connection with %s" % url)
 	var err = self.socket.connect_to_url(url, TLSOptions.client())
 	if err != OK:
+		print("[DSGNetwork] connection failed - aborting")
 		return err
 	self.last_state = self.socket.get_ready_state()
+	print("[DSGNetwork] connection was successful (state: %s)" % self.last_state)
 	return OK
 
 
