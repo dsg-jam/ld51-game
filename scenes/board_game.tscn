@@ -85,72 +85,56 @@ text = "[REMAINING_MOVES]"
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Controls" type="VBoxContainer" parent="VBoxContainer"]
+[node name="Controls" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_constants/separation = 10
 alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Controls"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Controls"]
 layout_mode = 2
-alignment = 1
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_bottom = 40
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Controls/HBoxContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
-
-[node name="UpButton" type="Button" parent="VBoxContainer/Controls/HBoxContainer/MarginContainer"]
+[node name="LeftButton" type="Button" parent="VBoxContainer/Controls/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "^"
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/Controls"]
-layout_mode = 2
-alignment = 1
-
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Controls/HBoxContainer2"]
-layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
-
-[node name="LeftButton" type="Button" parent="VBoxContainer/Controls/HBoxContainer2/MarginContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("2_n1wtn")
+theme_override_font_sizes/font_size = 30
 text = "<"
 
-[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer/Controls/HBoxContainer2"]
+[node name="HBoxContainer2" type="VBoxContainer" parent="VBoxContainer/Controls"]
 layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
-
-[node name="RightButton" type="Button" parent="VBoxContainer/Controls/HBoxContainer2/MarginContainer2"]
-layout_mode = 2
-size_flags_horizontal = 4
-text = ">"
-
-[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/Controls"]
-layout_mode = 2
+theme_override_constants/separation = 10
 alignment = 1
 
-[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer/Controls/HBoxContainer3"]
-layout_mode = 2
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
-
-[node name="DownButton" type="Button" parent="VBoxContainer/Controls/HBoxContainer3/MarginContainer2"]
+[node name="UpButton" type="Button" parent="VBoxContainer/Controls/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("2_n1wtn")
+theme_override_font_sizes/font_size = 30
+text = "^"
+
+[node name="DownButton" type="Button" parent="VBoxContainer/Controls/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("2_n1wtn")
+theme_override_font_sizes/font_size = 30
 text = "v"
 
+[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer/Controls"]
+layout_mode = 2
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="RightButton" type="Button" parent="VBoxContainer/Controls/MarginContainer2"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("2_n1wtn")
+theme_override_font_sizes/font_size = 30
+text = ">"
+
 [connection signal="timeout" from="DSGController/Timer" to="DSGController" method="_on_timer_timeout"]
-[connection signal="pressed" from="VBoxContainer/Controls/HBoxContainer/MarginContainer/UpButton" to="DSGController" method="_on_up_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/Controls/HBoxContainer2/MarginContainer/LeftButton" to="DSGController" method="_on_left_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/Controls/HBoxContainer2/MarginContainer2/RightButton" to="DSGController" method="_on_right_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/Controls/HBoxContainer3/MarginContainer2/DownButton" to="DSGController" method="_on_down_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Controls/MarginContainer/LeftButton" to="DSGController" method="_on_left_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Controls/HBoxContainer2/UpButton" to="DSGController" method="_on_up_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Controls/HBoxContainer2/DownButton" to="DSGController" method="_on_down_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Controls/MarginContainer2/RightButton" to="DSGController" method="_on_right_button_pressed"]

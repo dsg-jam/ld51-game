@@ -33,12 +33,21 @@ func _setup_lobby():
 	if not DSGNetwork.is_online():
 		DSGNetwork.connect_to_lobby()
 		return
-	self._info.text = "Player %s has won!" % GlobalVariables.get_player_color(GlobalVariables.winner_id)
+	self._info.text = _get_game_result()
 	if not GlobalVariables.is_host:
 		self._setup_non_host()
 	self._pop_up.set_visible(false)
 	self._amount_of_players = len(GlobalVariables.players)
 	self._update_labels()
+
+
+func _get_game_result():
+	if GlobalVariables.winner_id == "":
+		return "It's a draw!"
+	if GlobalVariables.winner_id == GlobalVariables.player_id:
+		return "Player %s has won!" % GlobalVariables.get_player_color(GlobalVariables.winner_id)
+	return "Player %s has won!" % GlobalVariables.get_player_color(GlobalVariables.winner_id)
+
 
 func _on_start_game_button_pressed():
 	if self._selected_map_idx < 0:

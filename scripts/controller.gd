@@ -21,7 +21,7 @@ var _latest_round_result: Dictionary
 @export var _message: Label
 @export var _moves_message: Label
 @export var _timer_message: Label
-@export var _control: VBoxContainer
+@export var _control: HBoxContainer
 
 @onready var _board = $Board
 @onready var _timer = $Timer
@@ -120,16 +120,19 @@ func _animate_round(payload: Dictionary):
 
 func _ready_for_next_round():
 	self._current_state = STATES.AWAITING_ROUND
+	GlobalVariables.winner_id = ""
 	DSGNetwork.send({
 		"type": DSGMessageType.READY_FOR_NEXT_ROUND,
 		"payload": {}
 	})
 	var payload = self._latest_round_result
-	if not "game_over" in payload:
+	var game_over = payload["game_over"]
+	if game_over == null:
 		return
-	if not payload["game_over"] == null:
-		GlobalVariables.winner_id = payload["game_over"]["winner_player_id"]
-		get_tree().change_scene_to_file("res://scenes/lobby.tscn")
+	var winner_player_id = game_over["winner_player_id"]
+	if winner_player_id != null:
+		GlobalVariables.winner_id = winner_player_id
+	get_tree().change_scene_to_file("res://scenes/lobby.tscn")
 
 
 func _on_update_selected_piece(piece_id, piece_player_id):
