@@ -15,7 +15,7 @@ static func parse(data: Dictionary) -> DSGMessage:
 	var type = data["type"]
 	var payload = data["payload"]
 	var res: DSGMessage = null
-	match data["type"]:
+	match type:
 		DSGMessageType.ERROR:
 			res = ErrorMessage.from_dict(payload)
 		DSGMessageType.PLAYER_MOVES:
@@ -103,7 +103,7 @@ class ReadyForNextRoundMessage extends DSGMessage:
 		self._payload = {}
 		return super.to_dict()
 	
-	static func from_dict(payload: Dictionary) -> ReadyForNextRoundMessage:
+	static func from_dict(_p: Dictionary) -> ReadyForNextRoundMessage:
 		return ReadyForNextRoundMessage.new()
 
 
@@ -274,7 +274,6 @@ class HostStartGameMessage extends DSGMessage:
 		self._platform = platform
 	
 	func to_dict() -> Dictionary:
-		var msg = super.to_dict()
 		self._payload = {
 			"platform": self._platform.to_dict()
 		}

@@ -5,7 +5,6 @@ const PUSH: String = "push"
 const PUSH_CONFLICT: String = "push_conflict"
 
 var _type: String
-var _payload: Dictionary
 
 static func parse(data: Dictionary) -> Outcome:
 	if not "type" in data or not "payload" in data:
