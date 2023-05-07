@@ -2,7 +2,7 @@ extends Node
 
 signal connected_to_server()
 signal connection_closed()
-signal message_received(message: String)
+signal message_received()
 
 const SERVER_USE_TLS: bool = true
 const SERVER_WS_PROTOCOL: String = "wss" if SERVER_USE_TLS else "ws"
@@ -10,7 +10,7 @@ const SERVER_HOST: String = "ld51-server.jam.dsg.li"
 
 var socket := WebSocketPeer.new()
 var last_state = WebSocketPeer.STATE_CLOSED
-var _pending_messages: Array[Dictionary] = []
+var _pending_messages: Array[DSGMessage] = []
 
 
 func _process(_delta):
@@ -54,7 +54,7 @@ func _try_to_reconnect() -> int:
 
 
 func _build_url(query: String) -> String:
-	return "%s://%s/lobby/%s/join%s" % [SERVER_WS_PROTOCOL, SERVER_HOST, GlobalVariables.lobby_id, query]
+	return "%s://%s/lobby/%s/join%s" % [SERVER_WS_PROTOCOL, SERVER_HOST, GlobalVariables.get_lobby_id_or_code(), query]
 
 
 func _get_message():
@@ -65,8 +65,11 @@ func _get_message():
 		return null
 	var raw_msg = pkt.get_string_from_utf8()
 	var msg: Dictionary = JSON.parse_string(raw_msg)
-	self._pending_messages.append(msg)
-	self.message_received.emit(msg["type"])
+	var dsg_msg = DSGMessage.parse(msg)
+	if dsg_msg == null:
+		return
+	self._pending_messages.append(dsg_msg)
+	self.message_received.emit()
 
 
 func _close(code := 1000, reason := "") -> void:
@@ -105,19 +108,19 @@ func has_pending_messages(filter: PackedStringArray) -> bool:
 		return not self._pending_messages.is_empty()
 
 	for msg in self._pending_messages:
-		if filter.has(msg["type"]):
+		if filter.has(msg._msg_type):
 			return true
 	return false
 
 
-func pop_pending_message(filter: PackedStringArray) -> Variant:
+func pop_pending_message(filter: PackedStringArray = []) -> DSGMessage:
 	if filter.is_empty():
 		return self._pending_messages.pop_front()
 
-	var msg: Variant
+	var msg: DSGMessage
 	for i in range(self._pending_messages.size()):
 		msg = self._pending_messages[i]
-		if filter.has(msg["type"]):
+		if filter.has(msg._msg_type):
 			self._pending_messages.remove_at(i)
 			return msg
 	return null

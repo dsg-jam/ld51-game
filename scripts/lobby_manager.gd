@@ -23,19 +23,25 @@ func _on_create_new_game_button_pressed() -> void:
 	]
 	self.request(url, headers, HTTPClient.METHOD_POST)
 
-func _start_joining_lobby(lobby_id: String) -> void:
-	GlobalVariables.lobby_id = lobby_id
+func _start_joining_lobby(lobby_id_or_code: String) -> void:
+	if len(lobby_id_or_code) < UUID_LEN:
+		GlobalVariables.join_code = lobby_id_or_code
+	else:
+		GlobalVariables.lobby_id = lobby_id_or_code
 	get_tree().change_scene_to_packed(lobby_scene)
 
 func _on_request_completed(_result: int, _response_code: int, _headers: PackedStringArray, body: PackedByteArray):
 	var response = JSON.parse_string(body.get_string_from_utf8())
 	if "lobby_id" in response:
 		self._start_joining_lobby(response["lobby_id"])
+	if "join_code" in response:
+		GlobalVariables.join_code = response["join_code"]
 
 func _on_join_button_pressed():
 	var game_id = game_id_input.text
-	if len(game_id) == UUID_LEN:
-		self._start_joining_lobby(game_id_input.text)
+	if len(game_id) <= 0:
+		return
+	self._start_joining_lobby(game_id_input.text)
 
 
 func _on_paste_button_pressed():
