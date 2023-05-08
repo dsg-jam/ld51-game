@@ -53,7 +53,7 @@ class MoveConflictOutcome extends Outcome:
 		var collision_point = BoardPosition.from_dict(payload.get("collision_point"))
 		var piece_ids: Array[String] = []
 		for piece_id in payload.get("piece_ids"):
-			piece_ids.append(BoardPosition.from_dict(piece_id))
+			piece_ids.append(piece_id)
 		return MoveConflictOutcome.new(piece_ids, collision_point)
 
 
@@ -100,7 +100,7 @@ class PushConflictOutcome extends Outcome:
 	var _piece_ids: Array[String]
 	var _collision_point: BoardPosition
 	
-	func _init(piece_ids: Array[String], collision_point: BoardPosition):
+	func _init(piece_ids: Array[String], collision_point: BoardPosition = null):
 		self._piece_ids = piece_ids
 		self._collision_point = collision_point
 	
@@ -110,15 +110,16 @@ class PushConflictOutcome extends Outcome:
 	static func _is_valid(payload: Dictionary) -> bool:
 		if not "piece_ids" in payload:
 			return false
-		if not "collision_point" in payload:
-			return false
 		return true
 	
 	static func from_dict(payload: Dictionary) -> PushConflictOutcome:
 		if not _is_valid(payload):
 			return null
-		var collision_point = BoardPosition.from_dict(payload.get("collision_point"))
+		var collision_point = null
+		var collision_point_payload = payload.get("collision_point")
+		if collision_point_payload != null:
+			collision_point = BoardPosition.from_dict(collision_point_payload)
 		var piece_ids: Array[String] = []
 		for piece_id in payload.get("piece_ids"):
-			piece_ids.append(BoardPosition.from_dict(piece_id))
+			piece_ids.append(piece_id)
 		return PushConflictOutcome.new(piece_ids, collision_point)

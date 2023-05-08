@@ -16,4 +16,4 @@ func _on_join_button_pressed():
 
 
 func _on_paste_button_pressed():
-	self.game_id_input.text = DisplayServer.clipboard_get()
+	self._join_code_input.text = DisplayServer.clipboard_get()
