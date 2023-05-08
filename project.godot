@@ -18,7 +18,7 @@ config/icon="res://assets/icon.svg"
 [autoload]
 
 GlobalVariables="*res://scripts/global_variables.gd"
-DSGNetwork="*res://scripts/dsg_network.gd"
+DSGNetwork="*res://scripts/networking/dsg_network.gd"
 
 [display]
 

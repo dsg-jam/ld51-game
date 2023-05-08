@@ -67,7 +67,7 @@ size_flags_vertical = 6
 theme_override_colors/font_color = Color(0.458824, 0.384314, 0.305882, 1)
 theme_override_fonts/font = ExtResource("2_ery7r")
 theme_override_font_sizes/font_size = 32
-text = "Game ID: "
+text = "Join Code:"
 
 [node name="IDValue" type="Label" parent="ColorRect/VBoxContainer/GameInfo"]
 layout_mode = 2
@@ -76,7 +76,7 @@ size_flags_vertical = 6
 theme_override_colors/font_color = Color(0.458824, 0.384314, 0.305882, 1)
 theme_override_fonts/font = ExtResource("2_ery7r")
 theme_override_font_sizes/font_size = 32
-text = "00000001"
+text = "ABC123"
 
 [node name="CopyButton" type="Button" parent="ColorRect/VBoxContainer/GameInfo"]
 layout_mode = 2

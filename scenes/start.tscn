@@ -1,23 +1,26 @@
-[gd_scene load_steps=4 format=3 uid="uid://b8n0vwymoq2x"]
+[gd_scene load_steps=5 format=3 uid="uid://duus1uby0n5mr"]
 
-[ext_resource type="Script" path="res://scripts/lobby_manager.gd" id="1_5enwb"]
+[ext_resource type="Script" path="res://scripts/start.gd" id="1_usvhe"]
+[ext_resource type="Script" path="res://scripts/networking/lobby_networking.gd" id="2_mjot8"]
 [ext_resource type="FontFile" uid="uid://ddtswll5v6p3s" path="res://assets/font/Stick-Regular.ttf" id="2_pw6rl"]
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_xko28"]
 color = Color(0.458824, 0.384314, 0.305882, 1)
 thickness = 4
 
-[node name="Control" type="Control"]
+[node name="Control" type="Control" node_paths=PackedStringArray("_join_code_input", "_lobby_networking")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_usvhe")
+_join_code_input = NodePath("ColorRect/VBoxContainer/HBoxContainer/JoinCode")
+_lobby_networking = NodePath("LobbyNetworking")
 
-[node name="CreatLobbyHttpRequest" type="HTTPRequest" parent="."]
-script = ExtResource("1_5enwb")
-game_id_path = NodePath("../ColorRect/VBoxContainer/HBoxContainer/GameID")
+[node name="LobbyNetworking" type="HTTPRequest" parent="."]
+script = ExtResource("2_mjot8")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 0
@@ -49,7 +52,7 @@ layout_mode = 2
 size_flags_vertical = 3
 alignment = 1
 
-[node name="creatNewGameButton" type="Button" parent="ColorRect/VBoxContainer/VBoxContainerTop"]
+[node name="CreateLobbyButton" type="Button" parent="ColorRect/VBoxContainer/VBoxContainerTop"]
 custom_minimum_size = Vector2(512, 0)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -67,9 +70,9 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.458824, 0.384314, 0.305882, 1)
 theme_override_fonts/font = ExtResource("2_pw6rl")
 theme_override_font_sizes/font_size = 32
-text = "Game ID: "
+text = "Join Code:"
 
-[node name="GameID" type="LineEdit" parent="ColorRect/VBoxContainer/HBoxContainer"]
+[node name="JoinCode" type="LineEdit" parent="ColorRect/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(256, 0)
 layout_mode = 2
 size_flags_vertical = 4
@@ -85,12 +88,12 @@ theme_override_font_sizes/font_size = 32
 text = "Paste
 "
 
-[node name="Button" type="Button" parent="ColorRect/VBoxContainer"]
+[node name="JoinButton" type="Button" parent="ColorRect/VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_pw6rl")
 theme_override_font_sizes/font_size = 32
 text = "Join"
 
-[connection signal="pressed" from="ColorRect/VBoxContainer/VBoxContainerTop/creatNewGameButton" to="CreatLobbyHttpRequest" method="_on_create_new_game_button_pressed"]
-[connection signal="pressed" from="ColorRect/VBoxContainer/HBoxContainer/PasteButton" to="CreatLobbyHttpRequest" method="_on_paste_button_pressed"]
-[connection signal="pressed" from="ColorRect/VBoxContainer/Button" to="CreatLobbyHttpRequest" method="_on_join_button_pressed"]
+[connection signal="pressed" from="ColorRect/VBoxContainer/VBoxContainerTop/CreateLobbyButton" to="." method="_on_create_lobby_button_pressed"]
+[connection signal="pressed" from="ColorRect/VBoxContainer/HBoxContainer/PasteButton" to="." method="_on_paste_button_pressed"]
+[connection signal="pressed" from="ColorRect/VBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]
