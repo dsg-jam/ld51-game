@@ -79,22 +79,15 @@ size_flags_vertical = 4
 theme_override_fonts/font = ExtResource("2_pw6rl")
 theme_override_font_sizes/font_size = 32
 
-[node name="PasteButton" type="Button" parent="ColorRect/VBoxContainer/HBoxContainer"]
+[node name="JoinButton" type="Button" parent="ColorRect/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(112, 0)
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_fonts/font = ExtResource("2_pw6rl")
 theme_override_font_sizes/font_size = 32
-text = "Paste
+text = "Join
 "
-
-[node name="JoinButton" type="Button" parent="ColorRect/VBoxContainer"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("2_pw6rl")
-theme_override_font_sizes/font_size = 32
-text = "Join"
 
 [connection signal="pressed" from="ColorRect/VBoxContainer/VBoxContainerTop/CreateLobbyButton" to="." method="_on_create_lobby_button_pressed"]
 [connection signal="text_submitted" from="ColorRect/VBoxContainer/HBoxContainer/JoinCode" to="." method="_on_join_code_text_submitted"]
-[connection signal="pressed" from="ColorRect/VBoxContainer/HBoxContainer/PasteButton" to="." method="_on_paste_button_pressed"]
-[connection signal="pressed" from="ColorRect/VBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]
+[connection signal="pressed" from="ColorRect/VBoxContainer/HBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]

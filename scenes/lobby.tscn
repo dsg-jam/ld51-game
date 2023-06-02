@@ -78,12 +78,6 @@ theme_override_fonts/font = ExtResource("2_ery7r")
 theme_override_font_sizes/font_size = 32
 text = "ABC123"
 
-[node name="CopyButton" type="Button" parent="ColorRect/VBoxContainer/GameInfo"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("2_ery7r")
-theme_override_font_sizes/font_size = 32
-text = "Copy"
-
 [node name="LobbyInfo" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
@@ -192,6 +186,5 @@ theme_override_fonts/font = ExtResource("2_ery7r")
 theme_override_font_sizes/font_size = 32
 text = "Establishing connection..."
 
-[connection signal="pressed" from="ColorRect/VBoxContainer/GameInfo/CopyButton" to="." method="_on_copy_button_pressed"]
 [connection signal="item_clicked" from="ColorRect/VBoxContainer/MapSelection/ScrollContainer/MapsList" to="." method="_on_maps_list_item_clicked"]
 [connection signal="pressed" from="ColorRect/VBoxContainer/StartGame/StartGameButton" to="." method="_on_start_game_button_pressed"]

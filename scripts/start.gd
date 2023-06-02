@@ -19,9 +19,5 @@ func _on_join_button_pressed():
 	self._join_lobby()
 
 
-func _on_paste_button_pressed():
-	self._join_code_input.text = DisplayServer.clipboard_get()
-
-
 func _on_join_code_text_submitted(_new_text):
 	self._join_lobby()
