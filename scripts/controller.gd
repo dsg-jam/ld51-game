@@ -78,9 +78,8 @@ func _on_ws_received_message() -> void:
 			break
 
 		if msg is DSGMessage.RoundStartMessage:
-			if self._current_state == STATES.AWAITING_ROUND:
-				self._current_state = STATES.ONGOING_ROUND
-				self._start_round(msg)
+			self._current_state = STATES.ONGOING_ROUND
+			self._start_round(msg)
 		if msg is DSGMessage.RoundResultMessage:
 			if self._current_state == STATES.AWAITING_RESULT:
 				self._current_state = STATES.ONGOING_ANIMATION
