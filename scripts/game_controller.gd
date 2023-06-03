@@ -209,7 +209,6 @@ func _on_right_button_pressed():
 	self._append_move(ACTIONS.MOVE_RIGHT, Vector2.RIGHT)
 
 func _on_reconnection():
-	self._ready_for_next_round()
 	self._pop_up_label.text = "Waiting for next round..."
 	self._pop_up_panel.show()
 

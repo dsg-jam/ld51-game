@@ -24,6 +24,7 @@ var _selected_map_idx: int = -1
 func _ready():
 	DSGNetwork.message_received.connect(_on_ws_received_message)
 	DSGNetwork.connected_to_server.connect(_on_ws_connected)
+	DSGNetwork.connection_closed.connect(_on_ws_closed)
 	self._setup_lobby()
 
 func _setup_lobby():
@@ -31,6 +32,7 @@ func _setup_lobby():
 	self._update_labels()
 	self._start_button.set_visible(false)
 	if not DSGNetwork.is_online():
+		DSGLogger.lobby_log("trying to connect to lobby with join-code: %s" % GlobalVariables.join_code)
 		DSGNetwork.connect_to_lobby()
 		return
 	self._amount_of_players = len(GlobalVariables.players)
@@ -63,6 +65,7 @@ func _on_start_game_button_pressed():
 	DSGNetwork.send(start_message.to_dict())
 
 func _on_ws_connected():
+	DSGLogger.lobby_log("lobby entered successfully")
 	self._pop_up.set_visible(false)
 
 func _on_ws_received_message() -> void:
@@ -76,6 +79,10 @@ func _on_ws_received_message() -> void:
 			self._server_hello(msg)
 		if msg is DSGMessage.PlayerJoinedMessage:
 			self._player_joined(msg)
+
+func _on_ws_closed():
+	DSGLogger.lobby_log("exiting lobby due to closed connection")
+	get_tree().change_scene_to_file("res://scenes/start.tscn")
 
 func _server_hello(hello_message: DSGMessage.ServerHelloMessage):
 	hello_message.write_global_variables()
