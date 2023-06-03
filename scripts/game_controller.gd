@@ -22,6 +22,8 @@ var _latest_round_result: DSGMessage.RoundResultMessage
 @export var _moves_message: Label
 @export var _timer_message: Label
 @export var _control: HBoxContainer
+@export var _pop_up_panel: Panel
+@export var _pop_up_label: Label
 
 @onready var _board = $Board
 @onready var _timer = $Timer
@@ -30,6 +32,9 @@ func _ready():
 	_handle_screen_resize()
 	get_tree().get_root().connect("size_changed", _handle_screen_resize)
 	DSGNetwork.message_received.connect(self._on_ws_received_message)
+	DSGNetwork.connection_lost.connect(_on_connection_lost)
+	DSGNetwork.connection_closed.connect(_on_connection_closed)
+	DSGNetwork.reconnected.connect(_on_reconnection)
 	self._board.update_selected_piece.connect(self._on_update_selected_piece)
 	self._board.ready_for_next_round.connect(_ready_for_next_round)
 	self._current_state = STATES.AWAITING_ROUND
@@ -79,6 +84,7 @@ func _on_ws_received_message() -> void:
 
 		if msg is DSGMessage.RoundStartMessage:
 			self._current_state = STATES.ONGOING_ROUND
+			self._pop_up_panel.hide()
 			self._start_round(msg)
 		if msg is DSGMessage.RoundResultMessage:
 			if self._current_state == STATES.AWAITING_RESULT:
@@ -183,7 +189,7 @@ func _update_lights():
 
 func _update_labels():
 	self._moves_message.text = "Moves left: " + str(self._moves_left)
-	self._timer_message.text = "Time left: %.1f" % self._timer.time_left
+	self._timer_message.text = "%.1f s" % self._timer.time_left
 	self._message.text = "Round " + str(self._round_number)
 
 
@@ -201,3 +207,15 @@ func _on_left_button_pressed():
 
 func _on_right_button_pressed():
 	self._append_move(ACTIONS.MOVE_RIGHT, Vector2.RIGHT)
+
+func _on_reconnection():
+	self._ready_for_next_round()
+	self._pop_up_label.text = "Waiting for next round..."
+	self._pop_up_panel.show()
+
+func _on_connection_lost():
+	self._pop_up_label.text = "Establishing connection..."
+	self._pop_up_panel.show()
+	
+func _on_connection_closed():
+	get_tree().change_scene_to_file("res://scenes/start.tscn")

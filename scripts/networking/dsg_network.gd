@@ -1,6 +1,8 @@
 extends Node
 
 signal connected_to_server()
+signal connection_lost()
+signal reconnected()
 signal connection_closed()
 signal message_received()
 
@@ -42,7 +44,9 @@ func _on_ws_open():
 
 func _on_ws_closed():
 	print("[DSGNetwork] connection closed:", self.socket.get_close_code(), self.socket.get_close_reason())
+	connection_lost.emit()
 	if _try_to_reconnect() == OK:
+		reconnected.emit()
 		return
 	connection_closed.emit()
 

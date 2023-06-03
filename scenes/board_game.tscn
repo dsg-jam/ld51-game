@@ -1,13 +1,29 @@
-[gd_scene load_steps=7 format=3 uid="uid://dcb2fcgn5t31k"]
+[gd_scene load_steps=9 format=3 uid="uid://dcb2fcgn5t31k"]
 
 [ext_resource type="Shader" path="res://shaders/board_game.gdshader" id="1_mis6b"]
-[ext_resource type="Script" path="res://scripts/controller.gd" id="1_q3buc"]
 [ext_resource type="PackedScene" uid="uid://dpw0yy580qqil" path="res://prefabs/board.tscn" id="2_aieau"]
+[ext_resource type="Script" path="res://scripts/game_controller.gd" id="2_h7g5x"]
 [ext_resource type="FontFile" uid="uid://ddtswll5v6p3s" path="res://assets/font/Stick-Regular.ttf" id="2_n1wtn"]
 [ext_resource type="AudioStream" uid="uid://bnoxq8cy6egds" path="res://assets/sounds/Gong-hit.wav" id="3_oei84"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_r7sbu"]
 shader = ExtResource("1_mis6b")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vfubb"]
+bg_color = Color(0, 0, 0, 0.768627)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gfarn"]
+bg_color = Color(0.996078, 0.815686, 0.619608, 1)
+border_width_left = 12
+border_width_top = 12
+border_width_right = 12
+border_width_bottom = 12
+border_color = Color(0.94902, 0.623529, 0.184314, 1)
+border_blend = true
+corner_radius_top_left = 32
+corner_radius_top_right = 32
+corner_radius_bottom_right = 32
+corner_radius_bottom_left = 32
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -30,12 +46,14 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.184314, 0.282353, 0.345098, 1)
 
-[node name="DSGController" type="Node2D" parent="." node_paths=PackedStringArray("_message", "_moves_message", "_timer_message", "_control")]
-script = ExtResource("1_q3buc")
-_message = NodePath("../VBoxContainer/HBoxContainer/MessageLabel")
-_moves_message = NodePath("../VBoxContainer/HBoxContainer/MovesLabel")
-_timer_message = NodePath("../VBoxContainer/HBoxContainer/TimerLabel")
+[node name="DSGController" type="Node2D" parent="." node_paths=PackedStringArray("_message", "_moves_message", "_timer_message", "_control", "_pop_up_panel", "_pop_up_label")]
+script = ExtResource("2_h7g5x")
+_message = NodePath("../VBoxContainer/HBoxContainer/MarginContainer/LeftBoxContainer/MessageLabel")
+_moves_message = NodePath("../VBoxContainer/HBoxContainer/MarginContainer/RightBoxContainer/MovesLabel")
+_timer_message = NodePath("../VBoxContainer/HBoxContainer/MarginContainer/CenterBoxContainer/TimerLabel")
 _control = NodePath("../VBoxContainer/Controls")
+_pop_up_panel = NodePath("../PopUp")
+_pop_up_label = NodePath("../PopUp/Panel/Label")
 
 [node name="Board" parent="DSGController" instance=ExtResource("2_aieau")]
 
@@ -56,30 +74,56 @@ size_flags_vertical = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 100
+size_flags_vertical = 0
 alignment = 1
 
-[node name="TimerLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+
+[node name="LeftBoxContainer" type="BoxContainer" parent="VBoxContainer/HBoxContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="MessageLabel" type="Label" parent="VBoxContainer/HBoxContainer/MarginContainer/LeftBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.996078, 0.815686, 0.619608, 1)
+theme_override_fonts/font = ExtResource("2_n1wtn")
+theme_override_font_sizes/font_size = 32
+text = "[MSG]"
+
+[node name="CenterBoxContainer" type="BoxContainer" parent="VBoxContainer/HBoxContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+alignment = 1
+
+[node name="TimerLabel" type="Label" parent="VBoxContainer/HBoxContainer/MarginContainer/CenterBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 1
 theme_override_colors/font_color = Color(0.996078, 0.815686, 0.619608, 1)
 theme_override_fonts/font = ExtResource("2_n1wtn")
 theme_override_font_sizes/font_size = 32
 text = "[TIMER]"
 
-[node name="MessageLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+[node name="RightBoxContainer" type="BoxContainer" parent="VBoxContainer/HBoxContainer/MarginContainer"]
 layout_mode = 2
-size_flags_vertical = 2
-theme_override_colors/font_color = Color(0.996078, 0.815686, 0.619608, 1)
-theme_override_fonts/font = ExtResource("2_n1wtn")
-theme_override_font_sizes/font_size = 32
-text = "SELECTED PIECE: [PIECE_ID]"
+size_flags_horizontal = 10
+alignment = 2
 
-[node name="MovesLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+[node name="MovesLabel" type="Label" parent="VBoxContainer/HBoxContainer/MarginContainer/RightBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 10
+size_flags_vertical = 1
 theme_override_colors/font_color = Color(0.996078, 0.815686, 0.619608, 1)
 theme_override_fonts/font = ExtResource("2_n1wtn")
 theme_override_font_sizes/font_size = 32
-text = "[REMAINING_MOVES]"
+text = "[MOVES]"
 
 [node name="VSplitContainer" type="VSplitContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -132,6 +176,50 @@ size_flags_horizontal = 4
 theme_override_fonts/font = ExtResource("2_n1wtn")
 theme_override_font_sizes/font_size = 30
 text = ">"
+
+[node name="PopUp" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_vfubb")
+
+[node name="Panel" type="Panel" parent="PopUp"]
+custom_minimum_size = Vector2(512, 128)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_gfarn")
+
+[node name="Label" type="Label" parent="PopUp/Panel"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -183.5
+offset_top = -25.5
+offset_right = 183.5
+offset_bottom = 25.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.458824, 0.384314, 0.305882, 1)
+theme_override_fonts/font = ExtResource("2_n1wtn")
+theme_override_font_sizes/font_size = 32
+text = "[MSG]"
+horizontal_alignment = 1
 
 [connection signal="timeout" from="DSGController/Timer" to="DSGController" method="_on_timer_timeout"]
 [connection signal="pressed" from="VBoxContainer/Controls/MarginContainer/LeftButton" to="DSGController" method="_on_left_button_pressed"]
